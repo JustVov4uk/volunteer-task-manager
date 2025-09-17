@@ -1,9 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from tasks.models import (Category,
-                          CustomUser,
-                          Tag, Task,
-                          Report)
+from tasks.models import Category, CustomUser, Tag, Task, Report
 
 
 @admin.register(Category)
@@ -13,9 +10,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    list_display = (UserAdmin.list_display +
-                    ("role", "phone_number",
-                     "city"))
+    list_display = UserAdmin.list_display + ("role", "phone_number", "city")
     list_filter = ("role", "city", "is_active")
     search_fields = ("username", "city")
     fieldsets = UserAdmin.fieldsets + (
@@ -48,12 +43,6 @@ class TaskAdmin(admin.ModelAdmin):
 
 @admin.register(Report)
 class ReportAdmin(admin.ModelAdmin):
-    list_display = [
-        "author",
-        "comment",
-        "task",
-        "verified_by",
-        "verified_at"
-    ]
+    list_display = ["author", "comment", "task", "verified_by", "verified_at"]
     list_filter = ("author", "task")
     search_fields = ("author",)
