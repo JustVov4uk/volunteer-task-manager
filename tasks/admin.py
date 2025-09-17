@@ -16,6 +16,8 @@ class CustomUserAdmin(UserAdmin):
     list_display = (UserAdmin.list_display +
                     ("role", "phone_number",
                      "city"))
+    list_filter = ("role", "city", "is_active")
+    search_fields = ("username", "city")
 
 
 @admin.register(Tag)
@@ -34,6 +36,8 @@ class TaskAdmin(admin.ModelAdmin):
         "deadline",
         "category",
     ]
+    list_filter = ("status", "deadline", "category")
+    search_fields = ("title", "description")
 
 
 @admin.register(Report)
@@ -45,3 +49,5 @@ class ReportAdmin(admin.ModelAdmin):
         "verified_by",
         "verified_at"
     ]
+    list_filter = ("author", "task")
+    search_fields = ("author",)
