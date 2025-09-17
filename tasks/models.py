@@ -63,6 +63,7 @@ class Report(models.Model):
     comment = models.CharField(max_length=500)
     author = models.ForeignKey(settings.AUTH_USER_MODEL,
                                on_delete=models.SET_NULL,
+                               blank=True, null=True,
                                related_name="reports_authored")
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     verified_by = models.ForeignKey(settings.AUTH_USER_MODEL,
