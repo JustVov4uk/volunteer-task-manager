@@ -18,6 +18,12 @@ class CustomUserAdmin(UserAdmin):
                      "city"))
     list_filter = ("role", "city", "is_active")
     search_fields = ("username", "city")
+    fieldsets = UserAdmin.fieldsets + (
+        (None, {"fields": ("role", "phone_number", "city")}),
+    )
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        (None, {"fields": ("role", "phone_number", "city")}),
+    )
 
 
 @admin.register(Tag)
