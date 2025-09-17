@@ -1,9 +1,9 @@
 from django.urls import path
-from tasks.views import test_view
-
+from tasks.views import index, CategoryListView
 
 urlpatterns = [
-    path("", test_view, name="index"),
+    path("", index, name="index"),
+    path("category/", CategoryListView.as_view(), name="category-list"),
 ]
 
 app_name = "tasks"

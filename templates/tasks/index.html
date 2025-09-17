@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Home page</h1>
+  <h3>Content: </h3>
+  <ul>
+    <li>Our volunteers: {{ num_volunteers }}</li>
+    <li>Category: {{ num_categories }}</li>
+    <li>Tasks: {{ num_tasks }}</li>
+  </ul>
+{% endblock %}
