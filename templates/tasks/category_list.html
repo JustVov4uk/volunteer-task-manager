@@ -1,12 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<h1>Category</h1>
+  <h1>Categories</h1>
   {% if category_list %}
-  	<ul>
-    {% for category in category_list %}
-    	<li>{{ category }}</li>
-    {% endfor %}
-    </ul>
+    <table>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+      {% for category in category_list %}
+        <tr>
+          <td><a href="{% url 'tasks:category-detail' pk=category.id %}">{{ category.id }}</a></td>
+          <td>{{ category.name }}</td>
+          <td>{{ category.description }}</td>
+        </tr>
+      {% endfor %}
+    </table>
   {% endif %}
 {% endblock %}

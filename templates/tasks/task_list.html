@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Tasks</h1>
+  {% if task_list %}
+    <table>
+      <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Created by</th>
+        <th>Assigned to</th>
+        <th>Status</th>
+        <th>Deadline</th>
+        <th>Category</th>
+      </tr>
+      {% for task in task_list %}
+        <tr>
+          <a href="#"></a>
+          <td>{{ task.title }}</td>
+          <td>{{ task.description }}</td>
+          <td>{{ task.created_by }}</td>
+          <td>{{ task.assigned_to }}</td>
+          <td>{{ task.status }}</td>
+          <td>{{ task.deadline }}</td>
+          <td>{{ task.category.name }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% endif %}
+{% endblock %}

@@ -5,8 +5,8 @@
   <h3>Content: </h3>
   <ul>
     <li>Our volunteers: {{ num_volunteers }}</li>
-    <li>Category: {{ num_categories }}</li>
-    <li>Tasks: {{ num_tasks }}</li>
+    <li><a href="{% url 'tasks:category-list' %}">Categories: {{ num_categories }}</a></li>
+    <li><a href="{% url 'tasks:task-list' %}">Tasks: {{ num_tasks }}</a></li>
     <li>Reports: {{ num_reports }}</li>
     <li>Tags: {{ num_tags }}</li>
   </ul>

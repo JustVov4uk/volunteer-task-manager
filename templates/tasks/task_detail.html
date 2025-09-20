@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Title: {{ task.title }}</h1>
+  <p>Description: {{ task.description }}</p>
+  <p>Created_by: {{ task.created_by.username }}</p>
+  <p>Assigned to: {{ task.assigned_to.username }}</p>
+  <p>Status: {{ task.status }}</p>
+  <p>Deadline: {{ task.deadline }}</p>
+  <p>Category: {{ task.category.name }}</p>
+  <p>Tag: {{ task.tags.name }}</p>
+  <div class="ml-3">
+
+  </div>
+{% endblock %}
