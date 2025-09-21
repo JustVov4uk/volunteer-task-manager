@@ -1,12 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Tags</h1>
+  <h1>Теги</h1>
   {% if tag_list %}
-    <ul>
-      {% for tag in tags_list %}
-        <p>{{ tag.name }}</p>
+    <ul class="list-group">
+      {% for tag in tag_list %}
+        <li class="list-group-item">
+          <a href="{% url 'tasks:tag-detail' pk=tag.id %}">{{ tag.name }}</a>
+        </li>
       {% endfor %}
     </ul>
+  {% else %}
+    <p>Немає тегів.</p>
   {% endif %}
 {% endblock %}

@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<p>Tags: {{ tag.name }}</p>
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title">Тег</h4>
+      <p class="card-text">{{ tag.name }}</p>
+    </div>
+  </div>
 {% endblock %}

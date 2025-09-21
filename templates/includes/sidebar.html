@@ -1,21 +1,20 @@
-<ul class="sidebar-nav">
-  {% if user.is_authenticated and user.role == "coordinator" %}
-    <li>:
-      <a href="{% url 'taxi:driver-detail' user.id %}">
-        {{ user.username }}
+<div class="list-group">
+  <a href="{% url 'tasks:index' %}" class="list-group-item list-group-item-action">Main</a>
+  <a href="{% url 'tasks:volunteer-list' %}" class="list-group-item list-group-item-action">Volunteers</a>
+  <a href="{% url 'tasks:task-list' %}" class="list-group-item list-group-item-action">Tasks</a>
+  <a href="{% url 'tasks:category-list' %}" class="list-group-item list-group-item-action">Categories</a>
+  <a href="{% url 'tasks:tag-list' %}" class="list-group-item list-group-item-action">Tags</a>
+  <a href="{% url 'tasks:report-list' %}" class="list-group-item list-group-item-action">Reports</a>
+
+  <div class="mt-3">
+    {% if request.user.is_authenticated %}
+      <a href="{% url 'logout' %}" class="list-group-item list-group-item-action list-group-item-danger">
+        Вийти
       </a>
-    </li>
-    <li>
-      <a href="{% url 'logout' %}">Logout</a>
-    </li>
-  {% else %}
-    <li>
-      <a href="{% url 'login' %}">Login</a>
-    </li>
-  {% endif %}
-  <br>
-  <li><a href="{% url "taxi:index" %}">Home page</a></li>
-  <li><a href="{% url "taxi:manufacturer-list" %}">Manufacturers</a></li>
-  <li><a href="{% url "taxi:car-list" %}">Cars</a></li>
-  <li><a href="{% url "taxi:driver-list" %}">Drivers</a></li>
-</ul>
+    {% else %}
+      <a href="{% url 'login' %}" class="list-group-item list-group-item-action list-group-item-primary">
+        Увійти
+      </a>
+    {% endif %}
+  </div>
+</div>

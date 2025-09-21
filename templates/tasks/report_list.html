@@ -1,26 +1,37 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<h1>Reports</h1>
+  <h1>Звіти</h1>
   {% if report_list %}
-  	<table>
-      <tr>
-        <th>Author</th>
-        <th>Comment</th>
-        <th>Task</th>
-        <th>Verified by</th>
-        <th>Verified at</th>
-      </tr>
-      {% for report in report_list %}
-      	<tr>
-          <td><a href="{% url 'tasks:report-detail' report.id %}">{{ report.id }}</a></td>
-          <td>{{ report.author }}</td>
-          <td>{{ report.comment }}</td>
-          <td>{{ report.task }}</td>
-          <td>{{ report.verified_by }}</td>
-          <td>{{ report.verified_at }}</td>
+    <table class="table table-striped table-hover align-middle">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Автор</th>
+          <th>Коментар</th>
+          <th>Завдання</th>
+          <th>Перевірив</th>
+          <th>Дата перевірки</th>
         </tr>
-      {% endfor %}
+      </thead>
+      <tbody>
+        {% for report in report_list %}
+          <tr>
+            <td>
+              <a href="{% url 'tasks:report-detail' pk=report.id %}">
+                {{ report.id }}
+              </a>
+            </td>
+            <td>{{ report.author|default:"—" }}</td>
+            <td>{{ report.comment }}</td>
+            <td>{{ report.task }}</td>
+            <td>{{ report.verified_by|default:"—" }}</td>
+            <td>{{ report.verified_at|date:"d.m.Y H:i"|default:"—" }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
+  {% else %}
+    <p>Звітів немає.</p>
   {% endif %}
 {% endblock %}

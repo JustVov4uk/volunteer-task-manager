@@ -1,13 +1,57 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Home page</h1>
-  <h3>Content: </h3>
-  <ul>
-    <li>Our volunteers: {{ num_volunteers }}</li>
-    <li><a href="{% url 'tasks:category-list' %}">Categories: {{ num_categories }}</a></li>
-    <li><a href="{% url 'tasks:task-list' %}">Tasks: {{ num_tasks }}</a></li>
-    <li><a href="{% url 'tasks:report-list' %}">Reports: {{ num_reports }}</a></li>
-    <li><a href="{% url 'tasks:tag-list' %}">Tags: {{ num_tags }}</a></li>
-  </ul>
+  <h1>Панель координатора</h1>
+  <div class="row">
+    <div class="col-md-3 mb-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Волонтери</h5>
+          <p class="display-6">
+            <a href="">{{ num_volunteers }}</a>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Категорії</h5>
+          <p class="display-6">
+            <a href="{% url 'tasks:category-list' %}">{{ num_categories }}</a>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Завдання</h5>
+          <p class="display-6">
+            <a href="{% url 'tasks:task-list' %}">{{ num_tasks }}</a>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Звіти</h5>
+          <p class="display-6">
+            <a href="{% url 'tasks:report-list' %}">{{ num_reports }}</a>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Теги</h5>
+          <p class="display-6">
+            <a href="{% url 'tasks:tag-list' %}">{{ num_tags }}</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

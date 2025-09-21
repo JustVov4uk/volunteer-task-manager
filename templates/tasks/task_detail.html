@@ -1,12 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Title: {{ task.title }}</h1>
-  <p>Description: {{ task.description }}</p>
-  <p>Created_by: {{ task.created_by.username }}</p>
-  <p>Assigned to: {{ task.assigned_to.username }}</p>
-  <p>Status: {{ task.status }}</p>
-  <p>Deadline: {{ task.deadline }}</p>
-  <p>Category: {{ task.category.name }}</p>
-  <p>Tag: {{ task.tags.name }}</p>
+  <div class="card">
+    <div class="card-body">
+      <h3 class="card-title">{{ task.title }}</h3>
+      <p class="card-text"><strong>Опис:</strong> {{ task.description }}</p>
+      <p><strong>Автор:</strong> {{ task.created_by.username }}</p>
+      <p><strong>Виконавець:</strong> {{ task.assigned_to.username|default:"—" }}</p>
+      <p><strong>Статус:</strong> {{ task.status }}</p>
+      <p><strong>Дедлайн:</strong> {{ task.deadline|date:"d.m.Y H:i" }}</p>
+      <p><strong>Категорія:</strong> {{ task.category.name }}</p>
+      <p><strong>Теги:</strong>
+        {% for tag in task.tags.all %}
+          <span class="badge bg-primary">{{ tag.name }}</span>
+        {% empty %}
+          —
+        {% endfor %}
+      </p>
+    </div>
+  </div>
 {% endblock %}

@@ -41,6 +41,13 @@ def volunteer_index(request: HttpRequest) -> HttpResponse:
 
     return render(request, "tasks/index_volunteer.html", context=context)
 
+
+class VolunteerListView(LoginRequiredMixin, generic.ListView):
+    model = CustomUser
+
+    def get_queryset(self):
+        return CustomUser.objects.filter(role="volunteer")
+
 class CategoryListView(LoginRequiredMixin, generic.ListView):
     model = Category
 
