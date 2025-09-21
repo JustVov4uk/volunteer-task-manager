@@ -57,4 +57,9 @@ class TaskDetailView(LoginRequiredMixin, generic.DetailView):
     model = Task
 
 
+class TagListView(LoginRequiredMixin, generic.ListView):
+    model = Tag
 
+
+class TagDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Tag

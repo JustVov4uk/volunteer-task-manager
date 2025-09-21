@@ -16,7 +16,7 @@
       </tr>
       {% for task in task_list %}
         <tr>
-          <a href="#"></a>
+          <a href="{% url 'tasks:task-detail' pk=task.id %}"></a>
           <td>{{ task.title }}</td>
           <td>{{ task.description }}</td>
           <td>{{ task.created_by }}</td>

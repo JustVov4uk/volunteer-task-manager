@@ -8,6 +8,6 @@
     <li><a href="{% url 'tasks:category-list' %}">Categories: {{ num_categories }}</a></li>
     <li><a href="{% url 'tasks:task-list' %}">Tasks: {{ num_tasks }}</a></li>
     <li>Reports: {{ num_reports }}</li>
-    <li>Tags: {{ num_tags }}</li>
+    <li><a href="{% url 'tasks:tag-list' %}">Tags: {{ num_tags }}</a></li>
   </ul>
 {% endblock %}
