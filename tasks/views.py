@@ -54,7 +54,7 @@ class VolunteerListView(LoginRequiredMixin, generic.ListView):
 class VolunteerDetailView(LoginRequiredMixin, generic.DetailView):
     model = CustomUser
     template_name = "tasks/volunteer_detail.html"
-    context_object_name = "volunteer_detail"
+    context_object_name = "volunteer"
 
     def get_queryset(self):
         return CustomUser.objects.filter(role="volunteer")
