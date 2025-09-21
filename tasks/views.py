@@ -2,8 +2,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 from django.views import generic
+from django.views.generic import CreateView
 
+from tasks.forms import CategoryForm
 from tasks.models import CustomUser, Task, Category, Tag, Report
 
 @login_required
@@ -66,6 +69,11 @@ class CategoryListView(LoginRequiredMixin, generic.ListView):
 class CategoryDetailView(LoginRequiredMixin, generic.DetailView):
     model = Category
 
+
+class CategoryCreateView(LoginRequiredMixin, CreateView):
+    model = Category
+    form_class = CategoryForm
+    success_url = reverse_lazy("tasks:category-list")
 
 class TaskListView(LoginRequiredMixin, generic.ListView):
     model = Task
