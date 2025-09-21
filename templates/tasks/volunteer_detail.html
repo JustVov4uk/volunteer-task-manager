@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title">{{ volunteer.username }}</h4>
+      <p><strong>Username:</strong> {{ volunteer.username }}</p>
+      <p><strong>First name:</strong> {{ volunteer.first_name }}</p>
+      <p><strong>Last name:</strong> {{ volunteer.last_name }}</p>
+      <p><strong>Email:</strong> {{ volunteer.email }}</p>
+      <p><strong>Phone:</strong> {{ volunteer.phone_number|default:"—" }}</p>
+      <p><strong>City:</strong> {{ volunteer.city|default:"—" }}</p>
+    </div>
+  </div>
+{% endblock %}

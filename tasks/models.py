@@ -17,7 +17,7 @@ class CustomUser(AbstractUser):
         ("volunteer", "Volunteer"),
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="coordinator")
-    phone_number = models.CharField(max_length=15, unique=False, blank=True, null=True)
+    phone_number = models.CharField(max_length=25, unique=False, blank=True, null=True)
     city = models.CharField(max_length=50, blank=True)
 
     def __str__(self):

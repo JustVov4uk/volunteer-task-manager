@@ -44,6 +44,17 @@ def volunteer_index(request: HttpRequest) -> HttpResponse:
 
 class VolunteerListView(LoginRequiredMixin, generic.ListView):
     model = CustomUser
+    template_name = "tasks/volunteer_list.html"
+    context_object_name = "volunteer_list"
+
+    def get_queryset(self):
+        return CustomUser.objects.filter(role="volunteer")
+
+
+class VolunteerDetailView(LoginRequiredMixin, generic.DetailView):
+    model = CustomUser
+    template_name = "tasks/volunteer_detail.html"
+    context_object_name = "volunteer_detail"
 
     def get_queryset(self):
         return CustomUser.objects.filter(role="volunteer")
