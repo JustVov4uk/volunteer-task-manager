@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Author: {{ report.author }}</h1>
+  <p><strong>Comment:</strong>{{ report.comment }}</p>
+  <p><strong>Task:</strong>{{ report.task }}</p>
+  <p><strong>Verified by:</strong>{{ report.verified_by }}</p>
+  <p><strong>Verified at:</strong>{{ report.verified_at }}</p>
+{% endblock %}

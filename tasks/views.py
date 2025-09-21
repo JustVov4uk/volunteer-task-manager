@@ -63,3 +63,11 @@ class TagListView(LoginRequiredMixin, generic.ListView):
 
 class TagDetailView(LoginRequiredMixin, generic.DetailView):
     model = Tag
+
+
+class ReportListView(LoginRequiredMixin, generic.ListView):
+    model = Report
+
+
+class ReportDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Report

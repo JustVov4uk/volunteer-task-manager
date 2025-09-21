@@ -7,7 +7,7 @@
     <li>Our volunteers: {{ num_volunteers }}</li>
     <li><a href="{% url 'tasks:category-list' %}">Categories: {{ num_categories }}</a></li>
     <li><a href="{% url 'tasks:task-list' %}">Tasks: {{ num_tasks }}</a></li>
-    <li>Reports: {{ num_reports }}</li>
+    <li><a href="{% url 'tasks:report-list' %}">Reports: {{ num_reports }}</a></li>
     <li><a href="{% url 'tasks:tag-list' %}">Tags: {{ num_tags }}</a></li>
   </ul>
 {% endblock %}

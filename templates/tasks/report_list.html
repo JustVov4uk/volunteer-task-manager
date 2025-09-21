@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h1>Reports</h1>
+  {% if report_list %}
+  	<table>
+      <tr>
+        <th>Author</th>
+        <th>Comment</th>
+        <th>Task</th>
+        <th>Verified by</th>
+        <th>Verified at</th>
+      </tr>
+      {% for report in report_list %}
+      	<tr>
+          <td><a href="{% url 'tasks:report-detail' report.id %}">{{ report.id }}</a></td>
+          <td>{{ report.author }}</td>
+          <td>{{ report.comment }}</td>
+          <td>{{ report.task }}</td>
+          <td>{{ report.verified_by }}</td>
+          <td>{{ report.verified_at }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% endif %}
+{% endblock %}

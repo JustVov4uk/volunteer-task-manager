@@ -5,7 +5,7 @@ from tasks.views import (index,
                          CategoryListView,
                          CategoryDetailView,
                          TaskListView, TaskDetailView,
-                         TagListView, TagDetailView)
+                         TagListView, TagDetailView, ReportListView, ReportDetailView)
 
 urlpatterns = [
     path("", index, name="index"),
@@ -15,6 +15,8 @@ urlpatterns = [
     path("tasks/<int:pk>/", TaskDetailView.as_view(), name="task-detail"),
     path("tags/", TagListView.as_view(), name="tag-list"),
     path("tags/<int:pk>/", TagDetailView.as_view(), name="tag-detail"),
+    path("reports/", ReportListView.as_view(), name="report-list"),
+    path("reports/<int:pk>/", ReportDetailView.as_view(), name="report-detail"),
     path("coordinator/", views.coordinator_index, name="coordinator-index"),
     path("volunteer/", views.volunteer_index, name="volunteer-index"),
 ]
