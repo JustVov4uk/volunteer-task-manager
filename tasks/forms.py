@@ -1,8 +1,22 @@
 from django import forms
-from tasks.models import Category
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+
+from tasks.models import Category, CustomUser
 
 
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
+        fields = "__all__"
+
+
+class CustomUserCreateForm(UserCreationForm):
+    class Meta:
+        model = CustomUser
+        fields = ("username", "role", "first_name", "last_name", "email", "phone_number", "city")
+
+
+class CustomUserUpdateForm(UserChangeForm):
+    class Meta:
+        model = CustomUser
         fields = "__all__"
