@@ -4,7 +4,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import generic
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView, DeleteView
 
 from tasks.forms import CategoryForm
 from tasks.models import CustomUser, Task, Category, Tag, Report
@@ -71,6 +71,18 @@ class CategoryDetailView(LoginRequiredMixin, generic.DetailView):
 
 
 class CategoryCreateView(LoginRequiredMixin, CreateView):
+    model = Category
+    form_class = CategoryForm
+    success_url = reverse_lazy("tasks:category-list")
+
+
+class CategoryUpdateView(LoginRequiredMixin, UpdateView):
+    model = Category
+    form_class = CategoryForm
+    success_url = reverse_lazy("tasks:category-list")
+
+
+class CategoryDeleteView(LoginRequiredMixin, DeleteView):
     model = Category
     form_class = CategoryForm
     success_url = reverse_lazy("tasks:category-list")
