@@ -19,4 +19,4 @@ class CustomUserCreateForm(UserCreationForm):
 class CustomUserUpdateForm(UserChangeForm):
     class Meta:
         model = CustomUser
-        fields = "__all__"
+        fields = ("username", "role", "first_name", "last_name", "email", "phone_number", "city")

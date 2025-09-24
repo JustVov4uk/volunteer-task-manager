@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.views.generic import CreateView, UpdateView, DeleteView
 
-from tasks.forms import CategoryForm, CustomUserCreateForm
+from tasks.forms import CategoryForm, CustomUserCreateForm, CustomUserUpdateForm
 from tasks.models import CustomUser, Task, Category, Tag, Report
 
 @login_required
@@ -70,6 +70,20 @@ class VolunteerCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy("tasks:volunteer-list")
 
 
+class VolunteerUpdateView(LoginRequiredMixin, UpdateView):
+    model = CustomUser
+    form_class = CustomUserUpdateForm
+    template_name = "tasks/volunteer_form.html"
+    success_url = reverse_lazy("tasks:volunteer-list")
+
+
+class VolunteerDeleteView(LoginRequiredMixin, DeleteView):
+    model = CustomUser
+    success_url = reverse_lazy("tasks:volunteer-list")
+    template_name = "tasks/volunteer_confirm_delete.html"
+    context_object_name = "volunteer"
+
+
 class CategoryListView(LoginRequiredMixin, generic.ListView):
     model = Category
 
@@ -92,7 +106,6 @@ class CategoryUpdateView(LoginRequiredMixin, UpdateView):
 
 class CategoryDeleteView(LoginRequiredMixin, DeleteView):
     model = Category
-    form_class = CategoryForm
     success_url = reverse_lazy("tasks:category-list")
 
 class TaskListView(LoginRequiredMixin, generic.ListView):

@@ -2,21 +2,23 @@ from django.urls import path
 
 from tasks import views
 from tasks.forms import CustomUserCreateForm
-from tasks.views import (index,
-                         CategoryListView,
+from tasks.views import (index, CategoryListView,
                          CategoryDetailView,
                          TaskListView, TaskDetailView,
                          TagListView, TagDetailView,
                          ReportListView, ReportDetailView,
-                         VolunteerListView,VolunteerDetailView,
-                         CategoryCreateView,CategoryUpdateView,
-                         CategoryDeleteView, VolunteerCreateView)
+                         VolunteerListView, VolunteerDetailView,
+                         CategoryCreateView, CategoryUpdateView,
+                         CategoryDeleteView, VolunteerCreateView,
+                         VolunteerUpdateView, VolunteerDeleteView)
 
 urlpatterns = [
     path("", index, name="index"),
     path("volunteers/", VolunteerListView.as_view(), name="volunteer-list"),
     path("volunteers/<int:pk>/", VolunteerDetailView.as_view(), name="volunteer-detail"),
     path("volunteers/create/", VolunteerCreateView.as_view(), name="volunteer-create"),
+    path("volunteers/update/<int:pk>/", VolunteerUpdateView.as_view(), name="volunteer-update"),
+    path("volunteers/delete/<int:pk>/", VolunteerDeleteView.as_view(), name="volunteer-delete"),
     path("categories/", CategoryListView.as_view(), name="category-list"),
     path("categories/<int:pk>/", CategoryDetailView.as_view(), name="category-detail"),
     path("categories/create/", CategoryCreateView.as_view(), name="category-create"),
