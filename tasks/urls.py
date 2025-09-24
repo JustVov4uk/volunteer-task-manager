@@ -10,7 +10,8 @@ from tasks.views import (index, CategoryListView,
                          VolunteerListView, VolunteerDetailView,
                          CategoryCreateView, CategoryUpdateView,
                          CategoryDeleteView, VolunteerCreateView,
-                         VolunteerUpdateView, VolunteerDeleteView)
+                         VolunteerUpdateView, VolunteerDeleteView,
+                         TaskCreateView, TaskUpdateView, TaskDeleteView)
 
 urlpatterns = [
     path("", index, name="index"),
@@ -26,6 +27,9 @@ urlpatterns = [
     path("categories/delete/<int:pk>/", CategoryDeleteView.as_view(), name="category-delete"),
     path("tasks/", TaskListView.as_view(), name="task-list"),
     path("tasks/<int:pk>/", TaskDetailView.as_view(), name="task-detail"),
+    path("tasks/create/", TaskCreateView.as_view(), name="task-create"),
+    path("tasks/update/<int:pk>/", TaskUpdateView.as_view(), name="task-update"),
+    path("tasks/delete/<int:pk>/", TaskDeleteView.as_view(), name="task-delete"),
     path("tags/", TagListView.as_view(), name="tag-list"),
     path("tags/<int:pk>/", TagDetailView.as_view(), name="tag-detail"),
     path("reports/", ReportListView.as_view(), name="report-list"),

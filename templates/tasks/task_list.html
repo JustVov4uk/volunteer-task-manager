@@ -1,18 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Завдання</h1>
+  <h1>Task</h1>
+  <a class="btn btn-success" href="{% url 'tasks:task-create' %}">Add Task</a>
   {% if task_list %}
     <table class="table table-striped table-hover align-middle">
       <thead>
         <tr>
-          <th>Назва</th>
-          <th>Опис</th>
-          <th>Автор</th>
-          <th>Виконавець</th>
-          <th>Статус</th>
-          <th>Дедлайн</th>
-          <th>Категорія</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Created by</th>
+          <th>Assigned to</th>
+          <th>Status</th>
+          <th>Deadline</th>
+          <th>Category</th>
         </tr>
       </thead>
       <tbody>

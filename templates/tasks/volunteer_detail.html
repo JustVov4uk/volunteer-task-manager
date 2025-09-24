@@ -4,7 +4,7 @@
   <div class="card">
     <div class="card-body">
       <h4 class="card-title">{{ volunteer.username }}</h4>
-        <a href="{% url 'tasks:volunteer-delete' pk=volunteer.id %}" class="btn btn-sm btn-warning">
+        <a href="{% url 'tasks:volunteer-delete' pk=volunteer.id %}" class="btn btn-danger link-to-page">
           Delete
         </a>
         <a href="{% url 'tasks:volunteer-update' pk=volunteer.id %}" class="btn btn-sm btn-warning">

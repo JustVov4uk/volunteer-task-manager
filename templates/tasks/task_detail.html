@@ -4,13 +4,19 @@
   <div class="card">
     <div class="card-body">
       <h3 class="card-title">{{ task.title }}</h3>
-      <p class="card-text"><strong>Опис:</strong> {{ task.description }}</p>
-      <p><strong>Автор:</strong> {{ task.created_by.username }}</p>
-      <p><strong>Виконавець:</strong> {{ task.assigned_to.username|default:"—" }}</p>
-      <p><strong>Статус:</strong> {{ task.status }}</p>
-      <p><strong>Дедлайн:</strong> {{ task.deadline|date:"d.m.Y H:i" }}</p>
-      <p><strong>Категорія:</strong> {{ task.category.name }}</p>
-      <p><strong>Теги:</strong>
+      <a href="{% url 'tasks:task-delete' pk=task.id %}" class="btn btn-danger link-to-page">
+        Delete
+      </a>
+      <a href="{% url 'tasks:task-update' pk=task.id %}" class="btn btn-sm btn-warning">
+        Update
+      </a>
+      <p class="card-text"><strong>Description:</strong> {{ task.description }}</p>
+      <p><strong>Created by:</strong> {{ task.created_by.username }}</p>
+      <p><strong>Assigned to:</strong> {{ task.assigned_to.username|default:"—" }}</p>
+      <p><strong>Status:</strong> {{ task.status }}</p>
+      <p><strong>Deadline:</strong> {{ task.deadline|date:"d.m.Y H:i" }}</p>
+      <p><strong>Category:</strong> {{ task.category.name }}</p>
+      <p><strong>Tags:</strong>
         {% for tag in task.tags.all %}
           <span class="badge bg-primary">{{ tag.name }}</span>
         {% empty %}
