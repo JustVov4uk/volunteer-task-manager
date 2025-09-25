@@ -3,12 +3,18 @@
 {% block content %}
   <div class="card">
     <div class="card-body">
-      <h4 class="card-title">Звіт #{{ report.id }}</h4>
-      <p><strong>Автор:</strong> {{ report.author|default:"—" }}</p>
-      <p><strong>Коментар:</strong> {{ report.comment }}</p>
-      <p><strong>Завдання:</strong> {{ report.task }}</p>
-      <p><strong>Перевірив:</strong> {{ report.verified_by|default:"—" }}</p>
-      <p><strong>Дата перевірки:</strong> {{ report.verified_at|date:"d.m.Y H:i"|default:"—" }}</p>
+      <h4 class="card-title">Report #{{ report.id }}</h4>
+      <a href="{% url 'tasks:report-delete' pk=report.id %}" class="btn btn-sm btn-danger">
+        Delete
+      </a>
+      <a href="{% url 'tasks:report-update' pk=report.id %}" class="btn btn-sm btn-warning">
+        Update
+      </a>
+      <p><strong>Author:</strong> {{ report.author|default:"—" }}</p>
+      <p><strong>Comment:</strong> {{ report.comment }}</p>
+      <p><strong>Task:</strong> {{ report.task }}</p>
+      <p><strong>Verified by:</strong> {{ report.verified_by|default:"—" }}</p>
+      <p><strong>Verified at:</strong> {{ report.verified_at|date:"d.m.Y H:i"|default:"—" }}</p>
     </div>
   </div>
 {% endblock %}

@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Панель координатора</h1>
+  <h1>Coordinator panel</h1>
   <div class="row">
     <div class="col-md-3 mb-3">
       <div class="card text-center">
         <div class="card-body">
-          <h5 class="card-title">Волонтери</h5>
+          <h5 class="card-title">Volunteers</h5>
           <p class="display-6">
             <a href="{% url 'tasks:volunteer-list' %}">{{ num_volunteers }}</a>
           </p>
@@ -16,7 +16,7 @@
     <div class="col-md-3 mb-3">
       <div class="card text-center">
         <div class="card-body">
-          <h5 class="card-title">Категорії</h5>
+          <h5 class="card-title">Categories</h5>
           <p class="display-6">
             <a href="{% url 'tasks:category-list' %}">{{ num_categories }}</a>
           </p>
@@ -26,7 +26,7 @@
     <div class="col-md-3 mb-3">
       <div class="card text-center">
         <div class="card-body">
-          <h5 class="card-title">Завдання</h5>
+          <h5 class="card-title">Tasks</h5>
           <p class="display-6">
             <a href="{% url 'tasks:task-list' %}">{{ num_tasks }}</a>
           </p>
@@ -36,7 +36,7 @@
     <div class="col-md-3 mb-3">
       <div class="card text-center">
         <div class="card-body">
-          <h5 class="card-title">Звіти</h5>
+          <h5 class="card-title">Reports</h5>
           <p class="display-6">
             <a href="{% url 'tasks:report-list' %}">{{ num_reports }}</a>
           </p>
@@ -46,7 +46,7 @@
     <div class="col-md-3 mb-3">
       <div class="card text-center">
         <div class="card-body">
-          <h5 class="card-title">Теги</h5>
+          <h5 class="card-title">Tags</h5>
           <p class="display-6">
             <a href="{% url 'tasks:tag-list' %}">{{ num_tags }}</a>
           </p>

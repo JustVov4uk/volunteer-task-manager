@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.views.generic import CreateView, UpdateView, DeleteView
 
-from tasks.forms import CategoryForm, CustomUserCreateForm, CustomUserUpdateForm, TaskForm, TagForm
+from tasks.forms import CategoryForm, CustomUserCreateForm, CustomUserUpdateForm, TaskForm, TagForm, ReportForm
 from tasks.models import CustomUser, Task, Category, Tag, Report
 
 @login_required
@@ -163,3 +163,20 @@ class ReportListView(LoginRequiredMixin, generic.ListView):
 
 class ReportDetailView(LoginRequiredMixin, generic.DetailView):
     model = Report
+
+
+class ReportCreateView(LoginRequiredMixin, CreateView):
+    model = Report
+    form_class = ReportForm
+    success_url = reverse_lazy("tasks:report-list")
+
+
+class ReportUpdateView(LoginRequiredMixin, UpdateView):
+    model = Report
+    form_class = ReportForm
+    success_url = reverse_lazy("tasks:report-list")
+
+
+class ReportDeleteView(LoginRequiredMixin, DeleteView):
+    model = Report
+    success_url = reverse_lazy("tasks:report-list")
