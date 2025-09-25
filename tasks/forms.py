@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
-from tasks.models import Category, CustomUser, Task
+from tasks.models import Category, CustomUser, Task, Tag
 
 
 class CategoryForm(forms.ModelForm):
@@ -31,3 +31,9 @@ class TaskForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["assigned_to"].queryset = CustomUser.objects.filter(role="volunteer")
         self.fields["created_by"].queryset = CustomUser.objects.filter(role="coordinator")
+
+
+class TagForm(forms.ModelForm):
+    class Meta:
+        model = Tag
+        fields = "__all__"

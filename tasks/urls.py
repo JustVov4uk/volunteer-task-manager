@@ -11,7 +11,8 @@ from tasks.views import (index, CategoryListView,
                          CategoryCreateView, CategoryUpdateView,
                          CategoryDeleteView, VolunteerCreateView,
                          VolunteerUpdateView, VolunteerDeleteView,
-                         TaskCreateView, TaskUpdateView, TaskDeleteView)
+                         TaskCreateView, TaskUpdateView, TaskDeleteView,
+                         TagCreateView, TagUpdateView, TagDeleteView)
 
 urlpatterns = [
     path("", index, name="index"),
@@ -32,6 +33,9 @@ urlpatterns = [
     path("tasks/delete/<int:pk>/", TaskDeleteView.as_view(), name="task-delete"),
     path("tags/", TagListView.as_view(), name="tag-list"),
     path("tags/<int:pk>/", TagDetailView.as_view(), name="tag-detail"),
+    path("tags/create/", TagCreateView.as_view(), name="tag-create"),
+    path("tags/update/<int:pk>/", TagUpdateView.as_view(), name="tag-update"),
+    path("tags/delete/<int:pk>/", TagDeleteView.as_view(), name="tag-delete"),
     path("reports/", ReportListView.as_view(), name="report-list"),
     path("reports/<int:pk>/", ReportDetailView.as_view(), name="report-detail"),
     path("coordinator/", views.coordinator_index, name="coordinator-index"),
