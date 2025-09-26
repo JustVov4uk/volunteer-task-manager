@@ -50,6 +50,7 @@ class VolunteerListView(LoginRequiredMixin, generic.ListView):
     model = CustomUser
     template_name = "tasks/volunteer_list.html"
     context_object_name = "volunteer_list"
+    paginate_by = 5
 
     def get_queryset(self):
         return CustomUser.objects.filter(role="volunteer")
@@ -90,6 +91,7 @@ class VolunteerDeleteView(LoginRequiredMixin, DeleteView):
 
 class CategoryListView(LoginRequiredMixin, generic.ListView):
     model = Category
+    paginate_by = 5
 
 
 class CategoryDetailView(LoginRequiredMixin, generic.DetailView):
@@ -114,6 +116,7 @@ class CategoryDeleteView(LoginRequiredMixin, DeleteView):
 
 class TaskListView(LoginRequiredMixin, generic.ListView):
     model = Task
+    paginate_by = 5
 
 
 class TaskDetailView(LoginRequiredMixin, generic.DetailView):
@@ -138,6 +141,7 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
 
 class TagListView(LoginRequiredMixin, generic.ListView):
     model = Tag
+    paginate_by = 5
 
 
 class TagDetailView(LoginRequiredMixin, generic.DetailView):
@@ -163,6 +167,7 @@ class TagDeleteView(LoginRequiredMixin, DeleteView):
 
 class ReportListView(LoginRequiredMixin, generic.ListView):
     model = Report
+    paginate_by = 5
 
 
 class ReportDetailView(LoginRequiredMixin, generic.DetailView):
