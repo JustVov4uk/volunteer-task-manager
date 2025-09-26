@@ -2,7 +2,9 @@
 
 {% block content %}
   <h1>Теги</h1>
+  {% if request.user.role == "coordinator" %}
   <a class="btn btn-success" href="{% url 'tasks:tag-create' %}">Add Tag</a>
+  {% endif %}
   {% if tag_list %}
     <ul class="list-group">
       {% for tag in tag_list %}

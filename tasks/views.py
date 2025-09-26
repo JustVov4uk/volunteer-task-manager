@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -68,6 +69,9 @@ class VolunteerCreateView(LoginRequiredMixin, CreateView):
     form_class = CustomUserCreateForm
     template_name = "tasks/volunteer_form.html"
     success_url = reverse_lazy("tasks:volunteer-list")
+
+    def get_queryset(self):
+        return CustomUser.objects.filter(role="koordinator")
 
 
 class VolunteerUpdateView(LoginRequiredMixin, UpdateView):

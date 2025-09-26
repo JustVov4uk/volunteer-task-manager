@@ -6,12 +6,14 @@
       <div class="card shadow-sm">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="mb-0">Tag details</h5>
+          {% if request.user.role == "coordinator" %}
           <a href="{% url 'tasks:tag-delete' pk=tag.id %}" class="btn btn-sm btn-danger">
             Delete
           </a>
           <a href="{% url 'tasks:tag-update' pk=tag.id %}" class="btn btn-sm btn-warning">
             Update
           </a>
+          {% endif %}
         </div>
         <div class="card-body">
           <p><strong>Name:</strong> {{ tag.name }}</p>

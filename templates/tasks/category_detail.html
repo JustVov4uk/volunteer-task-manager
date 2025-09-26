@@ -5,12 +5,14 @@
     <div class="card-body">
       <div class="d-flex justify-content-between align-items-center">
         <h4 class="card-title mb-0">{{ category.name }}</h4>
+        {% if request.user.role == "coordinator" %}
         <a href="{% url 'tasks:category-delete' pk=category.id %}" class="btn btn-danger link-to-page">
           Delete
         </a>
         <a href="{% url 'tasks:category-update' pk=category.id %}" class="btn btn-sm btn-warning">
           Update
         </a>
+        {% endif %}
       </div>
       <p class="card-text mt-3">{{ category.description }}</p>
     </div>

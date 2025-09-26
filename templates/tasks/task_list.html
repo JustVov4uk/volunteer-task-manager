@@ -2,7 +2,9 @@
 
 {% block content %}
   <h1>Task</h1>
+  {% if request.user.role == "coordinator" %}
   <a class="btn btn-success" href="{% url 'tasks:task-create' %}">Add Task</a>
+  {% endif %}
   {% if task_list %}
     <table class="table table-striped table-hover align-middle">
       <thead>

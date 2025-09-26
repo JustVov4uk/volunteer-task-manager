@@ -4,12 +4,14 @@
   <div class="card">
     <div class="card-body">
       <h3 class="card-title">{{ task.title }}</h3>
+      {% if request.user.role == "coordinator" %}
       <a href="{% url 'tasks:task-delete' pk=task.id %}" class="btn btn-danger link-to-page">
         Delete
       </a>
       <a href="{% url 'tasks:task-update' pk=task.id %}" class="btn btn-sm btn-warning">
         Update
       </a>
+      {% endif %}
       <p class="card-text"><strong>Description:</strong> {{ task.description }}</p>
       <p><strong>Created by:</strong> {{ task.created_by.username }}</p>
       <p><strong>Assigned to:</strong> {{ task.assigned_to.username|default:"—" }}</p>
