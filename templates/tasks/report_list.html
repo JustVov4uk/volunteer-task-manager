@@ -3,6 +3,7 @@
 {% block content %}
   <h1>Reports</h1>
   <a class="btn btn-success" href="{% url 'tasks:report-create' %}">Add Report</a>
+  {% include "includes/search_form.html" %}
   {% if report_list %}
     <table class="table table-striped table-hover align-middle">
       <thead>

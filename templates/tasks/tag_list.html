@@ -5,6 +5,7 @@
   {% if request.user.role == "coordinator" %}
   <a class="btn btn-success" href="{% url 'tasks:tag-create' %}">Add Tag</a>
   {% endif %}
+  {% include "includes/search_form.html" %}
   {% if tag_list %}
     <ul class="list-group">
       {% for tag in tag_list %}

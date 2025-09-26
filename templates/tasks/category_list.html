@@ -5,6 +5,7 @@
   {% if request.user.role == "coordinator" %}
   <a class="btn btn-success" href="{% url 'tasks:category-create' %}">Add Category</a>
   {% endif %}
+  {% include "includes/search_form.html" %}
   {% if category_list %}
     <table class="table table-striped table-hover align-middle">
       <thead>

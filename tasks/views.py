@@ -7,7 +7,8 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.views.generic import CreateView, UpdateView, DeleteView
 
-from tasks.forms import CategoryForm, CustomUserCreateForm, CustomUserUpdateForm, TaskForm, TagForm, ReportForm
+from tasks.forms import CategoryForm, CustomUserCreateForm, CustomUserUpdateForm, TaskForm, TagForm, ReportForm, \
+    CustomUserSearchForm
 from tasks.models import CustomUser, Task, Category, Tag, Report
 
 @login_required
@@ -52,6 +53,14 @@ class VolunteerListView(LoginRequiredMixin, generic.ListView):
     context_object_name = "volunteer_list"
     paginate_by = 5
 
+    def get_context_data(self, **kwargs):
+        context = super(VolunteerListView, self).get_context_data(**kwargs)
+        model_query = self.request.GET.get("username")
+        context["search_form"] = CustomUserSearchForm(
+            initial={"username": model_query}
+        )
+        return context
+
     def get_queryset(self):
         return CustomUser.objects.filter(role="volunteer")
 
@@ -62,7 +71,13 @@ class VolunteerDetailView(LoginRequiredMixin, generic.DetailView):
     context_object_name = "volunteer"
 
     def get_queryset(self):
-        return CustomUser.objects.filter(role="volunteer")
+        queryset = CustomUser.objects.filter(role="volunteer")
+        form = CustomUserSearchForm(self.request.GET)
+        if form.is_valid():
+            username = form.cleaned_data.get("username")
+            if username:
+                queryset = queryset.filter(username__icontains=username)
+        return queryset
 
 
 class VolunteerCreateView(LoginRequiredMixin, CreateView):
