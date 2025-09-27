@@ -51,6 +51,11 @@ class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = "__all__"
+        widgets = {
+            "deadline": forms.DateTimeInput(attrs={
+                "type": "datetime-local",
+            })
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -93,11 +98,15 @@ class TagSearchForm(forms.Form):
 class ReportForm(forms.ModelForm):
     class Meta:
         model = Report
-        fields = "__all__"
+        fields = ("comment", "author", "task")
+        widgets = {
+            "verified_at": forms.DateTimeInput(attrs={
+                "type": "datetime-local",
+            })
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["verified_by"].queryset = CustomUser.objects.filter(role="coordinator")
         self.fields["author"].queryset = CustomUser.objects.filter(role="volunteer")
 
 

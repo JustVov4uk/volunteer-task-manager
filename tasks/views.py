@@ -10,7 +10,9 @@ from django.views.generic import CreateView, UpdateView, DeleteView
 from tasks.forms import (CategoryForm, CustomUserCreateForm,
                          CustomUserUpdateForm, TaskForm,
                          TagForm, ReportForm, CustomUserSearchForm,
-                         CategorySearchForm, TaskSearchForm, TagSearchForm, ReportSearchForm)
+                         CategorySearchForm, TaskSearchForm,
+                         TagSearchForm, ReportSearchForm)
+from tasks.mixins import CoordinatorRequiredMixin
 from tasks.models import CustomUser, Task, Category, Tag, Report
 
 @login_required
@@ -82,24 +84,22 @@ class VolunteerDetailView(LoginRequiredMixin, generic.DetailView):
         return CustomUser.objects.filter(role="volunteer")
 
 
-class VolunteerCreateView(LoginRequiredMixin, CreateView):
+class VolunteerCreateView(LoginRequiredMixin, CoordinatorRequiredMixin, CreateView):
     model = CustomUser
     form_class = CustomUserCreateForm
     template_name = "tasks/volunteer_form.html"
     success_url = reverse_lazy("tasks:volunteer-list")
 
-    def get_queryset(self):
-        return CustomUser.objects.filter(role="koordinator")
 
 
-class VolunteerUpdateView(LoginRequiredMixin, UpdateView):
+class VolunteerUpdateView(LoginRequiredMixin, CoordinatorRequiredMixin, UpdateView):
     model = CustomUser
     form_class = CustomUserUpdateForm
     template_name = "tasks/volunteer_form.html"
     success_url = reverse_lazy("tasks:volunteer-list")
 
 
-class VolunteerDeleteView(LoginRequiredMixin, DeleteView):
+class VolunteerDeleteView(LoginRequiredMixin, CoordinatorRequiredMixin, DeleteView):
     model = CustomUser
     success_url = reverse_lazy("tasks:volunteer-list")
     template_name = "tasks/volunteer_confirm_delete.html"
@@ -132,19 +132,19 @@ class CategoryDetailView(LoginRequiredMixin, generic.DetailView):
     model = Category
 
 
-class CategoryCreateView(LoginRequiredMixin, CreateView):
+class CategoryCreateView(LoginRequiredMixin, CoordinatorRequiredMixin, CreateView):
     model = Category
     form_class = CategoryForm
     success_url = reverse_lazy("tasks:category-list")
 
 
-class CategoryUpdateView(LoginRequiredMixin, UpdateView):
+class CategoryUpdateView(LoginRequiredMixin, CoordinatorRequiredMixin, UpdateView):
     model = Category
     form_class = CategoryForm
     success_url = reverse_lazy("tasks:category-list")
 
 
-class CategoryDeleteView(LoginRequiredMixin, DeleteView):
+class CategoryDeleteView(LoginRequiredMixin, CoordinatorRequiredMixin, DeleteView):
     model = Category
     success_url = reverse_lazy("tasks:category-list")
 
@@ -176,19 +176,19 @@ class TaskDetailView(LoginRequiredMixin, generic.DetailView):
     model = Task
 
 
-class TaskCreateView(LoginRequiredMixin, CreateView):
+class TaskCreateView(LoginRequiredMixin, CoordinatorRequiredMixin, CreateView):
     model = Task
     form_class = TaskForm
     success_url = reverse_lazy("tasks:task-list")
 
 
-class TaskUpdateView(LoginRequiredMixin, UpdateView):
+class TaskUpdateView(LoginRequiredMixin,CoordinatorRequiredMixin, UpdateView):
     model = Task
     form_class = TaskForm
     success_url = reverse_lazy("tasks:task-list")
 
 
-class TaskDeleteView(LoginRequiredMixin, DeleteView):
+class TaskDeleteView(LoginRequiredMixin, CoordinatorRequiredMixin, DeleteView):
     model = Task
     success_url = reverse_lazy("tasks:task-list")
 
@@ -220,19 +220,19 @@ class TagDetailView(LoginRequiredMixin, generic.DetailView):
     model = Tag
 
 
-class TagCreateView(LoginRequiredMixin, CreateView):
+class TagCreateView(LoginRequiredMixin, CoordinatorRequiredMixin, CreateView):
     model = Tag
     form_class = TagForm
     success_url = reverse_lazy("tasks:tag-list")
 
 
-class TagUpdateView(LoginRequiredMixin, UpdateView):
+class TagUpdateView(LoginRequiredMixin, CoordinatorRequiredMixin, UpdateView):
     model = Tag
     form_class = TagForm
     success_url = reverse_lazy("tasks:tag-list")
 
 
-class TagDeleteView(LoginRequiredMixin, DeleteView):
+class TagDeleteView(LoginRequiredMixin, CoordinatorRequiredMixin, DeleteView):
     model = Tag
     success_url = reverse_lazy("tasks:tag-list")
 
@@ -257,7 +257,7 @@ class ReportListView(LoginRequiredMixin, generic.ListView):
         if form.is_valid():
             author = form.cleaned_data.get("author")
             if author:
-                queryset = queryset.filter(author__icontains=author)
+                queryset = queryset.filter(author__username__icontains=author)
         return queryset
 
 
@@ -270,6 +270,10 @@ class ReportCreateView(LoginRequiredMixin, CreateView):
     form_class = ReportForm
     success_url = reverse_lazy("tasks:report-list")
 
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.role != "volunteer":
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
 
 class ReportUpdateView(LoginRequiredMixin, UpdateView):
     model = Report
