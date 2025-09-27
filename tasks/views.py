@@ -7,8 +7,10 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.views.generic import CreateView, UpdateView, DeleteView
 
-from tasks.forms import CategoryForm, CustomUserCreateForm, CustomUserUpdateForm, TaskForm, TagForm, ReportForm, \
-    CustomUserSearchForm
+from tasks.forms import (CategoryForm, CustomUserCreateForm,
+                         CustomUserUpdateForm, TaskForm,
+                         TagForm, ReportForm, CustomUserSearchForm,
+                         CategorySearchForm, TaskSearchForm, TagSearchForm, ReportSearchForm)
 from tasks.models import CustomUser, Task, Category, Tag, Report
 
 @login_required
@@ -55,20 +57,11 @@ class VolunteerListView(LoginRequiredMixin, generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super(VolunteerListView, self).get_context_data(**kwargs)
-        model_query = self.request.GET.get("username")
+        username = self.request.GET.get("username")
         context["search_form"] = CustomUserSearchForm(
-            initial={"username": model_query}
+            initial={"username": username}
         )
         return context
-
-    def get_queryset(self):
-        return CustomUser.objects.filter(role="volunteer")
-
-
-class VolunteerDetailView(LoginRequiredMixin, generic.DetailView):
-    model = CustomUser
-    template_name = "tasks/volunteer_detail.html"
-    context_object_name = "volunteer"
 
     def get_queryset(self):
         queryset = CustomUser.objects.filter(role="volunteer")
@@ -78,6 +71,15 @@ class VolunteerDetailView(LoginRequiredMixin, generic.DetailView):
             if username:
                 queryset = queryset.filter(username__icontains=username)
         return queryset
+
+
+class VolunteerDetailView(LoginRequiredMixin, generic.DetailView):
+    model = CustomUser
+    template_name = "tasks/volunteer_detail.html"
+    context_object_name = "volunteer"
+
+    def get_queryset(self):
+        return CustomUser.objects.filter(role="volunteer")
 
 
 class VolunteerCreateView(LoginRequiredMixin, CreateView):
@@ -108,6 +110,23 @@ class CategoryListView(LoginRequiredMixin, generic.ListView):
     model = Category
     paginate_by = 5
 
+    def get_context_data(self, **kwargs):
+        context = super(CategoryListView, self).get_context_data(**kwargs)
+        name = self.request.GET.get("name")
+        context["search_form"] = CategorySearchForm(
+            initial={"name": name}
+        )
+        return context
+
+    def get_queryset(self):
+        queryset = Category.objects.all()
+        form = CategorySearchForm(self.request.GET)
+        if form.is_valid():
+            name = form.cleaned_data.get("name")
+            if name:
+                queryset = queryset.filter(name__icontains=name)
+        return queryset
+
 
 class CategoryDetailView(LoginRequiredMixin, generic.DetailView):
     model = Category
@@ -132,6 +151,25 @@ class CategoryDeleteView(LoginRequiredMixin, DeleteView):
 class TaskListView(LoginRequiredMixin, generic.ListView):
     model = Task
     paginate_by = 5
+
+    def get_context_data(
+        self, *, object_list = ..., **kwargs
+    ):
+        context = super(TaskListView, self).get_context_data(**kwargs)
+        title = self.request.GET.get("title")
+        context["search_form"] = TaskSearchForm(
+            initial={"title": title}
+        )
+        return context
+
+    def get_queryset(self):
+        queryset = Task.objects.all()
+        form = TaskSearchForm(self.request.GET)
+        if form.is_valid():
+            title = form.cleaned_data.get("title")
+            if title:
+                queryset = queryset.filter(title__icontains=title)
+        return queryset
 
 
 class TaskDetailView(LoginRequiredMixin, generic.DetailView):
@@ -158,6 +196,25 @@ class TagListView(LoginRequiredMixin, generic.ListView):
     model = Tag
     paginate_by = 5
 
+    def get_context_data(
+        self, *, object_list = ..., **kwargs
+    ):
+        context = super(TagListView, self).get_context_data(**kwargs)
+        name = self.request.GET.get("name")
+        context["search_form"] = TagSearchForm(
+            initial={"name": name}
+        )
+        return context
+
+    def get_queryset(self):
+        queryset = Tag.objects.all()
+        form = TagSearchForm(self.request.GET)
+        if form.is_valid():
+            name = form.cleaned_data.get("name")
+            if name:
+                queryset = queryset.filter(name__icontains=name)
+        return queryset
+
 
 class TagDetailView(LoginRequiredMixin, generic.DetailView):
     model = Tag
@@ -183,6 +240,25 @@ class TagDeleteView(LoginRequiredMixin, DeleteView):
 class ReportListView(LoginRequiredMixin, generic.ListView):
     model = Report
     paginate_by = 5
+
+    def get_context_data(
+        self, *, object_list = ..., **kwargs
+    ):
+        context = super(ReportListView, self).get_context_data(**kwargs)
+        author = self.request.GET.get("author")
+        context["search_form"] = ReportSearchForm(
+            initial={"author": author}
+        )
+        return context
+
+    def get_queryset(self):
+        queryset = Report.objects.all()
+        form = ReportSearchForm(self.request.GET)
+        if form.is_valid():
+            author = form.cleaned_data.get("author")
+            if author:
+                queryset = queryset.filter(author__icontains=author)
+        return queryset
 
 
 class ReportDetailView(LoginRequiredMixin, generic.DetailView):
