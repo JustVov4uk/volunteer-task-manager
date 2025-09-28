@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
@@ -9,9 +11,10 @@ from django.views.generic import CreateView, UpdateView, DeleteView
 
 from tasks.forms import (CategoryForm, CustomUserCreateForm,
                          CustomUserUpdateForm, TaskForm,
-                         TagForm, ReportForm, CustomUserSearchForm,
+                         TagForm, CustomUserSearchForm,
                          CategorySearchForm, TaskSearchForm,
-                         TagSearchForm, ReportSearchForm)
+                         TagSearchForm, ReportSearchForm,
+                         VolunteerReportForm, CoordinatorReportForm)
 from tasks.mixins import CoordinatorRequiredMixin
 from tasks.models import CustomUser, Task, Category, Tag, Report
 
@@ -267,7 +270,7 @@ class ReportDetailView(LoginRequiredMixin, generic.DetailView):
 
 class ReportCreateView(LoginRequiredMixin, CreateView):
     model = Report
-    form_class = ReportForm
+    form_class = VolunteerReportForm
     success_url = reverse_lazy("tasks:report-list")
 
     def dispatch(self, request, *args, **kwargs):
@@ -275,12 +278,17 @@ class ReportCreateView(LoginRequiredMixin, CreateView):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
-class ReportUpdateView(LoginRequiredMixin, UpdateView):
+class ReportUpdateView(LoginRequiredMixin, CoordinatorRequiredMixin, UpdateView):
     model = Report
-    form_class = ReportForm
+    form_class = CoordinatorReportForm
     success_url = reverse_lazy("tasks:report-list")
 
+    def form_valid(self, form):
+        form.instance.verified_by = self.request.user
+        form.instance.verified_at = timezone.now()
+        return super().form_valid(form)
 
-class ReportDeleteView(LoginRequiredMixin, DeleteView):
+
+class ReportDeleteView(LoginRequiredMixin, CoordinatorRequiredMixin, DeleteView):
     model = Report
     success_url = reverse_lazy("tasks:report-list")

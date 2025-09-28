@@ -95,10 +95,20 @@ class TagSearchForm(forms.Form):
     )
 
 
-class ReportForm(forms.ModelForm):
+class VolunteerReportForm(forms.ModelForm):
     class Meta:
         model = Report
         fields = ("comment", "author", "task")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["author"].queryset = CustomUser.objects.filter(role="volunteer")
+
+
+class CoordinatorReportForm(forms.ModelForm):
+    class Meta:
+        model = Report
+        fields = ("verified_by", "verified_at")
         widgets = {
             "verified_at": forms.DateTimeInput(attrs={
                 "type": "datetime-local",
@@ -107,7 +117,7 @@ class ReportForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["author"].queryset = CustomUser.objects.filter(role="volunteer")
+        self.fields["verified_by"].queryset = CustomUser.objects.filter(role="coordinator")
 
 
 class ReportSearchForm(forms.Form):

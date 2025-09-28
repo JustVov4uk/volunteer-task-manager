@@ -4,12 +4,16 @@
   <div class="card">
     <div class="card-body">
       <h4 class="card-title">Report #{{ report.id }}</h4>
+      {% if request.user.role == "coordinator" %}
       <a href="{% url 'tasks:report-delete' pk=report.id %}" class="btn btn-sm btn-danger">
         Delete
       </a>
+      {% endif %}
+      {% if request.user.role == "coordinator" %}
       <a href="{% url 'tasks:report-update' pk=report.id %}" class="btn btn-sm btn-warning">
         Update
       </a>
+      {% endif %}
       <p><strong>Author:</strong> {{ report.author|default:"—" }}</p>
       <p><strong>Comment:</strong> {{ report.comment }}</p>
       <p><strong>Task:</strong> {{ report.task }}</p>

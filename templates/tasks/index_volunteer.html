@@ -7,7 +7,9 @@
       <div class="card text-center">
         <div class="card-body">
           <h5 class="card-title">Task</h5>
-          <p class="display-6">{{ num_tasks }}</p>
+          <p class="display-6">
+            <a href="{% url 'tasks:task-list' %}">{{ num_tasks }}</a>
+          </p>
         </div>
       </div>
     </div>
@@ -15,7 +17,9 @@
       <div class="card text-center">
         <div class="card-body">
           <h5 class="card-title">Categories</h5>
-          <p class="display-6">{{ num_categories }}</p>
+          <p class="display-6">
+            <a href="{% url 'tasks:category-list' %}">{{ num_categories }}</a>
+          </p>
         </div>
       </div>
     </div>

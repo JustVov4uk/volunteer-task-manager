@@ -2,10 +2,13 @@
 
 {% block content %}
   <h1>Reports</h1>
+
   {% if request.user.role == "volunteer" %}
-  <a class="btn btn-success" href="{% url 'tasks:report-create' %}">Add Report</a>
+    <a class="btn btn-success mb-3" href="{% url 'tasks:report-create' %}">Add Report</a>
   {% endif %}
+
   {% include "includes/search_form.html" %}
+
   {% if report_list %}
     <table class="table table-striped table-hover align-middle">
       <thead>
@@ -20,7 +23,7 @@
       </thead>
       <tbody>
         {% for report in report_list %}
-          <tr>
+          <tr class="{% if not report.verified_at %}table-warning{% endif %}">
             <td>
               <a href="{% url 'tasks:report-detail' pk=report.id %}">
                 {{ report.id }}
