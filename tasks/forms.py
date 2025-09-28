@@ -145,3 +145,9 @@ class ReportSearchForm(forms.Form):
             }
         )
     )
+    author_filter = forms.ModelChoiceField(
+        queryset=CustomUser.objects.filter(role="volunteer"),
+        required=False,
+        empty_label="All authors",
+        label="Author",
+    )

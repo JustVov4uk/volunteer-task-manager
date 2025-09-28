@@ -253,18 +253,19 @@ class ReportListView(LoginRequiredMixin, generic.ListView):
     ):
         context = super(ReportListView, self).get_context_data(**kwargs)
         author = self.request.GET.get("author")
-        context["search_form"] = ReportSearchForm(
-            initial={"author": author}
-        )
+        context["search_form"] = ReportSearchForm(self.request.GET)
         return context
 
     def get_queryset(self):
         queryset = Report.objects.all()
         form = ReportSearchForm(self.request.GET)
         if form.is_valid():
-            author = form.cleaned_data.get("author")
-            if author:
-                queryset = queryset.filter(author__username__icontains=author)
+            author_text = form.cleaned_data.get("author")
+            author_filter = form.cleaned_data.get("author_filter")
+            if author_text:
+                queryset = queryset.filter(author__username__icontains=author_text)
+            if author_filter:
+                queryset = queryset.filter(author=author_filter)
         return queryset
 
 
