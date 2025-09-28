@@ -74,6 +74,20 @@ class TaskSearchForm(forms.Form):
             }
         )
     )
+    status = forms.ChoiceField(
+        choices=[("", "All"), ("active", "Active"),
+                 ("in progress", "In Progress"),
+                 ("completed", "Completed"),
+                 ("suspended", "Suspended")],
+        required=False,
+        label="Status",
+    )
+    category = forms.ModelChoiceField(
+        queryset=Category.objects.all(),
+        required=False,
+        empty_label="All categories",
+        label="Category",
+    )
 
 
 class TagForm(forms.ModelForm):

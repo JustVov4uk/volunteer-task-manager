@@ -160,9 +160,7 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
     ):
         context = super(TaskListView, self).get_context_data(**kwargs)
         title = self.request.GET.get("title")
-        context["search_form"] = TaskSearchForm(
-            initial={"title": title}
-        )
+        context["search_form"] = TaskSearchForm(self.request.GET)
         return context
 
     def get_queryset(self):
@@ -170,8 +168,14 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
         form = TaskSearchForm(self.request.GET)
         if form.is_valid():
             title = form.cleaned_data.get("title")
+            status = form.cleaned_data.get("status")
+            category = form.cleaned_data.get("category")
             if title:
                 queryset = queryset.filter(title__icontains=title)
+            if status:
+                queryset = queryset.filter(status=status)
+            if category:
+                queryset = queryset.filter(category=category)
         return queryset
 
 
