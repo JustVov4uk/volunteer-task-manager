@@ -43,10 +43,12 @@ def coordinator_index(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def volunteer_index(request: HttpRequest) -> HttpResponse:
+    user = request.user
     num_tasks = Task.objects.count()
     num_categories = Category.objects.count()
 
     context = {
+        "user": user,
         "num_tasks": num_tasks,
         "num_categories": num_categories,
     }
@@ -258,6 +260,8 @@ class ReportListView(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         queryset = Report.objects.all()
+        if self.request.user.role == "volunteer":
+            queryset = queryset.filter(author=self.request.user)
         form = ReportSearchForm(self.request.GET)
         if form.is_valid():
             author_text = form.cleaned_data.get("author")
