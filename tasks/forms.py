@@ -88,6 +88,12 @@ class TaskSearchForm(forms.Form):
         empty_label="All categories",
         label="Category",
     )
+    tags = forms.ModelChoiceField(
+        queryset=Tag.objects.all(),
+        required=False,
+        empty_label="All tags",
+        label="Tags",
+    )
 
 
 class TagForm(forms.ModelForm):
