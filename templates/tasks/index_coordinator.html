@@ -1,57 +1,105 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Coordinator panel</h1>
-  <div class="row">
+<div class="container">
+  <h1 class="mb-4 text-center">Coordinator Dashboard</h1>
+
+  <div class="row text-center mb-4">
     <div class="col-md-3 mb-3">
-      <div class="card text-center">
+      <div class="card bg-light shadow-sm h-100">
         <div class="card-body">
-          <h5 class="card-title">Volunteers</h5>
-          <p class="display-6">
-            <a href="{% url 'tasks:volunteer-list' %}">{{ num_volunteers }}</a>
+          <h3>{{ num_volunteers }}</h3>
+          <p class="mb-0">
+            <a href="{% url 'tasks:volunteer-list' %}">Volunteers</a>
           </p>
         </div>
       </div>
     </div>
+
     <div class="col-md-3 mb-3">
-      <div class="card text-center">
+      <div class="card bg-light shadow-sm h-100">
         <div class="card-body">
-          <h5 class="card-title">Categories</h5>
-          <p class="display-6">
-            <a href="{% url 'tasks:category-list' %}">{{ num_categories }}</a>
+          <h3>{{ num_tasks }}</h3>
+          <p class="mb-0">
+            <a href="{% url 'tasks:task-list' %}">Tasks</a>
           </p>
         </div>
       </div>
     </div>
+
     <div class="col-md-3 mb-3">
-      <div class="card text-center">
+      <div class="card bg-light shadow-sm h-100">
         <div class="card-body">
-          <h5 class="card-title">Tasks</h5>
-          <p class="display-6">
-            <a href="{% url 'tasks:task-list' %}">{{ num_tasks }}</a>
+          <h3>{{ num_reports }}</h3>
+          <p class="mb-0">
+            <a href="{% url 'tasks:report-list' %}">Reports</a>
           </p>
         </div>
       </div>
     </div>
+
     <div class="col-md-3 mb-3">
-      <div class="card text-center">
+      <div class="card bg-light shadow-sm h-100">
         <div class="card-body">
-          <h5 class="card-title">Reports</h5>
-          <p class="display-6">
-            <a href="{% url 'tasks:report-list' %}">{{ num_reports }}</a>
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3 mb-3">
-      <div class="card text-center">
-        <div class="card-body">
-          <h5 class="card-title">Tags</h5>
-          <p class="display-6">
-            <a href="{% url 'tasks:tag-list' %}">{{ num_tags }}</a>
+          <h3>{{ num_categories }}</h3>
+          <p class="mb-0">
+            <a href="{% url 'tasks:category-list' %}">Categories</a>
           </p>
         </div>
       </div>
     </div>
   </div>
+
+  <div class="row">
+    <div class="col-md-6 mx-auto">
+      <h5 class="text-center mb-3">Tasks by Status</h5>
+      <canvas id="statusChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const statusData = {{ status_counts|safe }};
+  const labels = statusData.map(item => item.status);
+  const data = statusData.map(item => item.count);
+
+  const ctx = document.getElementById('statusChart');
+
+  const chart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: data,
+        backgroundColor: ['#36A2EB', '#FFCE56', '#4BC0C0', '#FF6384'],
+        hoverOffset: 15
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const label = context.label || '';
+              const value = context.parsed;
+              return `${label}: ${value} tasks`;
+            }
+          }
+        }
+      },
+      onClick: (event, elements) => {
+        if (elements.length > 0) {
+          const index = elements[0].index;
+          const selectedStatus = labels[index];
+          const url = new URL("{% url 'tasks:task-list' %}", window.location.origin);
+          url.searchParams.set("status", selectedStatus);
+          window.location.href = url.toString();
+        }
+      }
+    }
+  });
+</script>
 {% endblock %}
