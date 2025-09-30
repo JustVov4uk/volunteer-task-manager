@@ -1,59 +1,56 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-  <h1 class="mb-4 text-center">Coordinator Dashboard</h1>
+<div class="py-4">
+  <h1 class="h4 mb-4 text-center">Coordinator Dashboard</h1>
 
-  <div class="row text-center mb-4">
-    <div class="col-md-3 mb-3">
-      <div class="card bg-light shadow-sm h-100">
-        <div class="card-body">
-          <h3>{{ num_volunteers }}</h3>
-          <p class="mb-0">
-            <a href="{% url 'tasks:volunteer-list' %}">Volunteers</a>
-          </p>
+  <!-- Stats cards -->
+  <div class="row">
+    <div class="col-12 col-sm-6 col-xl-3 mb-4">
+      <div class="card border-0 shadow">
+        <div class="card-body text-center">
+          <h3 class="h2">{{ num_volunteers }}</h3>
+          <a href="{% url 'tasks:volunteer-list' %}" class="text-muted small">Volunteers</a>
         </div>
       </div>
     </div>
-
-    <div class="col-md-3 mb-3">
-      <div class="card bg-light shadow-sm h-100">
-        <div class="card-body">
-          <h3>{{ num_tasks }}</h3>
-          <p class="mb-0">
-            <a href="{% url 'tasks:task-list' %}">Tasks</a>
-          </p>
+    <div class="col-12 col-sm-6 col-xl-3 mb-4">
+      <div class="card border-0 shadow">
+        <div class="card-body text-center">
+          <h3 class="h2">{{ num_tasks }}</h3>
+          <a href="{% url 'tasks:task-list' %}" class="text-muted small">Tasks</a>
         </div>
       </div>
     </div>
-
-    <div class="col-md-3 mb-3">
-      <div class="card bg-light shadow-sm h-100">
-        <div class="card-body">
-          <h3>{{ num_reports }}</h3>
-          <p class="mb-0">
-            <a href="{% url 'tasks:report-list' %}">Reports</a>
-          </p>
+    <div class="col-12 col-sm-6 col-xl-3 mb-4">
+      <div class="card border-0 shadow">
+        <div class="card-body text-center">
+          <h3 class="h2">{{ num_reports }}</h3>
+          <a href="{% url 'tasks:report-list' %}" class="text-muted small">Reports</a>
         </div>
       </div>
     </div>
-
-    <div class="col-md-3 mb-3">
-      <div class="card bg-light shadow-sm h-100">
-        <div class="card-body">
-          <h3>{{ num_categories }}</h3>
-          <p class="mb-0">
-            <a href="{% url 'tasks:category-list' %}">Categories</a>
-          </p>
+    <div class="col-12 col-sm-6 col-xl-3 mb-4">
+      <div class="card border-0 shadow">
+        <div class="card-body text-center">
+          <h3 class="h2">{{ num_categories }}</h3>
+          <a href="{% url 'tasks:category-list' %}" class="text-muted small">Categories</a>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Tasks by status chart -->
   <div class="row">
-    <div class="col-md-6 mx-auto">
-      <h5 class="text-center mb-3">Tasks by Status</h5>
-      <canvas id="statusChart"></canvas>
+    <div class="col-lg-6 mx-auto">
+      <div class="card border-0 shadow">
+        <div class="card-header">
+          <h5 class="mb-0 text-center">Tasks by Status</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="statusChart"></canvas>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -65,8 +62,7 @@
   const data = statusData.map(item => item.count);
 
   const ctx = document.getElementById('statusChart');
-
-  const chart = new Chart(ctx, {
+  new Chart(ctx, {
     type: 'pie',
     data: {
       labels: labels,
