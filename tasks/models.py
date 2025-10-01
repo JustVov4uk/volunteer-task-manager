@@ -19,6 +19,10 @@ class CustomUser(AbstractUser):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="coordinator")
     phone_number = models.CharField(max_length=25, unique=False, blank=True, null=True)
     city = models.CharField(max_length=50, blank=True)
+    profile_image = models.ImageField(upload_to="images/", null=True, blank=True)
+
+    def avatar_url(self):
+        return self.profile_image.url if self.profile_image else None
 
     def __str__(self):
         return self.username
