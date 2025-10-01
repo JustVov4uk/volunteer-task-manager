@@ -22,7 +22,9 @@ class CustomUser(AbstractUser):
     profile_image = models.ImageField(upload_to="images/", null=True, blank=True)
 
     def avatar_url(self):
-        return self.profile_image.url if self.profile_image else None
+        if self.profile_image:
+            return self.profile_image.url
+        return ""
 
     def __str__(self):
         return self.username

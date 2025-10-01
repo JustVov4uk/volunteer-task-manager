@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.utils.html import format_html
+
 from tasks.models import Category, CustomUser, Tag, Task, Report
 
 
@@ -10,15 +12,21 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    list_display = UserAdmin.list_display + ("role", "phone_number", "city")
+    list_display = UserAdmin.list_display + ("role", "phone_number", "city", "avatar_thumb")
     list_filter = ("role", "city", "is_active")
     search_fields = ("username", "city")
     fieldsets = UserAdmin.fieldsets + (
-        (None, {"fields": ("role", "phone_number", "city")}),
+        (None, {"fields": ("role", "phone_number", "city", "profile_image")}),
     )
     add_fieldsets = UserAdmin.add_fieldsets + (
         (None, {"fields": ("role", "phone_number", "city")}),
     )
+    def avatar_thumb(self, obj):
+        if obj.profile_image:
+            return format_html('<img src="{}" style="width:32px;height:32px;object-fit:cover;'
+                               'border-radius:50%;">', obj.profile_image.url)
+        return ""
+    avatar_thumb.short_description = ""
 
 
 @admin.register(Tag)

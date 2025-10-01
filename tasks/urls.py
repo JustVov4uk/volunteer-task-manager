@@ -1,3 +1,4 @@
+from django.conf.urls.static import static
 from django.urls import path
 
 from tasks import views
@@ -12,8 +13,10 @@ from tasks.views import (index, CategoryListView,
                          CategoryDeleteView, VolunteerCreateView,
                          VolunteerUpdateView, VolunteerDeleteView,
                          TaskCreateView, TaskUpdateView, TaskDeleteView,
-                         TagCreateView, TagUpdateView, TagDeleteView, ReportCreateView, ReportUpdateView,
+                         TagCreateView, TagUpdateView, TagDeleteView,
+                         ReportCreateView, ReportUpdateView,
                          ReportDeleteView)
+from volunteer_task_manager import settings
 
 urlpatterns = [
     path("", index, name="index"),
@@ -45,5 +48,8 @@ urlpatterns = [
     path("coordinator/", views.coordinator_index, name="coordinator-index"),
     path("volunteer/", views.volunteer_index, name="volunteer-index"),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 app_name = "tasks"

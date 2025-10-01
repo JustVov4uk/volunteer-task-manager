@@ -26,13 +26,13 @@ class CategorySearchForm(forms.Form):
 class CustomUserCreateForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ("username", "role", "first_name", "last_name", "email", "phone_number", "city")
+        fields = ("username", "role", "first_name", "last_name", "email", "phone_number", "city", "profile_image")
 
 
 class CustomUserUpdateForm(UserChangeForm):
     class Meta:
         model = CustomUser
-        fields = ("username", "role", "first_name", "last_name", "email", "phone_number", "city")
+        fields = ("username", "role", "first_name", "last_name", "email", "phone_number", "city", "profile_image")
 
 
 class CustomUserSearchForm(forms.Form):

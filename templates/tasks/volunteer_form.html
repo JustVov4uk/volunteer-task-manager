@@ -1,11 +1,14 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags %}
 
 {% block content %}
-  <h1>{{ object|yesno:"Update,Create" }} Volunteers</h1>
-  <form action="" method="post" novalidate>
-    {% csrf_token %}
-    {{ form|crispy }}
-    <input class="btn btn-primary" type="submit" value="Submit">
-  </form>
+<div class="card border-0 shadow">
+  <div class="card-header"><h5 class="mb-0">Volunteer</h5></div>
+  <div class="card-body">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+  </div>
+</div>
 {% endblock %}
