@@ -16,7 +16,7 @@ class CustomUser(AbstractUser):
         ("coordinator", "Coordinator"),
         ("volunteer", "Volunteer"),
     )
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="volunteer")
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="volunteer", db_index=True)
     phone_number = models.CharField(max_length=25, unique=False, blank=True, null=True)
     city = models.CharField(max_length=50, blank=True)
     profile_image = models.ImageField(upload_to="images/", null=True, blank=True)
@@ -58,10 +58,11 @@ class Task(models.Model):
         null=True,
         blank=True,
     )
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="active")
-    deadline = models.DateTimeField(null=True, blank=True)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
-    tags = models.ManyToManyField(Tag, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="active", db_index=True)
+    deadline = models.DateTimeField(null=True, blank=True, db_index=True)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL,
+                                 null=True, db_index=True, related_name="tasks")
+    tags = models.ManyToManyField(Tag, blank=True, related_name="tasks")
 
     def __str__(self):
         return self.title
@@ -80,11 +81,13 @@ class Report(models.Model):
     verified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
-        related_name="reports_verified",
+        related_name="reports",
         null=True,
         blank=True,
     )
     verified_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return f"Report for {self.task.title}"
+        if self.task:
+            return f"Report for {self.task.title}"
+        return "Report (no task)"
