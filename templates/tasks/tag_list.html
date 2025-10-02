@@ -1,20 +1,42 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Теги</h1>
-  {% if request.user.role == "coordinator" %}
-  <a class="btn btn-success" href="{% url 'tasks:tag-create' %}">Add Tag</a>
-  {% endif %}
-  {% include "includes/search_form.html" %}
+<div class="py-4">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h4 mb-0">Tags</h1>
+    {% if request.user.role == "coordinator" %}
+      <a class="btn btn-primary" href="{% url 'tasks:tag-create' %}">
+        <i class="bi bi-plus-circle"></i> Add Tag
+      </a>
+    {% endif %}
+  </div>
+
+  <!-- Search -->
+  <form method="get" class="mb-3">
+    <div class="input-group">
+      {{ search_form.name }}
+      <button class="btn btn-outline-secondary" type="submit">Search</button>
+    </div>
+  </form>
+
+  <!-- List -->
   {% if tag_list %}
-    <ul class="list-group">
-      {% for tag in tag_list %}
-        <li class="list-group-item">
-          <a href="{% url 'tasks:tag-detail' pk=tag.id %}">{{ tag.name }}</a>
-        </li>
-      {% endfor %}
-    </ul>
+    <div class="card border-0 shadow-sm">
+      <ul class="list-group list-group-flush">
+        {% for tag in tag_list %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <a href="{% url 'tasks:tag-detail' pk=tag.id %}" class="fw-bold text-decoration-none text-primary">
+              {{ tag.name }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
   {% else %}
-    <p>Немає тегів.</p>
+    <div class="alert alert-info" role="alert">
+      No tags found.
+    </div>
   {% endif %}
+</div>
 {% endblock %}

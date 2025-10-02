@@ -1,51 +1,54 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="py-4">
+<div class="container py-4">
   <h1 class="h4 mb-4 text-center">Coordinator Dashboard</h1>
 
-  <!-- Stats cards -->
-  <div class="row">
-    <div class="col-12 col-sm-6 col-xl-3 mb-4">
-      <div class="card border-0 shadow">
-        <div class="card-body text-center">
-          <h3 class="h2">{{ num_volunteers }}</h3>
+  <!-- Statistic cards -->
+  <div class="row g-4 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card border-0 shadow-sm text-center h-100">
+        <div class="card-body">
+          <h3 class="h2 mb-1">{{ num_volunteers }}</h3>
           <a href="{% url 'tasks:volunteer-list' %}" class="text-muted small">Volunteers</a>
         </div>
       </div>
     </div>
-    <div class="col-12 col-sm-6 col-xl-3 mb-4">
-      <div class="card border-0 shadow">
-        <div class="card-body text-center">
-          <h3 class="h2">{{ num_tasks }}</h3>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card border-0 shadow-sm text-center h-100">
+        <div class="card-body">
+          <h3 class="h2 mb-1">{{ num_tasks }}</h3>
           <a href="{% url 'tasks:task-list' %}" class="text-muted small">Tasks</a>
         </div>
       </div>
     </div>
-    <div class="col-12 col-sm-6 col-xl-3 mb-4">
-      <div class="card border-0 shadow">
-        <div class="card-body text-center">
-          <h3 class="h2">{{ num_reports }}</h3>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card border-0 shadow-sm text-center h-100">
+        <div class="card-body">
+          <h3 class="h2 mb-1">{{ num_reports }}</h3>
           <a href="{% url 'tasks:report-list' %}" class="text-muted small">Reports</a>
         </div>
       </div>
     </div>
-    <div class="col-12 col-sm-6 col-xl-3 mb-4">
-      <div class="card border-0 shadow">
-        <div class="card-body text-center">
-          <h3 class="h2">{{ num_categories }}</h3>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card border-0 shadow-sm text-center h-100">
+        <div class="card-body">
+          <h3 class="h2 mb-1">{{ num_categories }}</h3>
           <a href="{% url 'tasks:category-list' %}" class="text-muted small">Categories</a>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Tasks by status chart -->
-  <div class="row">
-    <div class="col-lg-6 mx-auto">
-      <div class="card border-0 shadow">
-        <div class="card-header">
-          <h5 class="mb-0 text-center">Tasks by Status</h5>
+  <!-- Chart section -->
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-light text-center">
+          <h5 class="mb-0">Tasks by Status</h5>
         </div>
         <div class="card-body">
           <canvas id="statusChart"></canvas>

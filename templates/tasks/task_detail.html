@@ -1,30 +1,72 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="card">
-    <div class="card-body">
-      <h3 class="card-title">{{ task.title }}</h3>
+<div class="py-4">
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">{{ task.title }}</h5>
       {% if request.user.role == "coordinator" %}
-      <a href="{% url 'tasks:task-delete' pk=task.id %}" class="btn btn-danger link-to-page">
-        Delete
-      </a>
-      <a href="{% url 'tasks:task-update' pk=task.id %}" class="btn btn-sm btn-warning">
-        Update
-      </a>
+        <div>
+          <a href="{% url 'tasks:task-update' pk=task.id %}" class="btn btn-sm btn-warning me-2">Update</a>
+          <a href="{% url 'tasks:task-delete' pk=task.id %}" class="btn btn-sm btn-danger">Delete</a>
+        </div>
       {% endif %}
-      <p class="card-text"><strong>Description:</strong> {{ task.description }}</p>
-      <p><strong>Created by:</strong> {{ task.created_by.username }}</p>
-      <p><strong>Assigned to:</strong> {{ task.assigned_to.username|default:"—" }}</p>
-      <p><strong>Status:</strong> {{ task.status }}</p>
-      <p><strong>Deadline:</strong> {{ task.deadline|date:"d.m.Y H:i" }}</p>
-      <p><strong>Category:</strong> {{ task.category.name }}</p>
-      <p><strong>Tags:</strong>
-        {% for tag in task.tags.all %}
-          <span class="badge bg-primary">{{ tag.name }}</span>
-        {% empty %}
-          —
-        {% endfor %}
-      </p>
+    </div>
+
+    <div class="card-body">
+      <div class="mb-3">
+        <strong>Description:</strong>
+        <p class="mb-0">{{ task.description }}</p>
+      </div>
+
+      <div class="row mb-2">
+        <div class="col-sm-4 fw-bold">Created by:</div>
+        <div class="col-sm-8">{{ task.created_by.username }}</div>
+      </div>
+
+      <div class="row mb-2">
+        <div class="col-sm-4 fw-bold">Assigned to:</div>
+        <div class="col-sm-8">{{ task.assigned_to.username|default:"—" }}</div>
+      </div>
+
+      <div class="row mb-2">
+        <div class="col-sm-4 fw-bold">Status:</div>
+        <div class="col-sm-8">
+          {% if task.status == "active" %}
+            <span class="badge bg-success">Active</span>
+          {% elif task.status == "in_progress" %}
+            <span class="badge bg-info text-dark">In Progress</span>
+          {% elif task.status == "completed" %}
+            <span class="badge bg-secondary">Completed</span>
+          {% elif task.status == "suspended" %}
+            <span class="badge bg-warning text-dark">Suspended</span>
+          {% else %}
+            {{ task.status }}
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row mb-2">
+        <div class="col-sm-4 fw-bold">Deadline:</div>
+        <div class="col-sm-8">{{ task.deadline|date:"d.m.Y H:i"|default:"—" }}</div>
+      </div>
+
+      <div class="row mb-2">
+        <div class="col-sm-4 fw-bold">Category:</div>
+        <div class="col-sm-8">{{ task.category.name }}</div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-4 fw-bold">Tags:</div>
+        <div class="col-sm-8">
+          {% for tag in task.tags.all %}
+            <span class="badge bg-primary me-1">{{ tag.name }}</span>
+          {% empty %}
+            —
+          {% endfor %}
+        </div>
+      </div>
     </div>
   </div>
+</div>
 {% endblock %}

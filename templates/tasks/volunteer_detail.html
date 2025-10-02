@@ -1,33 +1,50 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="text-center mb-3">
+<div class="py-4">
+  <!-- Avatar -->
+  <div class="text-center mb-4">
     {% if volunteer.avatar_url %}
-      <img src="{{ volunteer.avatar_url }}" class="rounded-circle" style="width:120px;
-      height:120px;object-fit:cover;"
-           alt="Avatar">
+      <img src="{{ volunteer.avatar_url }}" class="rounded-circle shadow-sm"
+           style="width:120px;height:120px;object-fit:cover;" alt="Avatar">
     {% else %}
       <div style="width:120px;height:120px;border:3px solid #ccc;border-radius:50%;margin:0 auto;"></div>
     {% endif %}
   </div>
 
-  <div class="card">
-    <div class="card-body">
-      <h4 class="card-title">{{ volunteer.username }}</h4>
+  <!-- Profile Card -->
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">{{ volunteer.username }}</h5>
       {% if request.user.role == "coordinator" %}
-        <a href="{% url 'tasks:volunteer-delete' pk=volunteer.id %}" class="btn btn-danger link-to-page">
-          Delete
-        </a>
-        <a href="{% url 'tasks:volunteer-update' pk=volunteer.id %}" class="btn btn-sm btn-warning">
-          Update
-        </a>
+        <div>
+          <a href="{% url 'tasks:volunteer-update' pk=volunteer.id %}" class="btn btn-sm btn-warning me-1">Update</a>
+          <a href="{% url 'tasks:volunteer-delete' pk=volunteer.id %}" class="btn btn-sm btn-danger">Delete</a>
+        </div>
       {% endif %}
-      <p><strong>Username:</strong> {{ volunteer.username }}</p>
-      <p><strong>First name:</strong> {{ volunteer.first_name }}</p>
-      <p><strong>Last name:</strong> {{ volunteer.last_name }}</p>
-      <p><strong>Email:</strong> {{ volunteer.email }}</p>
-      <p><strong>Phone:</strong> {{ volunteer.phone_number|default:"—" }}</p>
-      <p><strong>City:</strong> {{ volunteer.city|default:"—" }}</p>
+    </div>
+    <div class="card-body">
+      <div class="row mb-2">
+        <div class="col-sm-4 fw-bold">First name:</div>
+        <div class="col-sm-8">{{ volunteer.first_name|default:"—" }}</div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-sm-4 fw-bold">Last name:</div>
+        <div class="col-sm-8">{{ volunteer.last_name|default:"—" }}</div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-sm-4 fw-bold">Email:</div>
+        <div class="col-sm-8">{{ volunteer.email|default:"—" }}</div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-sm-4 fw-bold">Phone:</div>
+        <div class="col-sm-8">{{ volunteer.phone_number|default:"—" }}</div>
+      </div>
+      <div class="row">
+        <div class="col-sm-4 fw-bold">City:</div>
+        <div class="col-sm-8">{{ volunteer.city|default:"—" }}</div>
+      </div>
     </div>
   </div>
+</div>
 {% endblock %}

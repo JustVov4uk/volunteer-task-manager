@@ -1,54 +1,60 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Reports</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1 class="h4 mb-0">Reports</h1>
 
   {% if request.user.role == "volunteer" %}
-    <a class="btn btn-success mb-3" href="{% url 'tasks:report-create' %}">Add Report</a>
+    <a class="btn btn-success" href="{% url 'tasks:report-create' %}">Add Report</a>
   {% endif %}
+</div>
 
-  <form method="get" class="row g-2 mb-3">
-    <div class="col-md-4">
-      {{ search_form.author }}
-    </div>
-    <div class="col-md-4">
-      {{ search_form.author_filter }}
-    </div>
-    <div class="col-md-4">
-      <button type="submit" class="btn btn-primary w-100">Apply</button>
-    </div>
-  </form>
+<form method="get" class="row g-2 mb-4">
+  <div class="col-md-4">
+    {{ search_form.author }}
+  </div>
+  <div class="col-md-4">
+    {{ search_form.author_filter }}
+  </div>
+  <div class="col-md-4">
+    <button type="submit" class="btn btn-primary w-100">Apply</button>
+  </div>
+</form>
 
-  {% if report_list %}
-    <table class="table table-striped table-hover align-middle">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Author</th>
-          <th>Comment</th>
-          <th>Task</th>
-          <th>Verified by</th>
-          <th>Verified at</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for report in report_list %}
-          <tr class="{% if not report.verified_at %}table-warning{% endif %}">
-            <td>
-              <a href="{% url 'tasks:report-detail' pk=report.id %}">
-                {{ report.id }}
-              </a>
-            </td>
-            <td>{{ report.author|default:"—" }}</td>
-            <td>{{ report.comment }}</td>
-            <td>{{ report.task }}</td>
-            <td>{{ report.verified_by|default:"—" }}</td>
-            <td>{{ report.verified_at|date:"d.m.Y H:i"|default:"—" }}</td>
+{% if report_list %}
+  <div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-centered table-nowrap mb-0">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Author</th>
+            <th scope="col">Comment</th>
+            <th scope="col">Task</th>
+            <th scope="col">Verified by</th>
+            <th scope="col">Verified at</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <p>There are no reports.</p>
-  {% endif %}
+        </thead>
+        <tbody>
+          {% for report in report_list %}
+            <tr class="{% if not report.verified_at %}table-warning{% endif %}">
+              <td>
+                <a href="{% url 'tasks:report-detail' pk=report.id %}" class="text-decoration-none">
+                  {{ report.id }}
+                </a>
+              </td>
+              <td>{{ report.author|default:"—" }}</td>
+              <td>{{ report.comment }}</td>
+              <td>{{ report.task }}</td>
+              <td>{{ report.verified_by|default:"—" }}</td>
+              <td>{{ report.verified_at|date:"d.m.Y H:i"|default:"—" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% else %}
+  <p class="text-muted text-center">There are no reports.</p>
+{% endif %}
 {% endblock %}

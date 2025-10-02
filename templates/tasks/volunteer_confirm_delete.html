@@ -1,15 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="card">
+<div class="py-5 d-flex justify-content-center">
+  <div class="card border-0 shadow-sm" style="max-width: 500px; width: 100%;">
     <div class="card-body text-center">
-      <h3 class="card-title">Delete volunteer?</h3>
-      <p>Are you sure you want to delete <strong>{{ volunteer.username }}</strong>?</p>
+      <h4 class="mb-3">Delete Volunteer</h4>
+      <p class="text-muted">
+        Are you sure you want to delete <strong>{{ volunteer.username }}</strong>?
+      </p>
       <form method="post" class="d-inline">
         {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Yes, delete</button>
+        <button type="submit" class="btn btn-danger me-2">Yes, delete</button>
       </form>
-      <a href="{% url 'tasks:volunteer-detail' pk=volunteer.id %}" class="btn btn-secondary">Cancel</a>
+      <a href="{% url 'tasks:volunteer-detail' pk=volunteer.id %}" class="btn btn-outline-secondary">
+        Cancel
+      </a>
     </div>
   </div>
+</div>
 {% endblock %}

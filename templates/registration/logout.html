@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="row justify-content-center">
-    <div class="col-md-4">
-      <div class="card text-center">
-        <div class="card-body">
-          <p class="card-text">You have been logged out.</p>
-          <a href="{% url 'login' %}" class="btn btn-primary">Login again</a>
-        </div>
+<div class="row justify-content-center py-5">
+  <div class="col-md-5 col-lg-4">
+    <div class="card shadow-sm border-0 text-center">
+      <div class="card-body py-4">
+        <h4 class="mb-3">You have been logged out</h4>
+        <p class="text-muted mb-4">Thank you for using our platform.</p>
+        <a href="{% url 'login' %}" class="btn btn-primary w-100">Login again</a>
       </div>
     </div>
   </div>
+</div>
 {% endblock %}

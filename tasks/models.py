@@ -16,11 +16,12 @@ class CustomUser(AbstractUser):
         ("coordinator", "Coordinator"),
         ("volunteer", "Volunteer"),
     )
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="coordinator")
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="volunteer")
     phone_number = models.CharField(max_length=25, unique=False, blank=True, null=True)
     city = models.CharField(max_length=50, blank=True)
     profile_image = models.ImageField(upload_to="images/", null=True, blank=True)
 
+    @property
     def avatar_url(self):
         if self.profile_image:
             return self.profile_image.url
@@ -46,9 +47,9 @@ class Task(models.Model):
     )
 
     title = models.CharField(max_length=100)
-    description = models.CharField(max_length=500)
+    description = models.TextField(max_length=500, blank=True)
     created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="created_tasks"
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, related_name="created_tasks"
     )
     assigned_to = models.ForeignKey(
         settings.AUTH_USER_MODEL,

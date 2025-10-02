@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.utils import timezone
 
 from tasks.models import Category, CustomUser, Task, Tag, Report
 
@@ -62,6 +63,12 @@ class TaskForm(forms.ModelForm):
         self.fields["assigned_to"].queryset = CustomUser.objects.filter(role="volunteer")
         self.fields["created_by"].queryset = CustomUser.objects.filter(role="coordinator")
 
+    def clean_deadline(self):
+        deadline = self.cleaned_data.get("deadline")
+        if deadline < timezone.now():
+            raise forms.ValidationError("Deadline must be in the future.")
+        return deadline
+
 
 class TaskSearchForm(forms.Form):
     title = forms.CharField(
@@ -76,7 +83,7 @@ class TaskSearchForm(forms.Form):
     )
     status = forms.ChoiceField(
         choices=[("", "All"), ("active", "Active"),
-                 ("in progress", "In Progress"),
+                 ("in_progress", "In Progress"),
                  ("completed", "Completed"),
                  ("suspended", "Suspended")],
         required=False,
@@ -88,7 +95,7 @@ class TaskSearchForm(forms.Form):
         empty_label="All categories",
         label="Category",
     )
-    tags = forms.ModelChoiceField(
+    tag = forms.ModelChoiceField(
         queryset=Tag.objects.all(),
         required=False,
         empty_label="All tags",
