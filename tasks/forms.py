@@ -65,7 +65,7 @@ class TaskForm(forms.ModelForm):
 
     def clean_deadline(self):
         deadline = self.cleaned_data.get("deadline")
-        if deadline < timezone.now():
+        if deadline <= timezone.now():
             raise forms.ValidationError("Deadline must be in the future.")
         return deadline
 
@@ -125,11 +125,14 @@ class TagSearchForm(forms.Form):
 class VolunteerReportForm(forms.ModelForm):
     class Meta:
         model = Report
-        fields = ("comment", "author", "task")
+        fields = ("comment", "task")
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
-        self.fields["author"].queryset = CustomUser.objects.filter(role="volunteer")
+        if user:
+            self.fields["task"].queryset = Task.objects.filter(assigned_to=user)
+
 
 
 class CoordinatorReportForm(forms.ModelForm):

@@ -295,6 +295,10 @@ class ReportCreateView(LoginRequiredMixin, CreateView):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
 class ReportUpdateView(LoginRequiredMixin, CoordinatorRequiredMixin, UpdateView):
     model = Report
     form_class = CoordinatorReportForm

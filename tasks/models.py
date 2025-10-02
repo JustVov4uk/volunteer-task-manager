@@ -49,7 +49,8 @@ class Task(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=500, blank=True)
     created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, related_name="created_tasks"
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, related_name="created_tasks",
+        null=True, blank=True
     )
     assigned_to = models.ForeignKey(
         settings.AUTH_USER_MODEL,
