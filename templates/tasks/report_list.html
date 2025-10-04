@@ -30,6 +30,7 @@
             <th scope="col">#</th>
             <th scope="col">Author</th>
             <th scope="col">Comment</th>
+            <th scope="col">Created at</th>
             <th scope="col">Task</th>
             <th scope="col">Verified by</th>
             <th scope="col">Verified at</th>
@@ -45,6 +46,7 @@
               </td>
               <td>{{ report.author|default:"—" }}</td>
               <td>{{ report.comment }}</td>
+              <td>{{ report.created_at|date:"Y-m-d H:i" }}</td>
               <td>{{ report.task }}</td>
               <td>{{ report.verified_by|default:"—" }}</td>
               <td>{{ report.verified_at|date:"d.m.Y H:i"|default:"—" }}</td>

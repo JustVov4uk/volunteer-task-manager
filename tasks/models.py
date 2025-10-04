@@ -78,6 +78,8 @@ class Report(models.Model):
         null=True,
         related_name="reports_authored",
     )
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    updated_at = models.DateTimeField(auto_now=True)
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     verified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,

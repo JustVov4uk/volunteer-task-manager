@@ -89,7 +89,7 @@ class TaskSearchForm(forms.Form):
         empty_label="All categories",
         label="Category",
     )
-    tag = forms.ModelChoiceField(
+    tags = forms.ModelChoiceField(
         queryset=Tag.objects.all(),
         required=False,
         empty_label="All tags",
@@ -160,4 +160,10 @@ class ReportSearchForm(forms.Form):
         required=False,
         empty_label="All authors",
         label="Author",
+    )
+    created_filter = forms.ModelChoiceField(
+        queryset=CustomUser.objects.filter(role="volunteer"),
+        required=False,
+        empty_label="All authors",
+        label="Created",
     )

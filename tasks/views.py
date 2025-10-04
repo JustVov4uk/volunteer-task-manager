@@ -177,7 +177,7 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
             title = form.cleaned_data.get("title")
             status = form.cleaned_data.get("status")
             category = form.cleaned_data.get("category")
-            tag = form.cleaned_data.get("tag")
+            tag = form.cleaned_data.get("tags")
             if title:
                 queryset = queryset.filter(title__icontains=title)
             if status:
@@ -185,7 +185,7 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
             if category:
                 queryset = queryset.filter(category=category)
             if tag:
-                queryset = queryset.filter(tag=tag)
+                queryset = queryset.filter(tags=tag)
         return queryset
 
 
@@ -274,10 +274,13 @@ class ReportListView(LoginRequiredMixin, generic.ListView):
         if form.is_valid():
             author_text = form.cleaned_data.get("author")
             author_filter = form.cleaned_data.get("author_filter")
+            created_filter = form.cleaned_data.get("created_filter")
             if author_text:
                 queryset = queryset.filter(author__username__icontains=author_text)
             if author_filter:
                 queryset = queryset.filter(author=author_filter)
+            if created_filter:
+                queryset = queryset.filter(created_at=created_filter)
         return queryset
 
 

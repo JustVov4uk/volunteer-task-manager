@@ -10,16 +10,15 @@
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/volt.css' %}">
 </head>
-<body>
-
-  {% include "includes/sidebar.html" %}
-
-  <main class="content">
-    {% block content %}
-    {% endblock %}
-  </main>
-
-  <script src="{% static 'vendor/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'assets/js/volt.js' %}"></script>
+<body class="d-flex flex-column min-vh-100">
+{% include "includes/sidebar.html" %}
+<main class="flex-fill content">
+  {% block content %}{% endblock %}
+</main>
+<footer class="mt-auto py-3 border-top text-center text-muted">
+  © {{ 2025 }} Volunteer Task Manager
+</footer>
+<script src="{% static 'vendor/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'assets/js/volt.js' %}"></script>
 </body>
 </html>

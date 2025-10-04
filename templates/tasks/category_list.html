@@ -18,19 +18,13 @@
         <table class="table table-centered table-nowrap mb-0 rounded">
           <thead class="thead-light">
             <tr>
-              <th>ID</th>
               <th>Name</th>
               <th>Description</th>
             </tr>
           </thead>
           <tbody>
             {% for category in category_list %}
-              <tr>
-                <td>
-                  <a href="{% url 'tasks:category-detail' pk=category.id %}">
-                    {{ category.id }}
-                  </a>
-                </td>
+              <tr onclick="window.location='{% url 'tasks:category-detail' pk=category.id %}'" style="cursor: pointer;">
                 <td>{{ category.name }}</td>
                 <td>{{ category.description }}</td>
               </tr>

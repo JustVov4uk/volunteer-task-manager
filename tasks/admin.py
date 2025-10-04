@@ -51,6 +51,6 @@ class TaskAdmin(admin.ModelAdmin):
 
 @admin.register(Report)
 class ReportAdmin(admin.ModelAdmin):
-    list_display = ["author", "comment", "task", "verified_by", "verified_at"]
-    list_filter = ("author", "task")
+    list_display = ["author", "comment", "created_at", "task", "verified_by", "verified_at"]
+    list_filter = ("author", "task", "created_at")
     search_fields = ("author",)

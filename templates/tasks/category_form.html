@@ -13,6 +13,7 @@
       <div class="card-body">
         <form action="" method="post" novalidate>
           {% csrf_token %}
+          {{ form.non_field_errors }}
           {{ form|crispy }}
           <div class="d-grid mt-3">
             <button type="submit" class="btn btn-primary">
