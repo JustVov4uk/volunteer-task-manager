@@ -12,7 +12,6 @@
   </div>
 
   {% include "includes/search_form.html" %}
-
   {% if category_list %}
     <div class="card border-0 shadow">
       <div class="table-responsive">
@@ -43,5 +42,6 @@
   {% else %}
     <p class="text-muted">There are no categories.</p>
   {% endif %}
+  {% include "includes/pagination.html" %}
 </div>
 {% endblock %}

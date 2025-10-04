@@ -63,12 +63,6 @@ class TaskForm(forms.ModelForm):
         self.fields["assigned_to"].queryset = CustomUser.objects.filter(role="volunteer")
         self.fields["created_by"].queryset = CustomUser.objects.filter(role="coordinator")
 
-    def clean_deadline(self):
-        deadline = self.cleaned_data.get("deadline")
-        if deadline <= timezone.now():
-            raise forms.ValidationError("Deadline must be in the future.")
-        return deadline
-
 
 class TaskSearchForm(forms.Form):
     title = forms.CharField(

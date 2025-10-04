@@ -11,16 +11,14 @@
   <link rel="stylesheet" href="{% static 'css/volt.css' %}">
 </head>
 <body>
-  <!-- Sidebar -->
+
   {% include "includes/sidebar.html" %}
 
-  <!-- Main content -->
   <main class="content">
     {% block content %}
     {% endblock %}
   </main>
 
-  <!-- Scripts -->
   <script src="{% static 'vendor/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
   <script src="{% static 'assets/js/volt.js' %}"></script>
 </body>
