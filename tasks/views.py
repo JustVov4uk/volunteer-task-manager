@@ -1,4 +1,5 @@
 from django.db.models import Count
+from django.template.context_processors import request
 from django.utils import timezone
 
 from django.contrib.auth.decorators import login_required
@@ -172,6 +173,9 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         queryset = Task.objects.all()
+        if self.request.user.role == "volunteer":
+            queryset = queryset.filter(assigned_to=self.request.user)
+
         form = TaskSearchForm(self.request.GET)
         if form.is_valid():
             title = form.cleaned_data.get("title")
@@ -270,6 +274,7 @@ class ReportListView(LoginRequiredMixin, generic.ListView):
         queryset = Report.objects.all()
         if self.request.user.role == "volunteer":
             queryset = queryset.filter(author=self.request.user)
+
         form = ReportSearchForm(self.request.GET)
         if form.is_valid():
             author_text = form.cleaned_data.get("author")
