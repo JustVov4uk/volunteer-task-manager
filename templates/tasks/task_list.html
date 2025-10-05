@@ -47,12 +47,8 @@
           </thead>
           <tbody>
             {% for task in task_list %}
-              <tr>
-                <td>
-                  <a href="{% url 'tasks:task-detail' pk=task.id %}" class="fw-bold text-decoration-none text-primary">
-                    {{ task.title }}
-                  </a>
-                </td>
+              <tr onclick="window.location='{% url 'tasks:task-detail' pk=task.id %}'" style="cursor: pointer;">
+                <td>{{ task.title }}</td>
                 <td>{{ task.description }}</td>
                 <td>{{ task.created_by }}</td>
                 <td>{{ task.assigned_to|default:"—" }}</td>

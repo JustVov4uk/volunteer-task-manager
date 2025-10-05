@@ -1,8 +1,6 @@
 from django.conf.urls.static import static
 from django.urls import path
-
 from tasks import views
-from tasks.forms import CustomUserCreateForm
 from tasks.views import (index, CategoryListView,
                          CategoryDetailView,
                          TaskListView, TaskDetailView,

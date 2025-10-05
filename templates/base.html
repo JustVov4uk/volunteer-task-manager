@@ -11,14 +11,25 @@
   <link rel="stylesheet" href="{% static 'css/volt.css' %}">
 </head>
 <body class="d-flex flex-column min-vh-100">
-{% include "includes/sidebar.html" %}
-<main class="flex-fill content">
-  {% block content %}{% endblock %}
-</main>
-<footer class="mt-auto py-3 border-top text-center text-muted">
-  © {{ 2025 }} Volunteer Task Manager
-</footer>
-<script src="{% static 'vendor/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'assets/js/volt.js' %}"></script>
+
+  {% if request.resolver_match.url_name != "login" %}
+    {% include "includes/sidebar.html" %}
+  {% endif %}
+
+  <main class="flex-fill content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="mt-auto py-3 bg-light border-top text-center text-muted">
+    <div class="container">
+      <p class="mb-1">© {{ now|date:"Y" }} Volunteer Task Manager</p>
+      <small>
+        Made with ❤️ by <a href="https://github.com/JustVov4uk" target="_blank" class="text-decoration-none">JustVov4uk</a>
+      </small>
+    </div>
+  </footer>
+
+  <script src="{% static 'vendor/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/js/volt.js' %}"></script>
 </body>
 </html>
