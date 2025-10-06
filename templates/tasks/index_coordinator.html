@@ -4,41 +4,59 @@
 <div class="container py-4">
   <h1 class="h4 mb-4 text-center">Coordinator Dashboard</h1>
 
+  <style>
+    .hover-shadow {
+      transition: all 0.2s ease-in-out;
+    }
+    .hover-shadow:hover {
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      transform: translateY(-3px);
+    }
+  </style>
+
   <div class="row g-4 mb-4">
     <div class="col-12 col-sm-6 col-xl-3">
-      <div class="card border-0 shadow-sm text-center h-100">
-        <div class="card-body">
-          <h3 class="h2 mb-1">{{ num_volunteers }}</h3>
-          <a href="{% url 'tasks:volunteer-list' %}" class="text-muted small">Volunteers</a>
+      <a href="{% url 'tasks:volunteer-list' %}" class="text-decoration-none text-dark">
+        <div class="card border-0 shadow-sm text-center h-100 hover-shadow" style="cursor:pointer;">
+          <div class="card-body">
+            <h3 class="h2 mb-1">{{ num_volunteers }}</h3>
+            <div class="small text-muted">Volunteers</div>
+          </div>
         </div>
-      </div>
+      </a>
     </div>
 
     <div class="col-12 col-sm-6 col-xl-3">
-      <div class="card border-0 shadow-sm text-center h-100">
-        <div class="card-body">
-          <h3 class="h2 mb-1">{{ num_tasks }}</h3>
-          <a href="{% url 'tasks:task-list' %}" class="text-muted small">Tasks</a>
+      <a href="{% url 'tasks:task-list' %}" class="text-decoration-none text-dark">
+        <div class="card border-0 shadow-sm text-center h-100 hover-shadow" style="cursor:pointer;">
+          <div class="card-body">
+            <h3 class="h2 mb-1">{{ num_tasks }}</h3>
+            <div class="small text-muted">Tasks</div>
+          </div>
         </div>
-      </div>
+      </a>
     </div>
 
     <div class="col-12 col-sm-6 col-xl-3">
-      <div class="card border-0 shadow-sm text-center h-100">
-        <div class="card-body">
-          <h3 class="h2 mb-1">{{ num_reports }}</h3>
-          <a href="{% url 'tasks:report-list' %}" class="text-muted small">Reports</a>
+      <a href="{% url 'tasks:report-list' %}" class="text-decoration-none text-dark">
+        <div class="card border-0 shadow-sm text-center h-100 hover-shadow" style="cursor:pointer;">
+          <div class="card-body">
+            <h3 class="h2 mb-1">{{ num_reports }}</h3>
+            <div class="small text-muted">Reports</div>
+          </div>
         </div>
-      </div>
+      </a>
     </div>
 
     <div class="col-12 col-sm-6 col-xl-3">
-      <div class="card border-0 shadow-sm text-center h-100">
-        <div class="card-body">
-          <h3 class="h2 mb-1">{{ num_categories }}</h3>
-          <a href="{% url 'tasks:category-list' %}" class="text-muted small">Categories</a>
+      <a href="{% url 'tasks:category-list' %}" class="text-decoration-none text-dark">
+        <div class="card border-0 shadow-sm text-center h-100 hover-shadow" style="cursor:pointer;">
+          <div class="card-body">
+            <h3 class="h2 mb-1">{{ num_categories }}</h3>
+            <div class="small text-muted">Categories</div>
+          </div>
         </div>
-      </div>
+      </a>
     </div>
   </div>
 

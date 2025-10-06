@@ -95,6 +95,12 @@ class TaskSearchForm(forms.Form):
         empty_label="All tags",
         label="Tags",
     )
+    volunteer = forms.ModelChoiceField(
+        queryset=CustomUser.objects.filter(role="volunteer"),
+        required=False,
+        empty_label="All volunteers",
+        label="Volunteers",
+    )
 
 
 class TagForm(forms.ModelForm):

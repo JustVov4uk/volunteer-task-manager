@@ -182,6 +182,7 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
             status = form.cleaned_data.get("status")
             category = form.cleaned_data.get("category")
             tag = form.cleaned_data.get("tags")
+            volunteer = form.cleaned_data.get("volunteer")
             if title:
                 queryset = queryset.filter(title__icontains=title)
             if status:
@@ -190,6 +191,8 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
                 queryset = queryset.filter(category=category)
             if tag:
                 queryset = queryset.filter(tags=tag)
+            if volunteer:
+                queryset = queryset.filter(assigned_to=volunteer)
         return queryset
 
 
