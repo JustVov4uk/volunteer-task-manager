@@ -41,7 +41,7 @@
                 onclick="window.location='{% url 'tasks:report-detail' pk=report.id %}'"
                 style="cursor: pointer;">
               <td>{{ report.author|default:"—" }}</td>
-              <td>{{ report.comment|truncatechars:40 }}</td>
+              <td title="{{ report.comment }}">{{ report.comment|truncatechars:40 }}</td>
               <td>{{ report.created_at|date:"Y-m-d H:i" }}</td>
               <td>{{ report.task }}</td>
               <td>{{ report.verified_by|default:"—" }}</td>

@@ -2,20 +2,26 @@
 
 {% block content %}
 <div class="py-4">
+
   <!-- Avatar -->
   <div class="text-center mb-4">
     {% if volunteer.avatar_url %}
       <img src="{{ volunteer.avatar_url }}" class="rounded-circle shadow-sm"
            style="width:120px;height:120px;object-fit:cover;" alt="Avatar">
     {% else %}
-      <div style="width:120px;height:120px;border:3px solid #ccc;border-radius:50%;margin:0 auto;"></div>
+      <div class="rounded-circle bg-secondary mx-auto shadow-sm"
+           style="width:120px;height:120px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#fff;">
+        <i class="bi bi-person"></i>
+      </div>
     {% endif %}
+    <h4 class="mt-3 mb-0">{{ volunteer.username }}</h4>
+    <small class="text-muted">{{ volunteer.email|default:"—" }}</small>
   </div>
 
   <!-- Profile Card -->
-  <div class="card border-0 shadow-sm">
+  <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">{{ volunteer.username }}</h5>
+      <h5 class="mb-0">Profile Information</h5>
       {% if request.user.role == "coordinator" %}
         <div>
           <a href="{% url 'tasks:volunteer-update' pk=volunteer.id %}" class="btn btn-sm btn-warning me-1">Update</a>
@@ -33,10 +39,6 @@
         <div class="col-sm-8">{{ volunteer.last_name|default:"—" }}</div>
       </div>
       <div class="row mb-2">
-        <div class="col-sm-4 fw-bold">Email:</div>
-        <div class="col-sm-8">{{ volunteer.email|default:"—" }}</div>
-      </div>
-      <div class="row mb-2">
         <div class="col-sm-4 fw-bold">Phone:</div>
         <div class="col-sm-8">{{ volunteer.phone_number|default:"—" }}</div>
       </div>
@@ -46,5 +48,42 @@
       </div>
     </div>
   </div>
+
+  <!-- Statistics Section -->
+  <div class="row g-3">
+    <div class="col-6 col-md-3">
+      <div class="card border-0 shadow-sm text-center h-100">
+        <div class="card-body">
+          <h4 class="mb-1">{{ tasks_count }}</h4>
+          <small class="text-muted">Tasks</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card border-0 shadow-sm text-center h-100">
+        <div class="card-body">
+          <h4 class="mb-1">{{ reports_count }}</h4>
+          <small class="text-muted">Reports</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card border-0 shadow-sm text-center h-100">
+        <div class="card-body">
+          <h4 class="mb-1">{{ tasks_completed }}</h4>
+          <small class="text-muted">Completed</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card border-0 shadow-sm text-center h-100">
+        <div class="card-body">
+          <h4 class="mb-1">{{ tasks_in_progress }}</h4>
+          <small class="text-muted">In Progress</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 {% endblock %}

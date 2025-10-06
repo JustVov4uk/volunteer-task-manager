@@ -1,5 +1,4 @@
 from django.db.models import Count
-from django.template.context_processors import request
 from django.utils import timezone
 
 from django.contrib.auth.decorators import login_required
@@ -93,6 +92,18 @@ class VolunteerDetailView(LoginRequiredMixin, generic.DetailView):
 
     def get_queryset(self):
         return CustomUser.objects.filter(role="volunteer")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        volunteer = self.get_object()
+
+        tasks = volunteer.assigned_tasks.all()
+        context["tasks_count"] = tasks.count()
+        context["reports_count"] = volunteer.reports_authored.count()
+        context["tasks_completed"] = tasks.filter(status="completed").count()
+        context["tasks_in_progress"] = tasks.filter(status="in_progress").count()
+
+        return context
 
 
 class VolunteerCreateView(LoginRequiredMixin, CoordinatorRequiredMixin, CreateView):

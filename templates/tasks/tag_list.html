@@ -24,7 +24,9 @@
       <ul class="list-group list-group-flush">
         {% for tag in tag_list %}
           <li class="list-group-item d-flex justify-content-between align-items-center">
-            <a href="{% url 'tasks:tag-detail' pk=tag.id %}" class="fw-bold text-decoration-none text-primary">
+            <a href="{% url 'tasks:tag-detail' pk=tag.id %}"
+               class="fw-bold text-decoration-none text-primary"
+               title="{{ tag.name }}">
               {{ tag.name }}
             </a>
           </li>
