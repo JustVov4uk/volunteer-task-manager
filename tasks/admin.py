@@ -26,7 +26,7 @@ class CustomUserAdmin(UserAdmin):
             return format_html('<img src="{}" style="width:32px;height:32px;object-fit:cover;'
                                'border-radius:50%;">', obj.profile_image.url)
         return ""
-    avatar_thumb.short_description = ""
+    avatar_thumb.short_description = "Avatar"
 
 
 @admin.register(Tag)

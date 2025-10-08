@@ -91,7 +91,11 @@ class VolunteerDetailView(LoginRequiredMixin, generic.DetailView):
     context_object_name = "volunteer"
 
     def get_queryset(self):
-        return CustomUser.objects.filter(role="volunteer")
+        return (
+            CustomUser.objects
+            .filter(role="volunteer")
+            .prefetch_related("assigned_tasks", "reports_authored")
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -183,7 +187,11 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
         return context
 
     def get_queryset(self):
-        queryset = Task.objects.all()
+        queryset = (
+            Task.objects
+            .select_related("category", "created_by", "assigned_to")
+            .prefetch_related("tags")
+        )
         if self.request.user.role == "volunteer":
             queryset = queryset.filter(assigned_to=self.request.user)
 
@@ -209,6 +217,16 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
 
 class TaskDetailView(LoginRequiredMixin, generic.DetailView):
     model = Task
+
+    def get_queryset(self):
+        queryset = (
+            Task.objects
+            .select_related("category", "created_by", "assigned_to")
+            .prefetch_related("tags")
+        )
+        if self.request.user.role == "volunteer":
+            queryset = queryset.filter(assigned_to=self.request.user)
+        return queryset
 
 
 class TaskCreateView(LoginRequiredMixin, CoordinatorRequiredMixin, CreateView):
@@ -285,7 +303,10 @@ class ReportListView(LoginRequiredMixin, generic.ListView):
         return context
 
     def get_queryset(self):
-        queryset = Report.objects.all()
+        queryset = (
+            Report.objects
+            .select_related("author", "task", "verified_by")
+        )
         if self.request.user.role == "volunteer":
             queryset = queryset.filter(author=self.request.user)
 
@@ -299,12 +320,21 @@ class ReportListView(LoginRequiredMixin, generic.ListView):
             if author_filter:
                 queryset = queryset.filter(author=author_filter)
             if created_filter:
-                queryset = queryset.filter(created_at=created_filter)
+                queryset = queryset.filter(created_at__date=created_filter)
         return queryset
 
 
 class ReportDetailView(LoginRequiredMixin, generic.DetailView):
     model = Report
+
+    def get_queryset(self):
+        queryset = (
+            Report.objects
+            .select_related("author", "task", "verified_by")
+        )
+        if self.request.user.role == "volunteer":
+            queryset = queryset.filter(author=self.request.user)
+        return queryset
 
 
 class ReportCreateView(LoginRequiredMixin, CreateView):

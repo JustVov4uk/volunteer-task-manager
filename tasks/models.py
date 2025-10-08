@@ -17,9 +17,12 @@ class CustomUser(AbstractUser):
         ("volunteer", "Volunteer"),
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="volunteer", db_index=True)
-    phone_number = models.CharField(max_length=25, unique=False, blank=True, null=True)
+    phone_number = models.CharField(max_length=25, unique=True, blank=True, null=True)
     city = models.CharField(max_length=50, blank=True)
     profile_image = models.ImageField(upload_to="images/", null=True, blank=True)
+
+    class Meta:
+        ordering = ("username",)
 
     @property
     def avatar_url(self):
@@ -65,6 +68,9 @@ class Task(models.Model):
                                  null=True, db_index=True, related_name="tasks")
     tags = models.ManyToManyField(Tag, blank=True, related_name="tasks")
 
+    class Meta:
+        ordering = ("deadline",)
+
     def __str__(self):
         return self.title
 
@@ -89,6 +95,9 @@ class Report(models.Model):
         blank=True,
     )
     verified_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ("-created_at",)
 
     def __str__(self):
         if self.task:

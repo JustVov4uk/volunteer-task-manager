@@ -1,6 +1,5 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from django.utils import timezone
 
 from tasks.models import Category, CustomUser, Task, Tag, Report
 
@@ -167,9 +166,12 @@ class ReportSearchForm(forms.Form):
         empty_label="All authors",
         label="Author",
     )
-    created_filter = forms.ModelChoiceField(
-        queryset=CustomUser.objects.filter(role="volunteer"),
+    created_filter = forms.DateField(
         required=False,
-        empty_label="All authors",
-        label="Created",
+        label="Created on",
+        widget=forms.DateInput(
+            attrs={
+                "type": "date",
+            }
+        )
     )
