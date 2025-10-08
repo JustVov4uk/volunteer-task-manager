@@ -18,6 +18,8 @@ from tasks.forms import (CategoryForm, CustomUserCreateForm,
                          VolunteerReportForm, CoordinatorReportForm)
 from tasks.mixins import CoordinatorRequiredMixin
 from tasks.models import CustomUser, Task, Category, Tag, Report
+from tasks.notifications import notify_task_assigned, notify_report_verified
+
 
 @login_required
 def index(request: HttpRequest) -> HttpResponse:
@@ -234,11 +236,23 @@ class TaskCreateView(LoginRequiredMixin, CoordinatorRequiredMixin, CreateView):
     form_class = TaskForm
     success_url = reverse_lazy("tasks:task-list")
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        notify_task_assigned(self.object)
+        return response
+
 
 class TaskUpdateView(LoginRequiredMixin,CoordinatorRequiredMixin, UpdateView):
     model = Task
     form_class = TaskForm
     success_url = reverse_lazy("tasks:task-list")
+
+    def form_valid(self, form):
+        assigned_changed = "assigned_to" in form.changed_data
+        response = super().form_valid(form)
+        if assigned_changed:
+            notify_task_assigned(self.object)
+        return response
 
 
 class TaskDeleteView(LoginRequiredMixin, CoordinatorRequiredMixin, DeleteView):
@@ -359,7 +373,9 @@ class ReportUpdateView(LoginRequiredMixin, CoordinatorRequiredMixin, UpdateView)
     def form_valid(self, form):
         form.instance.verified_by = self.request.user
         form.instance.verified_at = timezone.now()
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        notify_report_verified(self.object)
+        return response
 
 
 class ReportDeleteView(LoginRequiredMixin, CoordinatorRequiredMixin, DeleteView):
