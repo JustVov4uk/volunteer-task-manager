@@ -5,9 +5,7 @@
   <h1 class="h4 mb-4 text-center">Coordinator Dashboard</h1>
 
   <style>
-    .hover-shadow {
-      transition: all 0.2s ease-in-out;
-    }
+    .hover-shadow { transition: all 0.2s ease-in-out; }
     .hover-shadow:hover {
       box-shadow: 0 6px 20px rgba(0,0,0,0.15);
       transform: translateY(-3px);
@@ -77,17 +75,16 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   const statusData = {{ status_counts|safe }};
-  const labels = statusData.map(item => item.status);
-  const data = statusData.map(item => item.count);
+  const labels = statusData.map(i => i.status);
+  const data = statusData.map(i => i.count);
 
-  const ctx = document.getElementById('statusChart');
-  new Chart(ctx, {
+  new Chart(document.getElementById('statusChart'), {
     type: 'pie',
     data: {
-      labels: labels,
+      labels,
       datasets: [{
-        data: data,
-        backgroundColor: ['#36A2EB', '#FFCE56', '#4BC0C0', '#FF6384'],
+        data,
+        backgroundColor: ['#36A2EB','#FFCE56','#4BC0C0','#FF6384'],
         hoverOffset: 15
       }]
     },
@@ -97,21 +94,16 @@
         legend: { position: 'bottom' },
         tooltip: {
           callbacks: {
-            label: function(context) {
-              const label = context.label || '';
-              const value = context.parsed;
-              return `${label}: ${value} tasks`;
-            }
+            label: ctx => `${ctx.label}: ${ctx.parsed} tasks`
           }
         }
       },
-      onClick: (event, elements) => {
-        if (elements.length > 0) {
-          const index = elements[0].index;
-          const selectedStatus = labels[index];
+      onClick: (e, el) => {
+        if (el.length > 0) {
+          const status = labels[el[0].index];
           const url = new URL("{% url 'tasks:task-list' %}", window.location.origin);
-          url.searchParams.set("status", selectedStatus);
-          window.location.href = url.toString();
+          url.searchParams.set("status", status);
+          window.location.href = url;
         }
       }
     }
