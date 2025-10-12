@@ -3,7 +3,7 @@ from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from tasks.models import Category
+from tasks.models import Category, Tag
 
 
 class CategoryModelTest(TestCase):
@@ -44,7 +44,7 @@ class CustomUserModelTest(TestCase):
             first_name="Test First",
             last_name="Test Last",
             password="Test Password",
-            email="Test Email",
+            email="test@gmail.com",
             role="coordinator",
             phone_number="Test Phone Number",
             city="Test City",
@@ -53,7 +53,7 @@ class CustomUserModelTest(TestCase):
         self.assertEqual(customuser.username, "Test User")
         self.assertEqual(customuser.first_name, "Test First")
         self.assertEqual(customuser.last_name, "Test Last")
-        self.assertEqual(customuser.email, "Test Email")
+        self.assertEqual(customuser.email, "test@gmail.com")
         self.assertEqual(customuser.role, "coordinator")
         self.assertEqual(customuser.phone_number, "Test Phone Number")
         self.assertEqual(customuser.city, "Test City")
@@ -149,3 +149,29 @@ class CustomUserModelTest(TestCase):
         )
         with self.assertRaises(ValidationError):
             customuser3.full_clean()
+
+
+class TagModelTest(TestCase):
+    def test_tag_is_valid_data(self):
+        tag = Tag.objects.create(
+            name="Test Tag",
+        )
+
+        self.assertEqual(tag.name, "Test Tag")
+
+    def test_tag_with_unique_name(self):
+        Tag.objects.create(
+            name="Test Tag",
+        )
+        with self.assertRaises(IntegrityError):
+            Tag.objects.create(name="Test Tag")
+
+    def test_tag_format_str(self):
+        tag = Tag.objects.create(
+            name="Test Tag",
+        )
+
+        self.assertEqual(
+            str(tag),
+            f"{tag.name}"
+        )
