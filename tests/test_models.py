@@ -1,9 +1,10 @@
+from datetime import datetime, timezone
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from tasks.models import Category, Tag
+from tasks.models import Category, Tag, Task
 
 
 class CategoryModelTest(TestCase):
@@ -175,3 +176,136 @@ class TagModelTest(TestCase):
             str(tag),
             f"{tag.name}"
         )
+
+
+class TaskModelTest(TestCase):
+    def test_task_with_minimal_fields(self):
+        task = Task.objects.create(
+            title="Test Task",
+        )
+
+        self.assertEqual(task.title, "Test Task")
+
+    def test_task_with_full_fields(self):
+        category = Category.objects.create(name="Help", description="Test Help")
+        user1 = get_user_model().objects.create_user(username="creator")
+        user2 = get_user_model().objects.create_user(username="performer")
+        tag1 = Tag.objects.create(name="urgent")
+        tag2 = Tag.objects.create(name="important")
+
+        task = Task.objects.create(
+            title="Test Task",
+            description="Test Description",
+            created_by=user1,
+            assigned_to=user2,
+            status="active",
+            deadline="2025-12-31T23:59:00Z",
+            category=category,
+    )
+        task.tags.add(tag1, tag2)
+
+        self.assertEqual(task.title, "Test Task")
+        self.assertEqual(task.description, "Test Description")
+        self.assertEqual(task.created_by, user1)
+        self.assertEqual(task.assigned_to, user2)
+        self.assertEqual(task.status, "active")
+        self.assertEqual(task.deadline, "2025-12-31T23:59:00Z")
+        self.assertEqual(task.category, category)
+        self.assertEqual(task.tags.count(), 2)
+
+    def test_task_default_value_is_active(self):
+        task = Task.objects.create(
+            title="Test Task",
+        )
+
+        self.assertEqual(task.status, "active")
+
+    def test_task_format_str(self):
+        task = Task.objects.create(
+            title="Test Task",
+        )
+
+        self.assertEqual(
+            str(task),
+            f"{task.title}"
+        )
+
+    def test_task_ordering_by_deadline(self):
+        Task.objects.create(
+            title="1Test Task",
+            deadline="2025-12-31T23:59:00Z",
+        )
+        Task.objects.create(
+            title="2Test Task",
+            deadline="2025-12-20T23:59:00Z",
+        )
+        Task.objects.create(
+            title="3Test Task",
+            deadline="2025-12-10T23:59:00Z",
+        )
+
+        tasks = Task.objects.all()
+        deadlines = [task.deadline for task in tasks]
+        self.assertEqual(deadlines, [
+            datetime(2025, 12, 10, 23, 59, tzinfo=timezone.utc),
+            datetime(2025, 12, 20, 23, 59, tzinfo=timezone.utc),
+            datetime(2025, 12, 31, 23, 59, tzinfo=timezone.utc),
+        ])
+
+    def test_task_foreign_key_set_null_on_delete(self):
+        user1 = get_user_model().objects.create_user(username="creator")
+        user2 = get_user_model().objects.create_user(username="performer")
+        category = Category.objects.create(name="Test Category")
+
+        task = Task.objects.create(
+            title="Test Task",
+            created_by=user1,
+            assigned_to=user2,
+            category=category,
+        )
+
+        self.assertEqual(task.created_by, user1)
+        self.assertEqual(task.assigned_to, user2)
+        self.assertEqual(task.category, category)
+
+        user1.delete()
+        user2.delete()
+        category.delete()
+
+        task.refresh_from_db()
+
+        self.assertIsNone(task.created_by)
+        self.assertIsNone(task.assigned_to)
+        self.assertIsNone(task.category)
+
+    def test_task_add_a_few_tags(self):
+        tag1 = Tag.objects.create(name="Urgent")
+        tag2 = Tag.objects.create(name="Important")
+
+        task = Task.objects.create(title="Test Task")
+        task.tags.add(tag1, tag2)
+
+        self.assertEqual(task.tags.count(), 2)
+        self.assertIn(tag1, task.tags.all())
+        self.assertIn(tag2, task.tags.all())
+
+    def test_task_status_invalid_value_raises_error(self):
+        task = Task.objects.create(
+            title="Test Task",
+            status="unknown",
+        )
+        with self.assertRaises(ValidationError):
+            task.full_clean()
+
+    def test_task_status_with_valid_values(self):
+        category = Category.objects.create(name="Test Category", description="Test Help")
+        for status in ["active", "in_progress", "completed", "suspended"]:
+            Task(title=f"Test Task {status}", status=status, category=category).full_clean()
+
+    def test_task_description_may_be_empty(self):
+        task = Task.objects.create(
+            title="Test Task",
+        )
+
+        self.assertEqual(task.title, "Test Task")
+        self.assertEqual(task.description, "")
