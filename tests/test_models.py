@@ -1,10 +1,11 @@
+import time
 from datetime import datetime, timezone
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from tasks.models import Category, Tag, Task
+from tasks.models import Category, Tag, Task, Report
 
 
 class CategoryModelTest(TestCase):
@@ -201,7 +202,7 @@ class TaskModelTest(TestCase):
             status="active",
             deadline="2025-12-31T23:59:00Z",
             category=category,
-    )
+        )
         task.tags.add(tag1, tag2)
 
         self.assertEqual(task.title, "Test Task")
@@ -309,3 +310,154 @@ class TaskModelTest(TestCase):
 
         self.assertEqual(task.title, "Test Task")
         self.assertEqual(task.description, "")
+
+
+class ReportModelTests(TestCase):
+    def test_report_is_valid_with_all_fields(self):
+        author = get_user_model().objects.create_user(username="volunteer")
+        task = Task.objects.create(
+            title="Test Task",
+        )
+        verified_by = get_user_model().objects.create_user(username="coordinator")
+
+        report = Report.objects.create(
+            comment="Test Comment",
+            author=author,
+            created_at="2025-12-10T10:00:00Z",
+            updated_at="2025-12-11T10:00:00Z",
+            task=task,
+            verified_by=verified_by,
+            verified_at=datetime(2025, 12, 15, 10, 0, 0, tzinfo=timezone.utc),
+        )
+
+        self.assertEqual(report.comment, "Test Comment")
+        self.assertEqual(report.author, author)
+        self.assertIsNotNone(report.created_at)
+        self.assertIsNotNone(report.updated_at)
+        self.assertEqual(report.task, task)
+        self.assertEqual(report.verified_by, verified_by)
+        self.assertEqual(report.verified_at,
+                         datetime(2025, 12, 15, 10, 0, 0, tzinfo=timezone.utc))
+
+    def test_report_created_at_and_updated_at_behaviour(self):
+        author = get_user_model().objects.create_user(username="volunteer")
+        task = Task.objects.create(
+            title="Test Task",
+        )
+        verified_by = get_user_model().objects.create_user(username="coordinator")
+
+        report = Report.objects.create(
+            comment="Test Comment",
+            author=author,
+            task=task,
+            verified_by=verified_by,
+        )
+
+        created_first = report.created_at
+        updated_first = report.updated_at
+
+        self.assertIsNotNone(created_first)
+        self.assertIsNotNone(updated_first)
+
+        time.sleep(1)
+        report.comment = "Update Comment"
+        report.save()
+        report.refresh_from_db()
+
+        self.assertEqual(report.created_at, created_first)
+        self.assertGreater(report.updated_at, updated_first)
+
+    def test_report_relation_author_verified_by_task(self):
+        author = get_user_model().objects.create_user(username="volunteer")
+        task = Task.objects.create(
+            title="Test Task",
+        )
+        verified_by = get_user_model().objects.create_user(username="coordinator")
+
+        report = Report.objects.create(
+            comment="Test Comment",
+            author=author,
+            task=task,
+            verified_by=verified_by,
+        )
+
+        self.assertEqual(report.author, author)
+        self.assertEqual(report.task, task)
+        self.assertEqual(report.verified_by, verified_by)
+
+        self.assertIn(report, author.reports_authored.all())
+        self.assertIn(report, task.reports_task.all())
+        self.assertIn(report, verified_by.reports_verified_by.all())
+
+    def test_report_on_delete_behaviour(self):
+        author = get_user_model().objects.create_user(username="volunteer")
+        task = Task.objects.create(title="Test Task")
+        verified_by = get_user_model().objects.create_user(username="coordinator")
+
+        report = Report.objects.create(
+            comment="Test Comment",
+            author=author,
+            task=task,
+            verified_by=verified_by,
+        )
+
+        self.assertEqual(report.author, author)
+        self.assertEqual(report.task, task)
+        self.assertEqual(report.verified_by, verified_by)
+
+        author.delete()
+        report.refresh_from_db()
+        self.assertIsNone(report.author)
+
+        verified_by.delete()
+        report.refresh_from_db()
+        self.assertIsNone(report.verified_by)
+
+        task.delete()
+        self.assertFalse(Report.objects.filter(id=report.pk).exists())
+
+    def test_report_ordering(self):
+        task = Task.objects.create(title="Test Task")
+
+        Report.objects.create(
+            comment="1Test Comment",
+            task=task,
+        )
+        time.sleep(1)
+        Report.objects.create(
+            comment="2Test Comment",
+            task=task,
+        )
+        time.sleep(1)
+        Report.objects.create(
+            comment="3Test Comment",
+            task=task,
+        )
+        reports = Report.objects.all()
+        comments = [report.comment for report in reports]
+        self.assertEqual(comments,
+                         ["3Test Comment",
+                          "2Test Comment",
+                          "1Test Comment"])
+
+    def test_report_if_task_exist_format_str(self):
+        task = Task.objects.create(title="Test Task")
+        report = Report.objects.create(
+            comment="Test Comment",
+            task=task,
+        )
+
+        self.assertEqual(
+            str(report),
+            f"Report for {report.task.title}"
+        )
+
+    def test_report_verified_at_is_none(self):
+        task = Task.objects.create(title="Test Task")
+        report = Report.objects.create(
+            comment="Test Comment",
+            task=task,
+        )
+
+        self.assertEqual(report.comment, "Test Comment")
+        self.assertEqual(report.verified_at, None)

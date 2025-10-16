@@ -86,11 +86,11 @@ class Report(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="reports_task")
     verified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
-        related_name="reports",
+        related_name="reports_verified_by",
         null=True,
         blank=True,
     )
@@ -100,6 +100,4 @@ class Report(models.Model):
         ordering = ("-created_at",)
 
     def __str__(self):
-        if self.task:
-            return f"Report for {self.task.title}"
-        return "Report (no task)"
+        return f"Report for {self.task.title}"
