@@ -4,7 +4,8 @@ from django.urls import reverse
 
 from tasks.forms import (CategoryForm,
                          CategorySearchForm,
-                         CustomUserCreateForm, CustomUserUpdateForm, CustomUserSearchForm)
+                         CustomUserCreateForm, CustomUserUpdateForm, CustomUserSearchForm, TaskForm)
+from tasks.models import Category, Tag
 
 
 class CategoryFormTest(TestCase):
@@ -149,3 +150,51 @@ class CustomUserSearchFormTest(TestCase):
     def test_form_with_placeholder(self):
         placeholder = CustomUserSearchForm().fields["username"].widget.attrs["placeholder"]
         self.assertEqual(placeholder, "Search by username")
+
+
+class TaskFormTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            role="coordinator",
+        )
+        self.volunteer = get_user_model().objects.create_user(
+            username="volunteer",
+            role="volunteer",
+        )
+        self.category = Category.objects.create(
+            name="Test Category",
+        )
+        self.tag = Tag.objects.create(
+            name="Test Tag",
+        )
+
+    def test_form_valid_with_all_fields(self):
+        form_data = {
+            "title": "test title",
+            "description": "test description",
+            "created_by": self.coordinator.id,
+            "assigned_to": self.volunteer.id,
+            "status": "active",
+            "deadline": "2019-07-30T12:00",
+            "category": self.category.id,
+            "tags": [self.tag.id]
+        }
+        form = TaskForm(data=form_data)
+        self.assertTrue(form.is_valid())
+
+    def test_form_deadline_widget_type_is_datetime_local(self):
+        form = TaskForm()
+        widget = form.fields["deadline"].widget
+        self.assertEqual(getattr(widget, "input_type", None), "datetime-local")
+
+    def test_form_querysets_filtered_in_init(self):
+        form = TaskForm()
+        assigned_queryset = form.fields["assigned_to"].queryset
+        created_queryset = form.fields["created_by"].queryset
+
+        self.assertIn(self.volunteer, assigned_queryset)
+        self.assertNotIn(self.coordinator, assigned_queryset)
+
+        self.assertIn(self.coordinator, created_queryset)
+        self.assertNotIn(self.volunteer, created_queryset)
