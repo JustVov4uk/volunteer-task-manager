@@ -1,10 +1,12 @@
+from unicodedata import category
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
 from tasks.forms import (CategoryForm,
                          CategorySearchForm,
-                         CustomUserCreateForm, CustomUserUpdateForm, CustomUserSearchForm, TaskForm)
+                         CustomUserCreateForm, CustomUserUpdateForm, CustomUserSearchForm, TaskForm, TaskSearchForm)
 from tasks.models import Category, Tag
 
 
@@ -198,3 +200,58 @@ class TaskFormTest(TestCase):
 
         self.assertIn(self.coordinator, created_queryset)
         self.assertNotIn(self.volunteer, created_queryset)
+
+
+class TaskSearchFormTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            role="coordinator",
+        )
+        self.volunteer = get_user_model().objects.create_user(
+            username="volunteer",
+            role="volunteer",
+        )
+        self.category = Category.objects.create(
+            name="Test Category",
+        )
+        self.tag = Tag.objects.create(
+            name="Test Tag",
+        )
+    def test_form_valid_for_all_filters(self):
+        form_data = {
+            "title": "test title",
+            "status": "active",
+            "category": self.category.id,
+            "tags": self.tag.id,
+            "volunteer": self.volunteer.id,
+        }
+        form = TaskSearchForm(data=form_data)
+        self.assertTrue(form.is_valid())
+
+    def test_form_valid_with_empty_filters(self):
+        form_data = {
+            "title": "",
+            "status": "",
+            "category": "",
+            "tags": "",
+            "volunteer": "",
+        }
+        form = TaskSearchForm(data=form_data)
+        self.assertTrue(form.is_valid())
+
+    def test_form_status_has_choices(self):
+        form = TaskSearchForm()
+        choices = [choice[0] for choice in form.fields["status"].choices if choice[0]]
+        self.assertEqual(choices, ["active", "in_progress", "completed", "suspended"])
+
+    def test_form_fields_category_tags_volunteer_with_empty_label(self):
+        form = TaskSearchForm()
+        self.assertEqual(form.fields["category"].empty_label, "All categories")
+        self.assertEqual(form.fields["tags"].empty_label, "All tags")
+        self.assertEqual(form.fields["volunteer"].empty_label, "All volunteers")
+
+    def test_form_placeholder_in_title(self):
+        form = TaskSearchForm()
+        placeholder = form.fields["title"].widget.attrs["placeholder"]
+        self.assertEqual(placeholder, "Search by title")
