@@ -6,7 +6,8 @@ from django.urls import reverse
 
 from tasks.forms import (CategoryForm,
                          CategorySearchForm,
-                         CustomUserCreateForm, CustomUserUpdateForm, CustomUserSearchForm, TaskForm, TaskSearchForm)
+                         CustomUserCreateForm, CustomUserUpdateForm, CustomUserSearchForm, TaskForm, TaskSearchForm,
+                         TagForm, TagSearchForm)
 from tasks.models import Category, Tag
 
 
@@ -255,3 +256,42 @@ class TaskSearchFormTest(TestCase):
         form = TaskSearchForm()
         placeholder = form.fields["title"].widget.attrs["placeholder"]
         self.assertEqual(placeholder, "Search by title")
+
+
+class TagFormTest(TestCase):
+    def test_form_valid_with_field_name(self):
+        form_data = {
+            "name": "test name",
+        }
+        form = TagForm(data=form_data)
+        self.assertTrue(form.is_valid())
+
+    def test_form_invalid_if_name_is_empty(self):
+        form_data = {
+            "name": "",
+        }
+        form = TagForm(data=form_data)
+        self.assertIn("name", form.errors)
+
+
+class TagSearchFormTest(TestCase):
+    def test_form_valid_with_name_filled(self):
+        form_data = {
+            "name": "test name",
+        }
+        form = TagSearchForm(data=form_data)
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data["name"], "test name")
+
+    def test_form_valid_if_name_field_is_empty(self):
+        form_data = {
+            "name": "",
+        }
+        form = TagSearchForm(data=form_data)
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data["name"], "")
+
+    def test_form_with_placeholder(self):
+        form = TagSearchForm()
+        placeholder = form.fields["name"].widget.attrs["placeholder"]
+        self.assertEqual(placeholder, "Search by name")
