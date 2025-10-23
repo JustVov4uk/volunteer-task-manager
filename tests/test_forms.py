@@ -1,14 +1,15 @@
-from unicodedata import category
-
 from django.contrib.auth import get_user_model
+from django.template.defaulttags import comment
 from django.test import TestCase
-from django.urls import reverse
-
 from tasks.forms import (CategoryForm,
                          CategorySearchForm,
-                         CustomUserCreateForm, CustomUserUpdateForm, CustomUserSearchForm, TaskForm, TaskSearchForm,
-                         TagForm, TagSearchForm)
-from tasks.models import Category, Tag
+                         CustomUserCreateForm,
+                         CustomUserUpdateForm,
+                         CustomUserSearchForm,
+                         TaskForm, TaskSearchForm,
+                         TagForm, TagSearchForm,
+                         VolunteerReportForm)
+from tasks.models import Category, Tag, Task
 
 
 class CategoryFormTest(TestCase):
@@ -295,3 +296,46 @@ class TagSearchFormTest(TestCase):
         form = TagSearchForm()
         placeholder = form.fields["name"].widget.attrs["placeholder"]
         self.assertEqual(placeholder, "Search by name")
+
+
+class VolunteerReportFormTest(TestCase):
+    def setUp(self):
+        self.author = get_user_model().objects.create_user(
+            username="author",
+            role="volunteer",
+        )
+        self.other_author = get_user_model().objects.create_user(
+            username="other_author",
+            role="volunteer",
+        )
+        self.task = Task.objects.create(
+            title="test title",
+            assigned_to=self.author,
+        )
+        self.other_task = Task.objects.create(
+            title="other test title",
+            assigned_to=self.other_author,
+        )
+
+    def test_form_with_user_in_init(self):
+        form = VolunteerReportForm(user=self.author)
+        task_queryset = form.fields["task"].queryset
+
+        self.assertIn(self.task, task_queryset)
+        self.assertNotIn(self.other_task, task_queryset)
+        self.assertEqual(task_queryset.count(), 1)
+
+    def test_form_without_user_in_init(self):
+        form = VolunteerReportForm()
+        task_queryset = form.fields["task"].queryset
+        self.assertEqual(task_queryset.count(), 2)
+        self.assertIn(self.task, task_queryset)
+        self.assertIn(self.other_task, task_queryset)
+
+    def test_form_valid_with_comment_and_task(self):
+        form_data = {
+            "comment": "test comment",
+            "task": self.task,
+        }
+        form = VolunteerReportForm(data=form_data)
+        self.assertTrue(form.is_valid())
