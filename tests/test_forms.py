@@ -8,7 +8,7 @@ from tasks.forms import (CategoryForm,
                          CustomUserSearchForm,
                          TaskForm, TaskSearchForm,
                          TagForm, TagSearchForm,
-                         VolunteerReportForm)
+                         VolunteerReportForm, CoordinatorReportForm)
 from tasks.models import Category, Tag, Task
 
 
@@ -339,3 +339,33 @@ class VolunteerReportFormTest(TestCase):
         }
         form = VolunteerReportForm(data=form_data)
         self.assertTrue(form.is_valid())
+
+
+class CoordinatorReportFormTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            role="coordinator",
+        )
+        self.other_coordinator = get_user_model().objects.create_user(
+            username="other_coordinator",
+            role="coordinator",
+        )
+        self.volunteer = get_user_model().objects.create_user(
+            username="volunteer",
+            role="volunteer",
+        )
+
+    def test_form_with_only_coordinator_in_init(self):
+        form = CoordinatorReportForm()
+        verified_queryset = form.fields["verified_by"].queryset
+
+        self.assertIn(self.coordinator, verified_queryset)
+        self.assertIn(self.other_coordinator, verified_queryset)
+        self.assertNotIn(self.volunteer, verified_queryset)
+        self.assertEqual(verified_queryset.count(), 2)
+
+    def test_form_with_widget(self):
+        form = CoordinatorReportForm()
+        widget = form.fields["verified_at"].widget
+        self.assertEqual(getattr(widget, "input_type", None), "datetime-local")
