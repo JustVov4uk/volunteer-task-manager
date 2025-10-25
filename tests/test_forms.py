@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.template.defaulttags import comment
 from django.test import TestCase
 from tasks.forms import (CategoryForm,
                          CategorySearchForm,
@@ -8,7 +7,8 @@ from tasks.forms import (CategoryForm,
                          CustomUserSearchForm,
                          TaskForm, TaskSearchForm,
                          TagForm, TagSearchForm,
-                         VolunteerReportForm, CoordinatorReportForm)
+                         VolunteerReportForm, CoordinatorReportForm,
+                         ReportSearchForm)
 from tasks.models import Category, Tag, Task
 
 
@@ -369,3 +369,45 @@ class CoordinatorReportFormTest(TestCase):
         form = CoordinatorReportForm()
         widget = form.fields["verified_at"].widget
         self.assertEqual(getattr(widget, "input_type", None), "datetime-local")
+
+
+class ReportSearchFormTest(TestCase):
+    def setUp(self):
+        self.volunteer = get_user_model().objects.create_user(
+            username="volunteer",
+            role="volunteer",
+        )
+        self.other_volunteer = get_user_model().objects.create_user(
+            username="other_volunteer",
+            role="volunteer",
+        )
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            role="coordinator",
+        )
+    def test_form_valid_with_input_data(self):
+        form_data = {
+            "author": "test author",
+        }
+        form = ReportSearchForm(data=form_data)
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data["author"], "test author")
+
+    def test_form_author_filter_equal_role_volunteer(self):
+        form = ReportSearchForm()
+        filter_queryset = form.fields["author_filter"].queryset
+
+        self.assertIn(self.volunteer, filter_queryset)
+        self.assertIn(self.other_volunteer, filter_queryset)
+        self.assertNotIn(self.coordinator, filter_queryset)
+        self.assertEqual(filter_queryset.count(), 2)
+
+    def test_form_with_widget(self):
+        form = ReportSearchForm()
+        widget = form.fields["created_filter"].widget
+        self.assertEqual(getattr(widget, "input_type", None), "date")
+
+    def test_form_with_placeholder(self):
+        form = ReportSearchForm()
+        placeholder = form.fields["author"].widget.attrs["placeholder"]
+        self.assertEqual(placeholder, "Search by author")
