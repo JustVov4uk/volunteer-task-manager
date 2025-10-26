@@ -29,6 +29,9 @@ def index(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def coordinator_index(request: HttpRequest) -> HttpResponse:
+    if request.user.role !="coordinator":
+        raise PermissionDenied
+
     num_volunteers = CustomUser.objects.filter(role="volunteer").count()
     num_tasks = Task.objects.count()
     num_categories = Category.objects.count()
