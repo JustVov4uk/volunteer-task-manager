@@ -112,7 +112,9 @@ class VolunteerListViewTest(TestCase):
         self.client.login(username="coordinator", password="test password")
         for i in range(10):
             get_user_model().objects.create_user(
-                username=f"volunteer{i}", role="volunteer"
+                username=f"page_volunteer_{i}",
+                password="test password",
+                role="volunteer",
             )
         response = self.client.get(reverse("tasks:volunteer-list"))
         self.assertEqual(len(response.context["volunteer_list"]), 5)
@@ -129,3 +131,45 @@ class VolunteerListViewTest(TestCase):
         response = self.client.get(reverse("tasks:volunteer-list"))
         self.assertEqual(response.status_code, 302)
         self.assertIn("/login", response.url)
+
+
+class VolunteerDetailViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            password="test password",
+            role="coordinator",
+        )
+        self.volunteer1 = get_user_model().objects.create_user(
+            username="volunteer1",
+            password="other test password",
+            role="volunteer",
+        )
+        self.volunteer2 = get_user_model().objects.create_user(
+            username="volunteer2",
+            password="other test password",
+            role="volunteer",
+        )
+
+    def test_view_logged_user_status_200_and_context(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.get(reverse("tasks:volunteer-detail", args=[self.volunteer.id]))
+        self.assertEqual(response.status_code, 200)
+
+        self.assertIn("tasks_count", response.context)
+        self.assertIn("reports_count", response.context)
+        self.assertIn("tasks_completed", response.context)
+        self.assertIn("tasks_in_progress", response.context)
+
+    def test_view_redirect_for_anonymous(self):
+        response = self.client.get(reverse("tasks:volunteer-detail", args=[self.volunteer.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login", response.url)
+
+    def test_view_filtering_only_volunteers(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.get(reverse("tasks:volunteer-list"))
+
+        for user in response.context["volunteer_list"]:
+            self.assertEqual(user.role, "volunteer")
