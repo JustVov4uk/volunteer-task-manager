@@ -386,10 +386,48 @@ class CategoryCreateViewTest(TestCase):
 
     def test_view_permission_denied_if_not_coordinator(self):
         self.client.login(username="volunteer", password="other test password")
-        response = self.client.get(reverse("tasks:category-create"))
+        response = self.client.post(reverse("tasks:category-create"))
         self.assertEqual(response.status_code, 403)
 
     def test_view_redirect_for_anonymous(self):
         response = self.client.get(reverse("tasks:category-create"))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login", response.url)
+
+
+class CategoryUpdateViewTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            password="test password",
+            role="coordinator",
+        )
+        self.volunteer = get_user_model().objects.create_user(
+            username="volunteer",
+            password="other test password",
+            role="volunteer",
+        )
+        self.category = Category.objects.create(
+            name="test category",
+            description="test description",
+        )
+
+    def test_view_update_category_success(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.post(reverse("tasks:category-update", args=[self.category.id]), {
+            "name": "Products",
+            "description": "test description",
+        })
+        self.assertRedirects(response, reverse("tasks:category-list"))
+        self.category.refresh_from_db()
+        self.assertEqual(self.category.name, "Products")
+
+    def test_view_permission_denied_if_not_coordinator(self):
+        self.client.login(username="volunteer", password="other test password")
+        response = self.client.post(reverse("tasks:category-update", args=[self.category.id]))
+        self.assertEqual(response.status_code, 403)
+
+    def test_view_redirect_for_anonymous(self):
+        response = self.client.post(reverse("tasks:category-update", args=[self.category.id]))
         self.assertEqual(response.status_code, 302)
         self.assertIn("/login", response.url)
