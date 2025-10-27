@@ -431,3 +431,37 @@ class CategoryUpdateViewTest(TestCase):
         response = self.client.post(reverse("tasks:category-update", args=[self.category.id]))
         self.assertEqual(response.status_code, 302)
         self.assertIn("/login", response.url)
+
+
+class CategoryDeleteViewTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            password="test password",
+            role="coordinator",
+        )
+        self.volunteer = get_user_model().objects.create_user(
+            username="volunteer",
+            password="other test password",
+            role="volunteer",
+        )
+        self.category = Category.objects.create(
+            name="test category",
+            description="test description",
+        )
+
+    def test_view_delete_category_success(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.post(reverse("tasks:category-delete", args=[self.category.id]))
+        self.assertRedirects(response, reverse("tasks:category-list"))
+        self.assertFalse(Category.objects.filter(name="test category").exists())
+
+    def test_view_permission_denied_if_not_coordinator(self):
+        self.client.login(username="volunteer", password="other test password")
+        response = self.client.post(reverse("tasks:category-delete", args=[self.category.id]))
+        self.assertEqual(response.status_code, 403)
+
+    def test_view_redirect_for_anonymous(self):
+        response = self.client.post(reverse("tasks:category-delete", args=[self.category.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login", response.url)
