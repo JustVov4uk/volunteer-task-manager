@@ -154,7 +154,7 @@ class VolunteerDetailViewTest(TestCase):
 
     def test_view_logged_user_status_200_and_context(self):
         self.client.login(username="coordinator", password="test password")
-        response = self.client.get(reverse("tasks:volunteer-detail", args=[self.volunteer.id]))
+        response = self.client.get(reverse("tasks:volunteer-detail", args=[self.volunteer1.id]))
         self.assertEqual(response.status_code, 200)
 
         self.assertIn("tasks_count", response.context)
@@ -163,7 +163,7 @@ class VolunteerDetailViewTest(TestCase):
         self.assertIn("tasks_in_progress", response.context)
 
     def test_view_redirect_for_anonymous(self):
-        response = self.client.get(reverse("tasks:volunteer-detail", args=[self.volunteer.id]))
+        response = self.client.get(reverse("tasks:volunteer-detail", args=[self.volunteer1.id]))
         self.assertEqual(response.status_code, 302)
         self.assertIn("/login", response.url)
 
@@ -173,3 +173,109 @@ class VolunteerDetailViewTest(TestCase):
 
         for user in response.context["volunteer_list"]:
             self.assertEqual(user.role, "volunteer")
+
+
+class VolunteerCreateViewTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            password="test password",
+            role="coordinator",
+        )
+    def test_view_create_success(self):
+        self.client.login(username="coordinator", password="test password")
+        volunteer = {
+            "username": "volunteer",
+            "password1": "Complex1234!",
+            "password2": "Complex1234!",
+            "first_name": "test name",
+            "last_name": "test last name",
+            "role": "volunteer",
+        }
+        response = self.client.post(reverse("tasks:volunteer-create"), data=volunteer)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(
+            get_user_model().objects.filter(
+                username="volunteer",
+                first_name="test name",
+                last_name="test last name",
+                role="volunteer",
+            ).exists())
+
+    def test_view_redirect_if_not_coordinator(self):
+        self.client.login(username="volunteer", password="Complex1234!")
+        response = self.client.get(reverse("tasks:volunteer-create"))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login", response.url)
+
+    def test_view_redirect_for_anonymous(self):
+        response = self.client.get(reverse("tasks:volunteer-create"))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login", response.url)
+
+
+class VolunteerUpdateViewTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            password="test password",
+            role="coordinator",
+        )
+        self.volunteer = get_user_model().objects.create_user(
+            username="volunteer",
+            password="other test password",
+            role="volunteer",
+            city="test city",
+        )
+
+    def test_view_update_success(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.post(reverse(
+            "tasks:volunteer-update", args=[self.volunteer.id]), {
+            "username": "volunteer",
+            "role": "volunteer",
+            "city": "London",
+        })
+        self.assertRedirects(response, reverse("tasks:volunteer-list"))
+        self.volunteer.refresh_from_db()
+        self.assertEqual(self.volunteer.city, "London")
+
+    def test_view_permission_denied_if_not_coordinator(self):
+        self.client.login(username="volunteer", password="other test password")
+        response = self.client.get(reverse("tasks:volunteer-update", args=[self.volunteer.id]))
+        self.assertEqual(response.status_code, 403)
+
+    def test_view_redirect_for_anonymous(self):
+        response = self.client.get(reverse("tasks:volunteer-list"))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login", response.url)
+
+
+class VolunteerDeleteViewTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            password="test password",
+            role="coordinator",
+        )
+        self.volunteer = get_user_model().objects.create_user(
+            username="volunteer",
+            password="other test password",
+            role="volunteer",
+        )
+
+    def test_view_delete_success(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.post(reverse("tasks:volunteer-delete", args=[self.volunteer.id]))
+        self.assertRedirects(response, reverse("tasks:volunteer-list"))
+        self.assertFalse(get_user_model().objects.filter(username="volunteer").exists())
+
+    def test_view_permission_denied_if_not_coordinator(self):
+        self.client.login(username="volunteer", password="other test password")
+        response = self.client.get(reverse("tasks:volunteer-delete", args=[self.volunteer.id]))
+        self.assertEqual(response.status_code, 403)
+
+    def test_view_redirect_for_anonymous(self):
+        response = self.client.get(reverse("tasks:volunteer-list"))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login", response.url)

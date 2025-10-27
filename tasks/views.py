@@ -122,7 +122,6 @@ class VolunteerCreateView(LoginRequiredMixin, CoordinatorRequiredMixin, CreateVi
     success_url = reverse_lazy("tasks:volunteer-list")
 
 
-
 class VolunteerUpdateView(LoginRequiredMixin, CoordinatorRequiredMixin, UpdateView):
     model = CustomUser
     form_class = CustomUserUpdateForm
