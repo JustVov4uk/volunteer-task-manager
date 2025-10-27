@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
 from django.urls import reverse
 
+from tasks.models import Category
+
 
 class IndexViewTest(TestCase):
     def setUp(self):
@@ -279,3 +281,50 @@ class VolunteerDeleteViewTest(TestCase):
         response = self.client.get(reverse("tasks:volunteer-list"))
         self.assertEqual(response.status_code, 302)
         self.assertIn("/login", response.url)
+
+
+class CategoryListViewTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            password="test password",
+            role="coordinator",
+        )
+        self.category1 = Category.objects.create(
+            name="test category1",
+            description="test description",
+        )
+        self.category2 = Category.objects.create(
+            name="test category2",
+            description="test description",
+        )
+
+    def test_view_logged_used_200_and_context(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.get(reverse("tasks:category-list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("category_list", response.context)
+        self.assertIn("search_form", response.context)
+
+    def test_view_filtering_for_name(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.get(reverse("tasks:category-list") + "?name=test category1")
+        categories = response.context["category_list"]
+        self.assertEqual(len(categories), 1)
+        self.assertEqual(categories[0].name, "test category1")
+
+    def test_view_pagination(self):
+        self.client.login(username="coordinator", password="test password")
+        for category in range(15):
+            Category.objects.create(
+                name=f"test category{category}",
+                description="test description",
+            )
+        response = self.client.get(reverse("tasks:category-list"))
+        self.assertEqual(len(response.context["category_list"]), 5)
+
+    def test_view_redirect_for_anonymous(self):
+        response = self.client.get(reverse("tasks:category-list"))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login", response.url)
+
