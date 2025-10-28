@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
 from django.urls import reverse
 
-from tasks.models import Category
+from tasks.models import Category, Task, Tag
 
 
 class IndexViewTest(TestCase):
@@ -463,5 +463,128 @@ class CategoryDeleteViewTest(TestCase):
 
     def test_view_redirect_for_anonymous(self):
         response = self.client.post(reverse("tasks:category-delete", args=[self.category.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login", response.url)
+
+
+class TaskListViewTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            password="test password",
+            role="coordinator",
+        )
+        self.volunteer1 = get_user_model().objects.create_user(
+            username="volunteer1",
+            password="other test password",
+            role="volunteer",
+        )
+        self.volunteer2 = get_user_model().objects.create_user(
+            username="volunteer2",
+            password="other test password2",
+            role="volunteer",
+        )
+        self.category1 = Category.objects.create(
+            name="test category1",
+            description="test description",
+        )
+        self.category2 = Category.objects.create(
+            name="test category2",
+            description="test description",
+        )
+        self.tag1 = Tag.objects.create(
+            name="urgent",
+        )
+        self.tag2 = Tag.objects.create(
+            name="medicine",
+        )
+        self.task1 = Task.objects.create(
+            title="test task1",
+            category=self.category1,
+            status="active",
+            assigned_to=self.volunteer1,
+        )
+        self.task1.tags.add(self.tag1)
+
+        self.task2 = Task.objects.create(
+            title="test task2",
+            category=self.category2,
+            status="in_progress",
+            assigned_to=self.volunteer2,
+        )
+        self.task2.tags.add(self.tag2)
+
+    def test_view_coordinator_see_all_tasks(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.get(reverse("tasks:task-list"))
+
+        self.assertEqual(response.status_code, 200)
+        tasks = response.context["task_list"]
+        self.assertIn(self.task1, tasks)
+        self.assertIn(self.task2, tasks)
+        self.assertEqual(len(tasks), 2)
+
+    def test_view_volunteer_see_only_yourself_tasks(self):
+        self.client.login(username="volunteer1", password="other test password")
+        response = self.client.get(reverse("tasks:task-list"))
+
+        self.assertEqual(response.status_code, 200)
+        tasks = response.context["task_list"]
+        self.assertIn(self.task1, tasks)
+        self.assertEqual(len(tasks), 1)
+
+    def test_view_filtering_by_title(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.get(reverse("tasks:task-list")
+                                   + "?title=test task1",
+                                   )
+        tasks = response.context["task_list"]
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.task1, tasks)
+        self.assertNotIn(self.task2, tasks)
+
+    def test_view_filtering_by_status(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.get(reverse("tasks:task-list")
+                                   + "?status=in_progress",
+                                   )
+        tasks = response.context["task_list"]
+        self.assertIn(self.task2, tasks)
+        self.assertNotIn(self.task1, tasks)
+
+    def test_view_filtering_by_category(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.get(reverse("tasks:task-list")
+                                   + f"?category={self.category1.id}",
+                                   )
+        tasks = response.context["task_list"]
+        self.assertIn(self.task1, tasks)
+        self.assertNotIn(self.task2, tasks)
+
+    def test_view_filtering_by_tag(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.get(reverse("tasks:task-list"), {"tags": [self.tag1.id]})
+        tasks = response.context["task_list"]
+        self.assertIn(self.task1, tasks)
+        self.assertNotIn(self.task2, tasks)
+
+    def test_view_filtering_by_assigned_to(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.get(reverse("tasks:task-list"), {"volunteer": self.volunteer1.id })
+        tasks = response.context["task_list"]
+        self.assertIn(self.task1, tasks)
+        self.assertNotIn(self.task2, tasks)
+
+    def test_view_pagination(self):
+        self.client.login(username="coordinator", password="test password")
+        for task in range(15):
+            Task.objects.create(
+                title=f"test task{task}"
+            )
+        response = self.client.get(reverse("tasks:task-list"))
+        self.assertEqual(len(response.context["task_list"]), 5)
+
+    def test_view_redirect_for_anonymous(self):
+        response = self.client.get(reverse("tasks:task-list"))
         self.assertEqual(response.status_code, 302)
         self.assertIn("/login", response.url)
