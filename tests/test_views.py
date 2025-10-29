@@ -639,3 +639,43 @@ class TaskDetailViewTest(TestCase):
         response = self.client.get(reverse("tasks:task-detail", args=[self.task1.id]))
         self.assertEqual(response.status_code, 302)
         self.assertIn("/login", response.url)
+
+
+class TaskCreateViewTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            password="test password",
+            role="coordinator",
+        )
+        self.volunteer = get_user_model().objects.create_user(
+            username="volunteer",
+            password="other test password",
+            role="volunteer",
+        )
+        self.category = Category.objects.create(
+            name="test category",
+        )
+
+    def test_view_create_success(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.post(reverse("tasks:task-create"), {
+            "title": "test task",
+            "description": "test task",
+            "created_by": self.coordinator.id,
+            "assigned_to": self.volunteer.id,
+            "status": "active",
+            "category": self.category.id,
+        })
+        self.assertRedirects(response, reverse("tasks:task-list"))
+        self.assertTrue(Task.objects.filter(title="test task", assigned_to=self.volunteer).exists())
+
+    def test_view_permission_denied_if_not_coordinator(self):
+        self.client.login(username="volunteer", password="other test password")
+        response = self.client.post(reverse("tasks:task-create"))
+        self.assertEqual(response.status_code, 403)
+
+    def test_view_redirect_for_anonymous(self):
+        response = self.client.get(reverse("tasks:task-list"))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login", response.url)
