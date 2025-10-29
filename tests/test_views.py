@@ -747,3 +747,36 @@ class TaskUpdateViewTest(TestCase):
         self.assertEqual(response.status_code, 302)
 
 
+class TaskDeleteViewTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            password="test password",
+            role="coordinator",
+        )
+        self.volunteer = get_user_model().objects.create_user(
+            username="volunteer",
+            password="other test password",
+            role="volunteer",
+        )
+        self.task = Task.objects.create(
+            title="test task",
+            assigned_to=self.volunteer,
+            status="in_progress",
+        )
+
+    def test_view_delete_success(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.post(reverse("tasks:task-delete", args=[self.task.id]))
+        self.assertRedirects(response, reverse("tasks:task-list"))
+        self.assertFalse(Task.objects.filter(title="test task").exists())
+
+    def test_view_permission_denied_if_not_coordinator(self):
+        self.client.login(username="volunteer", password="other test password")
+        response = self.client.post(reverse("tasks:task-delete", args=[self.task.id]))
+        self.assertEqual(response.status_code, 403)
+
+    def test_view_redirect_for_anonymous(self):
+        response = self.client.get(reverse("tasks:task-list"))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login", response.url)
