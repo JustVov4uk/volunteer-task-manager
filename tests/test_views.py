@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -679,3 +681,69 @@ class TaskCreateViewTest(TestCase):
         response = self.client.get(reverse("tasks:task-list"))
         self.assertEqual(response.status_code, 302)
         self.assertIn("/login", response.url)
+
+
+class TaskUpdateViewTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            password="test password",
+            role="coordinator",
+        )
+        self.volunteer1 = get_user_model().objects.create_user(
+            username="volunteer1",
+            password="other test password",
+            role="volunteer",
+        )
+        self.volunteer2 = get_user_model().objects.create_user(
+            username="volunteer2",
+            password="other test password2",
+            role="volunteer",
+        )
+        self.category = Category.objects.create(
+            name="test category",
+        )
+        self.task = Task.objects.create(
+            title="test task",
+            assigned_to=self.volunteer1,
+            status="active",
+        )
+
+    def test_view_update_success(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.post(reverse("tasks:task-update", args=[self.task.id]), {
+            "title": "test task",
+            "description": "test task",
+            "created_by": self.coordinator.id,
+            "assigned_to": self.volunteer1.id,
+            "status": "in_progress",
+            "category": self.category.id,
+        })
+
+        self.assertRedirects(response, reverse("tasks:task-list"))
+        self.task.refresh_from_db()
+        self.assertEqual(self.task.status, "in_progress")
+
+    @patch("tasks.views.notify_task_assigned")
+    def test_view_check_notify_task_if_change_assigned_to(self, mock_notify):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.post(reverse("tasks:task-update", args=[self.task.id]), {
+            "title": "test task",
+            "description": "test task",
+            "created_by": self.coordinator.id,
+            "assigned_to": self.volunteer2.id,
+            "status": "in_progress",
+            "category": self.category.id,
+        })
+
+        self.assertRedirects(response, reverse("tasks:task-list"))
+        self.task.refresh_from_db()
+        self.assertEqual(self.task.assigned_to, self.volunteer2)
+        mock_notify.assert_called_once_with(self.task)
+
+    def test_view_redirect_if_not_coordinator(self):
+        self.client.login(username="volunteer", password="test password")
+        response = self.client.post(reverse("tasks:task-update", args=[self.task.id]))
+        self.assertEqual(response.status_code, 302)
+
+
