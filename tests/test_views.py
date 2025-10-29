@@ -588,3 +588,54 @@ class TaskListViewTest(TestCase):
         response = self.client.get(reverse("tasks:task-list"))
         self.assertEqual(response.status_code, 302)
         self.assertIn("/login", response.url)
+
+
+class TaskDetailViewTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            password="test password",
+            role="coordinator",
+        )
+        self.volunteer1 = get_user_model().objects.create_user(
+            username="volunteer1",
+            password="other test password",
+            role="volunteer",
+        )
+        self.volunteer2 = get_user_model().objects.create_user(
+            username="volunteer2",
+            password="other test password2",
+            role="volunteer",
+        )
+        self.task1 = Task.objects.create(
+            title="test task1",
+            assigned_to=self.volunteer1,
+        )
+        self.task2 = Task.objects.create(
+            title="test task2",
+            assigned_to=self.volunteer2,
+        )
+
+    def test_view_coordinator_see_all_tasks(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.get(reverse("tasks:task-detail", args=[self.task1.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["task"], self.task1)
+
+        response = self.client.get(reverse("tasks:task-detail", args=[self.task2.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["task"], self.task2)
+
+    def test_view_volunteer_see_only_yourself_tasks(self):
+        self.client.login(username="volunteer1", password="other test password")
+        response = self.client.get(reverse("tasks:task-detail", args=[self.task1.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["task"], self.task1)
+
+        response = self.client.get(reverse("tasks:task-detail", args=[self.task2.id]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_view_redirect_for_anonymous(self):
+        response = self.client.get(reverse("tasks:task-detail", args=[self.task1.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login", response.url)
