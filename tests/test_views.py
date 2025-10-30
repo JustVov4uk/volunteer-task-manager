@@ -913,3 +913,36 @@ class TagUpdateViewTest(TestCase):
         response = self.client.post(reverse("tasks:tag-update", args=[self.tag.id]))
         self.assertEqual(response.status_code, 302)
         self.assertIn("/login", response.url)
+
+
+class TagDeleteViewTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            password="test password",
+            role="coordinator",
+        )
+        self.volunteer = get_user_model().objects.create_user(
+            username="volunteer",
+            password="other test password",
+            role="volunteer",
+        )
+        self.tag = Tag.objects.create(
+            name="test tag",
+        )
+
+    def test_view_delete_success(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.post(reverse("tasks:tag-delete", args=[self.tag.id]))
+        self.assertRedirects(response, reverse("tasks:tag-list"))
+        self.assertFalse(Tag.objects.filter(name="test tag").exists())
+
+    def test_view_permission_denied_if_not_coordinator(self):
+        self.client.login(username="volunteer", password="other test password")
+        response = self.client.post(reverse("tasks:tag-delete", args=[self.tag.id]))
+        self.assertEqual(response.status_code, 403)
+
+    def test_view_redirect_for_anonymous(self):
+        response = self.client.post(reverse("tasks:tag-delete", args=[self.tag.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login", response.url)
