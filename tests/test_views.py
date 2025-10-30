@@ -825,4 +825,55 @@ class TagListViewTest(TestCase):
         self.assertIn("/login", response.url)
 
 
+class TagDetailViewTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            password="test password",
+            role="coordinator",
+        )
+        self.tag = Tag.objects.create(
+            name="test tag",
+        )
+    def test_view_status_code_200(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.get(reverse("tasks:tag-detail", args=[self.tag.id]))
+        self.assertEqual(response.status_code, 200)
 
+    def test_view_redirect_for_anonymous(self):
+        response = self.client.get(reverse("tasks:tag-detail", args=[self.tag.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login", response.url)
+
+
+class TagCreateViewTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            password="test password",
+            role="coordinator",
+        )
+        self.volunteer = get_user_model().objects.create_user(
+            username="volunteer",
+            password="other test password",
+            role="volunteer",
+        )
+
+    def test_view_create_success(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.post(reverse("tasks:tag-create"), data={
+            "name": "test tag",
+        })
+        self.assertRedirects(response, reverse("tasks:tag-list"))
+        self.assertEqual(Tag.objects.count(), 1)
+        self.assertTrue(Tag.objects.filter(name="test tag").exists())
+
+    def test_view_permission_denied_if_not_coordinator(self):
+        self.client.login(username="volunteer", password="other test password")
+        response = self.client.post(reverse("tasks:tag-create"))
+        self.assertEqual(response.status_code, 403)
+
+    def test_view_redirect_for_anonymous(self):
+        response = self.client.get(reverse("tasks:tag-create"))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login", response.url)
