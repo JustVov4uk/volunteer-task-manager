@@ -780,3 +780,49 @@ class TaskDeleteViewTest(TestCase):
         response = self.client.get(reverse("tasks:task-list"))
         self.assertEqual(response.status_code, 302)
         self.assertIn("/login", response.url)
+
+
+class TagListViewTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            password="test password",
+            role="coordinator",
+        )
+        self.tag1 = Tag.objects.create(
+            name="test tag1",
+        )
+        self.tag2 = Tag.objects.create(
+            name="test tag2",
+        )
+
+    def test_view_status_code_200_and_context(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.get(reverse("tasks:tag-list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("tag_list", response.context)
+        self.assertIn("search_form", response.context)
+
+    def test_view_filtering_by_name(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.get(reverse("tasks:tag-list") + "?name=test tag1")
+        tags = response.context["tag_list"]
+        self.assertEqual(len(tags), 1)
+        self.assertEqual(tags[0].name, "test tag1")
+
+    def test_view_pagination(self):
+        self.client.login(username="coordinator", password="test password")
+        for i in range(15):
+            Tag.objects.create(
+                name=f"tag{i}",
+            )
+        response = self.client.get(reverse("tasks:tag-list"))
+        self.assertEqual(len(response.context["tag_list"]), 5)
+
+    def test_view_redirect_for_anonymous(self):
+        response = self.client.get(reverse("tasks:tag-list"))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login", response.url)
+
+
+

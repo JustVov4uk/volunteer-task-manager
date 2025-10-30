@@ -7,7 +7,8 @@ from tasks.forms import (CategoryForm,
                          CustomUserSearchForm,
                          TaskForm, TaskSearchForm,
                          TagForm, TagSearchForm,
-                         VolunteerReportForm, CoordinatorReportForm,
+                         VolunteerReportForm,
+                         CoordinatorReportForm,
                          ReportSearchForm)
 from tasks.models import Category, Tag, Task
 
