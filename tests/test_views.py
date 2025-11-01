@@ -1,10 +1,12 @@
+from datetime import datetime
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
 from django.urls import reverse
+from django.utils.timezone import make_aware
 
-from tasks.models import Category, Task, Tag
+from tasks.models import Category, Task, Tag, Report
 
 
 class IndexViewTest(TestCase):
@@ -944,5 +946,91 @@ class TagDeleteViewTest(TestCase):
 
     def test_view_redirect_for_anonymous(self):
         response = self.client.post(reverse("tasks:tag-delete", args=[self.tag.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login", response.url)
+
+
+class ReportListViewTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            password="test password",
+            role="coordinator",
+        )
+        self.volunteer1 = get_user_model().objects.create_user(
+            username="volunteer1",
+            password="other test password1",
+            role="volunteer",
+        )
+        self.volunteer2 = get_user_model().objects.create_user(
+            username="volunteer2",
+            password="other test password2",
+            role="volunteer",
+        )
+        self.task1 = Task.objects.create(
+            title="test task",
+        )
+        self.task2 = Task.objects.create(
+            title="another task",
+        )
+        self.report1 = Report.objects.create(
+            comment="test report",
+            author=self.volunteer1,
+            task=self.task1,
+            verified_by=self.coordinator,
+        )
+        self.report2 = Report.objects.create(
+            comment="another report",
+            author=self.volunteer2,
+            task=self.task2,
+            verified_by=self.coordinator
+        )
+
+    def test_view_coordinator_see_all_reports(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.get(reverse("tasks:report-list"))
+        self.assertEqual(response.status_code, 200)
+        reports = response.context["report_list"]
+        self.assertIn(self.report1, reports)
+        self.assertIn(self.report2, reports)
+        self.assertEqual(len(reports), 2)
+
+    def test_view_volunteer_see_only_yourself_reports(self):
+        self.client.login(username="volunteer1", password="other test password1")
+        response = self.client.get(reverse("tasks:report-list"))
+        self.assertEqual(response.status_code, 200)
+        reports = response.context["report_list"]
+        self.assertIn(self.report1, reports)
+        self.assertNotIn(self.report2, reports)
+        self.assertEqual(len(reports), 1)
+
+    def test_view_filtering_by_author(self):
+        self.client.login(username="volunteer1", password="other test password1")
+        response = self.client.get(reverse("tasks:report-list")
+                                   + "?author=volunteer1"
+                                   )
+        reports = response.context["report_list"]
+        self.assertIn(self.report1, reports)
+        self.assertNotIn(self.report2, reports)
+
+    def test_view_filtering_by_author_filter(self):
+        self.client.login(username="volunteer1", password="other test password1")
+        response = self.client.get(reverse("tasks:report-list"), {"author_filter": self.volunteer1.id})
+        reports = response.context["report_list"]
+        self.assertIn(self.report1, reports)
+        self.assertNotIn(self.report2, reports)
+
+    def test_view_pagination(self):
+        self.client.login(username="coordinator", password="test password")
+        for report in range(15):
+            Report.objects.create(
+                comment=f"test report{report}",
+                task=self.task1,
+            )
+        response = self.client.get(reverse("tasks:report-list"))
+        self.assertEqual(len(response.context["report_list"]), 5)
+
+    def test_view_redirect_for_anonymous(self):
+        response = self.client.get(reverse("tasks:report-list"))
         self.assertEqual(response.status_code, 302)
         self.assertIn("/login", response.url)
