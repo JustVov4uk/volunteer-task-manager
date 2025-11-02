@@ -1,11 +1,7 @@
-from datetime import datetime
 from unittest.mock import patch
-
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
 from django.urls import reverse
-from django.utils.timezone import make_aware
-
 from tasks.models import Category, Task, Tag, Report
 
 
@@ -1096,3 +1092,36 @@ class ReportDetailViewTest(TestCase):
         response = self.client.get(reverse("tasks:report-detail", args=[self.task1.id]))
         self.assertEqual(response.status_code, 302)
         self.assertIn("/login", response.url)
+
+
+class ReportCreateViewTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            password="test password",
+            role="coordinator",
+        )
+        self.volunteer = get_user_model().objects.create_user(
+            username="volunteer",
+            password="test password",
+            role="volunteer",
+        )
+        self.task = Task.objects.create(
+            title="test task",
+        )
+
+    def test_view_create_success(self):
+        self.client.login(username="volunteer", password="test password")
+        response = self.client.post(reverse("tasks:report-create"), {
+            "comment": "test report",
+            "author": self.volunteer.id,
+            "task": self.task.id,
+        })
+
+        self.assertRedirects(response, reverse("tasks:report-list"))
+        self.assertTrue(Report.objects.filter(task=self.task.id).exists())
+
+    def test_view_permission_denied_if_not_volunteer(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.post(reverse("tasks:report-create"))
+        self.assertEqual(response.status_code, 403)
