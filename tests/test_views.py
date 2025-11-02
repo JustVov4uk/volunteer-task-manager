@@ -1174,3 +1174,40 @@ class ReportUpdateViewTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn("/login", response.url)
 
+
+class ReportDeleteViewTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            password="test password",
+            role="coordinator",
+        )
+        self.volunteer = get_user_model().objects.create_user(
+            username="volunteer",
+            password="other test password",
+            role="volunteer",
+        )
+        self.task = Task.objects.create(
+            title="test task",
+        )
+        self.report = Report.objects.create(
+            comment="test report",
+            author=self.volunteer,
+            task=self.task,
+        )
+
+    def test_view_delete_success(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.post(reverse("tasks:report-delete", args=[self.report.id]))
+        self.assertRedirects(response, reverse("tasks:report-list"))
+        self.assertFalse(Report.objects.filter(comment="test report").exists())
+
+    def test_view_permission_denied_if_not_coordinator(self):
+        self.client.login(username="volunteer", password="other test password")
+        response = self.client.post(reverse("tasks:report-delete", args=[self.report.id]))
+        self.assertEqual(response.status_code, 403)
+
+    def test_view_redirect_for_anonymous(self):
+        response = self.client.post(reverse("tasks:report-delete", args=[self.report.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login", response.url)
