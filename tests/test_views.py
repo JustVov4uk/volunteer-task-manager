@@ -1,7 +1,12 @@
+from datetime import timedelta
+
+from django.utils import timezone
 from unittest.mock import patch
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
 from django.urls import reverse
+
+
 from tasks.models import Category, Task, Tag, Report
 
 
@@ -1125,3 +1130,47 @@ class ReportCreateViewTest(TestCase):
         self.client.login(username="coordinator", password="test password")
         response = self.client.post(reverse("tasks:report-create"))
         self.assertEqual(response.status_code, 403)
+
+
+class ReportUpdateViewTest(TestCase):
+    def setUp(self):
+        self.coordinator = get_user_model().objects.create_user(
+            username="coordinator",
+            password="test password",
+            role="coordinator",
+        )
+        self.volunteer = get_user_model().objects.create_user(
+            username="volunteer",
+            password="other test password",
+            role="volunteer",
+        )
+        self.task = Task.objects.create(
+            title="test task",
+        )
+        self.report = Report.objects.create(
+            comment="test report",
+            author=self.volunteer,
+            task=self.task,
+        )
+
+    def test_view_update_success(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.post(reverse("tasks:report-update", args=[self.report.id]), {
+            "comment": "test report",
+            "author": self.volunteer.id,
+            "task": self.task.id,
+        })
+        self.assertRedirects(response, reverse("tasks:report-list"))
+        self.report.refresh_from_db()
+        self.assertAlmostEqual(self.report.verified_at, timezone.now(), delta=timedelta(seconds=5))
+
+    def test_view_permission_denied_if_not_coordinator(self):
+        self.client.login(username="volunteer", password="other test password")
+        response = self.client.post(reverse("tasks:report-update", args=[self.report.id]))
+        self.assertEqual(response.status_code, 403)
+
+    def test_view_redirect_for_anonymous(self):
+        response = self.client.post(reverse("tasks:report-update", args=[self.report.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login", response.url)
+
