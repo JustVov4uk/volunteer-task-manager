@@ -12,7 +12,8 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    list_display = UserAdmin.list_display + ("role", "phone_number", "city", "avatar_thumb")
+    list_display = (UserAdmin.list_display +
+                    ("role", "phone_number", "city", "avatar_thumb"))
     list_filter = ("role", "city", "is_active")
     search_fields = ("username", "city")
     fieldsets = UserAdmin.fieldsets + (
@@ -21,10 +22,12 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = UserAdmin.add_fieldsets + (
         (None, {"fields": ("role", "phone_number", "city")}),
     )
+
     def avatar_thumb(self, obj):
         if obj.profile_image:
-            return format_html('<img src="{}" style="width:32px;height:32px;object-fit:cover;'
-                               'border-radius:50%;">', obj.profile_image.url)
+            return format_html(
+                '<img src="{}" style="width:32px;height:32px;object-fit:cover;'
+                'border-radius:50%;">', obj.profile_image.url)
         return ""
     avatar_thumb.short_description = "Avatar"
 
@@ -51,6 +54,7 @@ class TaskAdmin(admin.ModelAdmin):
 
 @admin.register(Report)
 class ReportAdmin(admin.ModelAdmin):
-    list_display = ["author", "comment", "created_at", "task", "verified_by", "verified_at"]
+    list_display = ["author", "comment", "created_at",
+                    "task", "verified_by", "verified_at"]
     list_filter = ("author", "task", "created_at")
     search_fields = ("author",)

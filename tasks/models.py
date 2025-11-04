@@ -16,10 +16,13 @@ class CustomUser(AbstractUser):
         ("coordinator", "Coordinator"),
         ("volunteer", "Volunteer"),
     )
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="volunteer", db_index=True)
-    phone_number = models.CharField(max_length=25, unique=True, blank=True, null=True)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES,
+                            default="volunteer", db_index=True)
+    phone_number = models.CharField(max_length=25, unique=True,
+                                    blank=True, null=True)
     city = models.CharField(max_length=50, blank=True)
-    profile_image = models.ImageField(upload_to="images/", null=True, blank=True)
+    profile_image = models.ImageField(upload_to="images/",
+                                      null=True, blank=True)
 
     class Meta:
         ordering = ("username",)
@@ -52,7 +55,8 @@ class Task(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=500, blank=True)
     created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, related_name="created_tasks",
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
+        related_name="created_tasks",
         null=True, blank=True
     )
     assigned_to = models.ForeignKey(
@@ -62,10 +66,12 @@ class Task(models.Model):
         null=True,
         blank=True,
     )
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="active", db_index=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES,
+                              default="active", db_index=True)
     deadline = models.DateTimeField(null=True, blank=True, db_index=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL,
-                                 null=True, db_index=True, related_name="tasks")
+                                 null=True, db_index=True,
+                                 related_name="tasks")
     tags = models.ManyToManyField(Tag, blank=True, related_name="tasks")
 
     class Meta:
@@ -86,7 +92,8 @@ class Report(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
-    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="reports_task")
+    task = models.ForeignKey(Task, on_delete=models.CASCADE,
+                             related_name="reports_task")
     verified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,

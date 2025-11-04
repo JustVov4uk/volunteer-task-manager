@@ -26,13 +26,17 @@ class CategorySearchForm(forms.Form):
 class CustomUserCreateForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ("username", "role", "first_name", "last_name", "email", "phone_number", "city", "profile_image")
+        fields = ("username", "role", "first_name",
+                  "last_name", "email", "phone_number",
+                  "city", "profile_image")
 
 
 class CustomUserUpdateForm(UserChangeForm):
     class Meta:
         model = CustomUser
-        fields = ("username", "role", "first_name", "last_name", "email", "phone_number", "city", "profile_image")
+        fields = ("username", "role", "first_name",
+                  "last_name", "email", "phone_number",
+                  "city", "profile_image")
 
 
 class CustomUserSearchForm(forms.Form):
@@ -47,6 +51,7 @@ class CustomUserSearchForm(forms.Form):
         )
     )
 
+
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
@@ -59,8 +64,10 @@ class TaskForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["assigned_to"].queryset = CustomUser.objects.filter(role="volunteer")
-        self.fields["created_by"].queryset = CustomUser.objects.filter(role="coordinator")
+        self.fields["assigned_to"].queryset = CustomUser.objects.filter(
+            role="volunteer")
+        self.fields["created_by"].queryset = CustomUser.objects.filter(
+            role="coordinator")
 
 
 class TaskSearchForm(forms.Form):
@@ -130,8 +137,8 @@ class VolunteerReportForm(forms.ModelForm):
         user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
         if user:
-            self.fields["task"].queryset = Task.objects.filter(assigned_to=user)
-
+            self.fields["task"].queryset = Task.objects.filter(
+                assigned_to=user)
 
 
 class CoordinatorReportForm(forms.ModelForm):
@@ -146,7 +153,8 @@ class CoordinatorReportForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["verified_by"].queryset = CustomUser.objects.filter(role="coordinator")
+        self.fields["verified_by"].queryset = CustomUser.objects.filter(
+            role="coordinator")
 
 
 class ReportSearchForm(forms.Form):

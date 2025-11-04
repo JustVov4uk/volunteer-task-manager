@@ -3,7 +3,9 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
 
-def send_email_notification(subject: str, template: str, context: dict, to_email: str):
+
+def send_email_notification(subject: str, template: str,
+                            context: dict, to_email: str):
     if not to_email:
         return
     html_message = render_to_string(template, context)
@@ -17,6 +19,7 @@ def send_email_notification(subject: str, template: str, context: dict, to_email
         html_message=html_message,
     )
 
+
 def notify_task_assigned(task):
     user = task.assigned_to
     if user and user.email:
@@ -27,6 +30,7 @@ def notify_task_assigned(task):
             context=context,
             to_email=user.email,
         )
+
 
 def notify_report_verified(report):
     user = report.author

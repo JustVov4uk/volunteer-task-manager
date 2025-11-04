@@ -23,13 +23,14 @@ from tasks.notifications import notify_task_assigned, notify_report_verified
 
 @login_required
 def index(request: HttpRequest) -> HttpResponse:
-    if request.user.role =="coordinator":
+    if request.user.role == "coordinator":
         return redirect("tasks:coordinator-index")
     return redirect("tasks:volunteer-index")
 
+
 @login_required
 def coordinator_index(request: HttpRequest) -> HttpResponse:
-    if request.user.role !="coordinator":
+    if request.user.role != "coordinator":
         raise PermissionDenied
 
     num_volunteers = CustomUser.objects.filter(role="volunteer").count()
@@ -40,7 +41,7 @@ def coordinator_index(request: HttpRequest) -> HttpResponse:
     status_counts = (Task.objects.values("status")
                      .annotate(count=Count("status"))
                      .order_by()
-    )
+                )
 
     context = {
         "num_volunteers": num_volunteers,
@@ -50,6 +51,7 @@ def coordinator_index(request: HttpRequest) -> HttpResponse:
         "status_counts": list(status_counts),
     }
     return render(request, "tasks/index_coordinator.html", context=context)
+
 
 @login_required
 def volunteer_index(request: HttpRequest) -> HttpResponse:
@@ -110,26 +112,30 @@ class VolunteerDetailView(LoginRequiredMixin, generic.DetailView):
         context["tasks_count"] = tasks.count()
         context["reports_count"] = volunteer.reports_authored.count()
         context["tasks_completed"] = tasks.filter(status="completed").count()
-        context["tasks_in_progress"] = tasks.filter(status="in_progress").count()
+        context["tasks_in_progress"] = tasks.filter(
+            status="in_progress").count()
 
         return context
 
 
-class VolunteerCreateView(LoginRequiredMixin, CoordinatorRequiredMixin, CreateView):
+class VolunteerCreateView(LoginRequiredMixin,
+                          CoordinatorRequiredMixin, CreateView):
     model = CustomUser
     form_class = CustomUserCreateForm
     template_name = "tasks/volunteer_form.html"
     success_url = reverse_lazy("tasks:volunteer-list")
 
 
-class VolunteerUpdateView(LoginRequiredMixin, CoordinatorRequiredMixin, UpdateView):
+class VolunteerUpdateView(LoginRequiredMixin,
+                          CoordinatorRequiredMixin, UpdateView):
     model = CustomUser
     form_class = CustomUserUpdateForm
     template_name = "tasks/volunteer_form.html"
     success_url = reverse_lazy("tasks:volunteer-list")
 
 
-class VolunteerDeleteView(LoginRequiredMixin, CoordinatorRequiredMixin, DeleteView):
+class VolunteerDeleteView(LoginRequiredMixin,
+                          CoordinatorRequiredMixin, DeleteView):
     model = CustomUser
     success_url = reverse_lazy("tasks:volunteer-list")
     template_name = "tasks/volunteer_confirm_delete.html"
@@ -162,31 +168,34 @@ class CategoryDetailView(LoginRequiredMixin, generic.DetailView):
     model = Category
 
 
-class CategoryCreateView(LoginRequiredMixin, CoordinatorRequiredMixin, CreateView):
+class CategoryCreateView(LoginRequiredMixin,
+                         CoordinatorRequiredMixin, CreateView):
     model = Category
     form_class = CategoryForm
     success_url = reverse_lazy("tasks:category-list")
 
 
-class CategoryUpdateView(LoginRequiredMixin, CoordinatorRequiredMixin, UpdateView):
+class CategoryUpdateView(LoginRequiredMixin,
+                         CoordinatorRequiredMixin, UpdateView):
     model = Category
     form_class = CategoryForm
     success_url = reverse_lazy("tasks:category-list")
 
 
-class CategoryDeleteView(LoginRequiredMixin, CoordinatorRequiredMixin, DeleteView):
+class CategoryDeleteView(LoginRequiredMixin,
+                         CoordinatorRequiredMixin, DeleteView):
     model = Category
     success_url = reverse_lazy("tasks:category-list")
+
 
 class TaskListView(LoginRequiredMixin, generic.ListView):
     model = Task
     paginate_by = 5
 
     def get_context_data(
-        self, *, object_list = ..., **kwargs
+        self, *, object_list=..., **kwargs
     ):
         context = super(TaskListView, self).get_context_data(**kwargs)
-        title = self.request.GET.get("title")
         context["search_form"] = TaskSearchForm(self.request.GET)
         return context
 
@@ -244,7 +253,7 @@ class TaskCreateView(LoginRequiredMixin, CoordinatorRequiredMixin, CreateView):
         return response
 
 
-class TaskUpdateView(LoginRequiredMixin,CoordinatorRequiredMixin, UpdateView):
+class TaskUpdateView(LoginRequiredMixin, CoordinatorRequiredMixin, UpdateView):
     model = Task
     form_class = TaskForm
     success_url = reverse_lazy("tasks:task-list")
@@ -261,12 +270,13 @@ class TaskDeleteView(LoginRequiredMixin, CoordinatorRequiredMixin, DeleteView):
     model = Task
     success_url = reverse_lazy("tasks:task-list")
 
+
 class TagListView(LoginRequiredMixin, generic.ListView):
     model = Tag
     paginate_by = 5
 
     def get_context_data(
-        self, *, object_list = ..., **kwargs
+        self, *, object_list=..., **kwargs
     ):
         context = super(TagListView, self).get_context_data(**kwargs)
         name = self.request.GET.get("name")
@@ -311,10 +321,9 @@ class ReportListView(LoginRequiredMixin, generic.ListView):
     paginate_by = 5
 
     def get_context_data(
-        self, *, object_list = ..., **kwargs
+        self, *, object_list=..., **kwargs
     ):
         context = super(ReportListView, self).get_context_data(**kwargs)
-        author = self.request.GET.get("author")
         context["search_form"] = ReportSearchForm(self.request.GET)
         return context
 
@@ -332,7 +341,8 @@ class ReportListView(LoginRequiredMixin, generic.ListView):
             author_filter = form.cleaned_data.get("author_filter")
             created_filter = form.cleaned_data.get("created_filter")
             if author_text:
-                queryset = queryset.filter(author__username__icontains=author_text)
+                queryset = queryset.filter(
+                    author__username__icontains=author_text)
             if author_filter:
                 queryset = queryset.filter(author=author_filter)
             if created_filter:
@@ -367,7 +377,9 @@ class ReportCreateView(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
-class ReportUpdateView(LoginRequiredMixin, CoordinatorRequiredMixin, UpdateView):
+
+class ReportUpdateView(LoginRequiredMixin,
+                       CoordinatorRequiredMixin, UpdateView):
     model = Report
     form_class = CoordinatorReportForm
     success_url = reverse_lazy("tasks:report-list")
@@ -380,6 +392,7 @@ class ReportUpdateView(LoginRequiredMixin, CoordinatorRequiredMixin, UpdateView)
         return response
 
 
-class ReportDeleteView(LoginRequiredMixin, CoordinatorRequiredMixin, DeleteView):
+class ReportDeleteView(LoginRequiredMixin,
+                       CoordinatorRequiredMixin, DeleteView):
     model = Report
     success_url = reverse_lazy("tasks:report-list")

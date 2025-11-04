@@ -3,6 +3,7 @@ from django.http import HttpRequest
 
 register = template.Library()
 
+
 @register.simple_tag
 def query_transform(request: HttpRequest, **kwargs):
     updated = request.GET.copy()
