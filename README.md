@@ -39,11 +39,14 @@ Coordinators can create and assign tasks, while volunteers can complete them and
 
 - **Python 3.12**  
 - **Django 5**  
-- **SQLite**  
+- **SQLite**
+- **HTML/CSS**
 - **Bootstrap 5**  
 - **Django ORM**  
 - **unittest**  
 - **SMTP email backend**
+- **Git**
+- **GitHub**
 
 ---
 
@@ -56,6 +59,7 @@ python -m venv venv
 source venv/bin/activate   # or venv\Scripts\activate on Windows
 pip install -r requirements.txt
 python manage.py migrate
+python manage.py loaddata fixtures/data.json  # to load example data
 python manage.py runserver
 ```
 
