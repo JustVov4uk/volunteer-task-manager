@@ -31,19 +31,27 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
-INSTALLED_APPS = [
+# Django apps
+django_apps = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+]
+#Third-party apps
+third_party_apps = [
     "crispy_forms",
     "crispy_bootstrap5",
     "debug_toolbar",
+]
+#Local apps
+local_apps = [
     "tasks",
 ]
+
+INSTALLED_APPS = django_apps + third_party_apps + local_apps
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
