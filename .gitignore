@@ -1,2 +1,7 @@
 .idea
+.env
 .venv/
+/media/
+__pycache__/
+db.sqlite3
+.coverage

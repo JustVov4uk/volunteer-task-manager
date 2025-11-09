@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+  <h1 class="h4 mb-4 text-center">Coordinator Dashboard</h1>
+
+  <style>
+    .hover-shadow { transition: all 0.2s ease-in-out; }
+    .hover-shadow:hover {
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      transform: translateY(-3px);
+    }
+  </style>
+
+  <div class="row g-4 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+      <a href="{% url 'tasks:volunteer-list' %}" class="text-decoration-none text-dark">
+        <div class="card border-0 shadow-sm text-center h-100 hover-shadow" style="cursor:pointer;">
+          <div class="card-body">
+            <h3 class="h2 mb-1">{{ num_volunteers }}</h3>
+            <div class="small text-muted">Volunteers</div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <a href="{% url 'tasks:task-list' %}" class="text-decoration-none text-dark">
+        <div class="card border-0 shadow-sm text-center h-100 hover-shadow" style="cursor:pointer;">
+          <div class="card-body">
+            <h3 class="h2 mb-1">{{ num_tasks }}</h3>
+            <div class="small text-muted">Tasks</div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <a href="{% url 'tasks:report-list' %}" class="text-decoration-none text-dark">
+        <div class="card border-0 shadow-sm text-center h-100 hover-shadow" style="cursor:pointer;">
+          <div class="card-body">
+            <h3 class="h2 mb-1">{{ num_reports }}</h3>
+            <div class="small text-muted">Reports</div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <a href="{% url 'tasks:category-list' %}" class="text-decoration-none text-dark">
+        <div class="card border-0 shadow-sm text-center h-100 hover-shadow" style="cursor:pointer;">
+          <div class="card-body">
+            <h3 class="h2 mb-1">{{ num_categories }}</h3>
+            <div class="small text-muted">Categories</div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-light text-center">
+          <h5 class="mb-0">Tasks by Status</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="statusChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const statusData = {{ status_counts|safe }};
+  const labels = statusData.map(i => i.status);
+  const data = statusData.map(i => i.count);
+
+  new Chart(document.getElementById('statusChart'), {
+    type: 'pie',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: ['#36A2EB','#FFCE56','#4BC0C0','#FF6384'],
+        hoverOffset: 15
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' },
+        tooltip: {
+          callbacks: {
+            label: ctx => `${ctx.label}: ${ctx.parsed} tasks`
+          }
+        }
+      },
+      onClick: (e, el) => {
+        if (el.length > 0) {
+          const status = labels[el[0].index];
+          const url = new URL("{% url 'tasks:task-list' %}", window.location.origin);
+          url.searchParams.set("status", status);
+          window.location.href = url;
+        }
+      }
+    }
+  });
+</script>
+{% endblock %}

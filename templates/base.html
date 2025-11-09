@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% block title %}
+    <title>Volunteer Task Manager</title>
+  {% endblock %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/volt.css' %}">
+  <style>
+      /* фон тільки для логіну */
+      body.login-page {
+          background: url("{% static 'assets/img/image_fon.webp' %}") center/cover no-repeat fixed;
+          background-color: #0057b7;
+      }
+
+      body.login-page::before {
+          content: "";
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.15);
+          z-index: -1;
+      }
+
+      /* основний фон для решти сторінок */
+      body.default-page {
+          background-color: #f8f9fa;
+      }
+
+      /* прибирає відступ контенту на сторінці логіну */
+      body.login-page main.content {
+          margin-left: 0 !important;
+          padding-left: 0 !important;
+      }
+  </style>
+
+</head>
+
+<body class="d-flex flex-column min-vh-100
+  {% if request.resolver_match.url_name == 'login' %}
+    login-page
+  {% else %}
+    default-page
+  {% endif %}">
+
+  {% if request.resolver_match.url_name != "login" %}
+    {% include "includes/sidebar.html" %}
+  {% endif %}
+
+  <main class="flex-fill content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="mt-auto py-3 bg-light border-top text-center text-muted">
+    <div class="container">
+      <p class="mb-1">© {{ now|date:"Y" }} Volunteer Task Manager</p>
+      <small>
+        Made with ❤️ by
+        <a href="https://github.com/JustVov4uk" target="_blank" class="text-decoration-none">JustVov4uk</a>
+      </small>
+    </div>
+  </footer>
+
+  <script src="{% static 'vendor/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/js/volt.js' %}"></script>
+</body>
+</html>

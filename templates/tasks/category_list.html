@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
+    <h1 class="h4 mb-3 mb-md-0">Categories</h1>
+    {% if request.user.role == "coordinator" %}
+      <a href="{% url 'tasks:category-create' %}" class="btn btn-success">Add Category</a>
+    {% endif %}
+  </div>
+
+  {% include "includes/search_form.html" %}
+
+  {% if category_list %}
+    <div class="card border-0 shadow-sm">
+      <div class="table-responsive">
+        <table class="table table-hover table-centered align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for category in category_list %}
+              <tr onclick="window.location='{% url 'tasks:category-detail' pk=category.id %}'" style="cursor:pointer;">
+                <td>{{ category.name }}</td>
+                <td>{{ category.description|truncatechars:40 }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% else %}
+    <p class="text-muted">There are no categories.</p>
+  {% endif %}
+  {% include "includes/pagination.html" %}
+</div>
+{% endblock %}
