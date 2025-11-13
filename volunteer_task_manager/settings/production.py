@@ -4,7 +4,7 @@ from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "volunteer-task-manager.onrender.com"]
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
