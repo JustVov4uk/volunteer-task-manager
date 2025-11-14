@@ -1,0 +1,3 @@
+<h3>You have been assigned a task: {{ task.title }}</h3>
+<p>Description: {{ task.description|default:"—" }}</p>
+<p>Deadline: {{ task.deadline|date:"Y-m-d H:i"|default:"—" }}</p>

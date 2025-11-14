@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h4 mb-0">Tasks</h1>
+    {% if request.user.role == "coordinator" %}
+      <a class="btn btn-primary" href="{% url 'tasks:task-create' %}">
+        <i class="bi bi-plus-circle"></i> Add Task
+      </a>
+    {% endif %}
+  </div>
+
+  <form method="get" class="row g-2 mb-4">
+    <div class="col-md-3">
+      {{ search_form.title }}
+    </div>
+    <div class="col-md-2">
+      {{ search_form.status }}
+    </div>
+    <div class="col-md-2">
+      {{ search_form.category }}
+    </div>
+    <div class="col-md-2">
+      {{ search_form.tags }}
+    </div>
+    {% if request.user.role == "coordinator" %}
+      <div class="col-md-2">
+        {{ search_form.volunteer }}
+      </div>
+    {% endif %}
+    <div class="col-md-1 d-grid">
+      <button type="submit" class="btn btn-outline-primary">Filter</button>
+    </div>
+  </form>
+
+  {% if task_list %}
+    <div class="card border-0 shadow-sm">
+      <div class="table-responsive">
+        <table class="table table-centered table-hover mb-0">
+          <thead class="thead-light">
+            <tr>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Created by</th>
+              <th>Assigned to</th>
+              <th>Status</th>
+              <th>Deadline</th>
+              <th>Category</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for task in task_list %}
+              <tr onclick="window.location='{% url 'tasks:task-detail' pk=task.id %}'" style="cursor: pointer;">
+                <td title="{{ task.title }}">{{ task.title|truncatechars:30 }}</td>
+                <td title="{{ task.description }}">{{ task.description|truncatechars:40 }}</td>
+                <td>{{ task.created_by }}</td>
+                <td>{{ task.assigned_to|default:"—" }}</td>
+                <td>
+                  {% if task.status == "active" %}
+                    <span class="badge bg-warning text-dark">Active</span>
+                  {% elif task.status == "in_progress" %}
+                    <span class="badge bg-info text-dark">In Progress</span>
+                  {% elif task.status == "completed" %}
+                    <span class="badge bg-success">Completed</span>
+                  {% elif task.status == "suspended" %}
+                    <span class="badge bg-secondary">Suspended</span>
+                  {% else %}
+                    {{ task.status }}
+                  {% endif %}
+                </td>
+                <td>{{ task.deadline|date:"d.m.Y H:i"|default:"—" }}</td>
+                <td>{{ task.category.name }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% else %}
+    <div class="alert alert-info" role="alert">
+      No tasks found.
+    </div>
+  {% endif %}
+</div>
+
+{% include "includes/pagination.html" %}
+{% endblock %}

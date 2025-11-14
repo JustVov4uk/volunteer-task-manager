@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm border-0">
+      <div class="card-body text-center">
+        <h3 class="card-title mb-3">Delete Report?</h3>
+        <p>Are you sure you want to delete <strong>Report #{{ report.id }}</strong> ({{ report.task.title }})?</p>
+        <form action="" method="post" class="d-inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger me-2">Yes, delete</button>
+        </form>
+        <a href="{% url 'tasks:report-detail' pk=report.id %}" class="btn btn-secondary">Cancel</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

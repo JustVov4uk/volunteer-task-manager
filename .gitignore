@@ -1,12 +1,8 @@
 .idea
-<<<<<<< HEAD
 .venv/
-=======
 .env
-.venv/
 /media/
 __pycache__/
 db.sqlite3
 .coverage
-/staticfiles/
->>>>>>> 5d7a07b (add staticfiles to .gitignore and add Render domain to ALLOWED_HOSTS)
+/staticfiles
