@@ -6,7 +6,7 @@ Coordinators can create and assign tasks, while volunteers can complete them and
 ---
 🌐 Live Demo
 
-Задеплоєна версія проєкту:
+Deployed version of project:
 https://volunteer-task-manager.onrender.com/accounts/login/
 
 ## 🧾 Test Accounts
