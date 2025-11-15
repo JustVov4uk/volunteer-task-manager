@@ -4,6 +4,23 @@
 Coordinators can create and assign tasks, while volunteers can complete them and submit reports.
 
 ---
+🌐 Live Demo
+
+Задеплоєна версія проєкту:
+https://volunteer-task-manager.onrender.com/accounts/login/
+
+## 🧾 Test Accounts
+
+**Coordinator:**  
+- Login: `administrator1`  
+- Password: `Me262VoV`
+
+**Volunteer:**  
+- Login: `vol_tanya`  
+- Password: `GoodPass123!`
+
+> These are example accounts for testing only.  
+> Use your own credentials when deploying or testing locally.
 
 ## 🚀 Features
 
@@ -88,22 +105,7 @@ EMAIL_HOST_PASSWORD=your_email_app_password
 > For Gmail, create an **App Password** in your Google Account and use it instead of your real password.
 
 ---
-
-## 🧾 Test Accounts
-
-**Coordinator (admin):**  
-- Login: `administrator`  
-- Password: `Me262VoV`
-
-**Volunteer:**  
-- Login: `vol_tanya`  
-- Password: `GoodPass123!`
-
-> These are example accounts for testing only.  
-> Use your own credentials when deploying or testing locally.
-
 ---
-
 ## 📸 Screenshots
 
 > Screenshots of all pages are located in `/screenshots/`  
