@@ -1,15 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h4 mb-0">Reports</h1>
+<div class="page-shell py-4">
+  <div class="page-header">
+    <div>
+      <div class="eyebrow">Review flow</div>
+      <h1 class="page-title">Reports</h1>
+      <p class="page-subtitle">Review volunteer updates, verification status, and completed task evidence.</p>
+    </div>
 
     {% if request.user.role == "volunteer" %}
       <a class="btn btn-success" href="{% url 'tasks:report-create' %}">Add Report</a>
     {% endif %}
   </div>
 
-  <form method="get" class="row g-2 mb-4">
+  <form method="get" class="toolbar-panel">
+    <div class="row g-3 align-items-end">
     <div class="col-md-3">
       {{ search_form.author }}
     </div>
@@ -22,13 +28,14 @@
     <div class="col-md-3">
       <button type="submit" class="btn btn-primary w-100">Apply</button>
     </div>
+    </div>
   </form>
 
   {% if report_list %}
-    <div class="card border-0 shadow-sm">
+    <div class="table-card responsive-card-table">
       <div class="table-responsive">
-        <table class="table table-centered table-nowrap mb-0">
-          <thead class="thead-light">
+        <table class="table table-centered table-modern mb-0">
+          <thead>
             <tr>
               <th scope="col">Author</th>
               <th scope="col">Comment</th>
@@ -40,14 +47,21 @@
           </thead>
           <tbody>
             {% for report in report_list %}
-              <tr class="clickable-row {% if not report.verified_at %}table-warning{% endif %}"
+              <tr class="clickable-row"
                   onclick="window.location='{% url 'tasks:report-detail' pk=report.id %}'">
-                <td>{{ report.author|default:"—" }}</td>
-                <td title="{{ report.comment }}">{{ report.comment|truncatechars:40 }}</td>
-                <td>{{ report.created_at|date:"Y-m-d H:i" }}</td>
-                <td>{{ report.task }}</td>
-                <td>{{ report.verified_by|default:"—" }}</td>
-                <td>{{ report.verified_at|date:"d.m.Y H:i"|default:"—" }}</td>
+                <td data-label="Author" class="title-cell">{{ report.author|default:"—" }}</td>
+                <td data-label="Comment" class="muted-cell" title="{{ report.comment }}">{{ report.comment|truncatechars:56 }}</td>
+                <td data-label="Created at">{{ report.created_at|date:"Y-m-d H:i" }}</td>
+                <td data-label="Task">{{ report.task|truncatechars:42 }}</td>
+                <td data-label="Verified by">{{ report.verified_by|default:"—" }}</td>
+                <td data-label="Verified at">
+                  {% if report.verified_at %}
+                    <span class="status-pill status-completed">Verified</span>
+                    <div class="small text-muted mt-1">{{ report.verified_at|date:"Y-m-d H:i" }}</div>
+                  {% else %}
+                    <span class="status-pill status-active">Pending</span>
+                  {% endif %}
+                </td>
               </tr>
             {% endfor %}
           </tbody>
@@ -55,8 +69,9 @@
       </div>
     </div>
   {% else %}
-    <p class="text-muted text-center">There are no reports.</p>
+    <div class="empty-state">There are no reports.</div>
   {% endif %}
 
   {% include "includes/pagination.html" %}
+</div>
 {% endblock %}

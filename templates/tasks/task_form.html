@@ -2,24 +2,47 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="py-4">
-  <div class="card border-0 shadow-sm">
-    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">
-        {{ object|yesno:"Update Task,Create Task" }}
-      </h5>
-    </div>
-    <div class="card-body">
-      <form action="" method="post" enctype="multipart/form-data" novalidate>
-        {% csrf_token %}
-        {{ form.non_field_errors }}
-        {{ form|crispy }}
-        <div class="mt-3">
-          <button type="submit" class="btn btn-primary">Save</button>
-          <a href="{% url 'tasks:task-list' %}" class="btn btn-outline-secondary">Cancel</a>
-        </div>
-      </form>
+<div class="form-shell py-4">
+  <div class="page-header">
+    <div>
+      <div class="eyebrow">Task editor</div>
+      <h1 class="page-title">{{ object|yesno:"Update Task,Create Task" }}</h1>
+      <p class="page-subtitle">Define the work, assign a volunteer, set the deadline, and attach operational tags.</p>
     </div>
   </div>
+
+  <form action="" method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="task-form-grid">
+      <section class="form-section">
+        <h2 class="form-section-title">Task Details</h2>
+        {{ form.title|as_crispy_field }}
+        {{ form.description|as_crispy_field }}
+      </section>
+
+      <div>
+        <section class="form-section mb-3">
+          <h2 class="form-section-title">Assignment</h2>
+          {{ form.created_by|as_crispy_field }}
+          {{ form.assigned_to|as_crispy_field }}
+          {{ form.status|as_crispy_field }}
+          {{ form.deadline|as_crispy_field }}
+        </section>
+
+        <section class="form-section">
+          <h2 class="form-section-title">Classification</h2>
+          {{ form.category|as_crispy_field }}
+          {{ form.tags|as_crispy_field }}
+        </section>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <a href="{% url 'tasks:task-list' %}" class="btn btn-outline-secondary">Cancel</a>
+      <button type="submit" class="btn btn-primary">Save Task</button>
+    </div>
+  </form>
 </div>
 {% endblock %}

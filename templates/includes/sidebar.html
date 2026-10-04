@@ -22,9 +22,10 @@
       </div>
     </div>
 
+    {% with current=request.resolver_match.url_name %}
     <ul class="nav flex-column pt-3 pt-md-0">
       <li class="nav-item">
-        <a href="{% url 'tasks:index' %}" class="nav-link d-flex align-items-center">
+        <a href="{% url 'tasks:index' %}" class="nav-link d-flex align-items-center {% if current == 'index' %}active{% endif %}">
           <span class="sidebar-icon">
             <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20">
               <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM9 5a1 1 0 112 0v5a1 1 0 01-2 0V5zm1 8a1.25 1.25 0 110 2.5A1.25 1.25 0 0110 13z"/>
@@ -33,11 +34,31 @@
           <span class="sidebar-text">Dashboard</span>
         </a>
       </li>
-      <li class="nav-item"><a href="{% url 'tasks:volunteer-list' %}" class="nav-link"><span class="sidebar-text">Volunteers</span></a></li>
-      <li class="nav-item"><a href="{% url 'tasks:task-list' %}" class="nav-link"><span class="sidebar-text">Tasks</span></a></li>
-      <li class="nav-item"><a href="{% url 'tasks:category-list' %}" class="nav-link"><span class="sidebar-text">Categories</span></a></li>
-      <li class="nav-item"><a href="{% url 'tasks:tag-list' %}" class="nav-link"><span class="sidebar-text">Tags</span></a></li>
-      <li class="nav-item"><a href="{% url 'tasks:report-list' %}" class="nav-link"><span class="sidebar-text">Reports</span></a></li>
+      <li class="nav-item">
+        <a href="{% url 'tasks:volunteer-list' %}" class="nav-link {% if current == 'volunteer-list' or current == 'volunteer-detail' or current == 'volunteer-create' or current == 'volunteer-update' or current == 'volunteer-delete' %}active{% endif %}">
+          <span class="sidebar-text">Volunteers</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{% url 'tasks:task-list' %}" class="nav-link {% if current == 'task-list' or current == 'task-detail' or current == 'task-create' or current == 'task-update' or current == 'task-delete' %}active{% endif %}">
+          <span class="sidebar-text">Tasks</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{% url 'tasks:category-list' %}" class="nav-link {% if current == 'category-list' or current == 'category-detail' or current == 'category-create' or current == 'category-update' or current == 'category-delete' %}active{% endif %}">
+          <span class="sidebar-text">Categories</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{% url 'tasks:tag-list' %}" class="nav-link {% if current == 'tag-list' or current == 'tag-detail' or current == 'tag-create' or current == 'tag-update' or current == 'tag-delete' %}active{% endif %}">
+          <span class="sidebar-text">Tags</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{% url 'tasks:report-list' %}" class="nav-link {% if current == 'report-list' or current == 'report-detail' or current == 'report-create' or current == 'report-update' or current == 'report-delete' %}active{% endif %}">
+          <span class="sidebar-text">Reports</span>
+        </a>
+      </li>
 
       <li role="separator" class="dropdown-divider mt-4 mb-3 border-gray-700"></li>
 
@@ -58,5 +79,6 @@
         </li>
       {% endif %}
     </ul>
+    {% endwith %}
   </div>
 </aside>

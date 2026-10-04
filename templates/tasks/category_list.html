@@ -1,21 +1,25 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container py-4">
-  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
-    <h1 class="h4 mb-3 mb-md-0">Categories</h1>
+<div class="page-shell py-4">
+  <div class="page-header">
+    <div>
+      <div class="eyebrow">Work streams</div>
+      <h1 class="page-title">Categories</h1>
+      <p class="page-subtitle">Group volunteer tasks by operational direction and responsibility area.</p>
+    </div>
     {% if request.user.role == "coordinator" %}
-      <a href="{% url 'tasks:category-create' %}" class="btn btn-success">Add Category</a>
+      <a href="{% url 'tasks:category-create' %}" class="btn btn-primary">Add Category</a>
     {% endif %}
   </div>
 
   {% include "includes/search_form.html" %}
 
   {% if category_list %}
-    <div class="card border-0 shadow-sm">
+    <div class="table-card responsive-card-table">
       <div class="table-responsive">
-        <table class="table table-hover table-centered align-middle mb-0">
-          <thead class="table-light">
+        <table class="table table-hover table-centered table-modern align-middle mb-0">
+          <thead>
             <tr>
               <th>Name</th>
               <th>Description</th>
@@ -24,8 +28,8 @@
           <tbody>
             {% for category in category_list %}
               <tr class="clickable-row" onclick="window.location='{% url 'tasks:category-detail' pk=category.id %}'">
-                <td>{{ category.name }}</td>
-                <td>{{ category.description|truncatechars:40 }}</td>
+                <td data-label="Name" class="title-cell">{{ category.name }}</td>
+                <td data-label="Description" class="muted-cell">{{ category.description|truncatechars:70 }}</td>
               </tr>
             {% endfor %}
           </tbody>
@@ -33,7 +37,7 @@
       </div>
     </div>
   {% else %}
-    <p class="text-muted">There are no categories.</p>
+    <div class="empty-state">There are no categories.</div>
   {% endif %}
   {% include "includes/pagination.html" %}
 </div>

@@ -1,23 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="py-4">
-    <div class="card border-0 shadow-sm">
-      <div class="card-header bg-white d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">{{ task.title }}</h5>
-        {% if request.user.role == "coordinator" %}
-          <div>
-            <a href="{% url 'tasks:task-update' pk=task.id %}" class="btn btn-sm btn-warning me-2">Update</a>
-            <a href="{% url 'tasks:task-delete' pk=task.id %}" class="btn btn-sm btn-danger">Delete</a>
-          </div>
-        {% endif %}
+  <div class="page-shell py-4">
+    <div class="page-header">
+      <div>
+        <div class="eyebrow">Task details</div>
+        <h1 class="page-title">{{ task.title }}</h1>
+        <p class="page-subtitle">Task assignment, status, category, and tags.</p>
       </div>
 
-      <div class="card-body">
-        <div class="mb-3">
-          <strong>Description:</strong>
-          <p class="mb-0 text-break">{{ task.description }}</p>
-        </div>
+      <div class="d-flex gap-2">
+        {% if request.user.role == "coordinator" %}
+          <a href="{% url 'tasks:task-update' pk=task.id %}" class="btn btn-primary">Update</a>
+          <a href="{% url 'tasks:task-delete' pk=task.id %}" class="btn btn-outline-danger">Delete</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="form-shell">
+      <div class="form-section">
+        <h2 class="form-section-title">Description</h2>
+        <p class="mb-0 text-break">{{ task.description }}</p>
+      </div>
+
+      <div class="form-section">
+        <h2 class="form-section-title">Assignment</h2>
 
         <div class="row mb-2">
           <div class="col-sm-4 fw-bold">Created by:</div>
@@ -27,7 +34,11 @@
         <div class="row mb-2">
           <div class="col-sm-4 fw-bold">Assigned to:</div>
           <div class="col-sm-8">
-            <a href="{% url 'tasks:volunteer-detail' pk=task.assigned_to.id %}">{{ task.assigned_to.username|default:"—" }}</a>
+            {% if task.assigned_to %}
+              <a href="{% url 'tasks:volunteer-detail' pk=task.assigned_to.id %}">{{ task.assigned_to.username }}</a>
+            {% else %}
+              —
+            {% endif %}
           </div>
         </div>
 
@@ -35,13 +46,13 @@
           <div class="col-sm-4 fw-bold">Status:</div>
           <div class="col-sm-8">
             {% if task.status == "active" %}
-              <span class="badge bg-success">Active</span>
+              <span class="status-pill status-active">Active</span>
             {% elif task.status == "in_progress" %}
-              <span class="badge bg-info text-dark">In Progress</span>
+              <span class="status-pill status-progress">In Progress</span>
             {% elif task.status == "completed" %}
-              <span class="badge bg-secondary">Completed</span>
+              <span class="status-pill status-completed">Completed</span>
             {% elif task.status == "suspended" %}
-              <span class="badge bg-warning text-dark">Suspended</span>
+              <span class="status-pill status-suspended">Suspended</span>
             {% else %}
               {{ task.status }}
             {% endif %}
@@ -52,17 +63,21 @@
           <div class="col-sm-4 fw-bold">Deadline:</div>
           <div class="col-sm-8">{{ task.deadline|date:"d.m.Y H:i"|default:"—" }}</div>
         </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="form-section-title">Classification</h2>
 
         <div class="row mb-2">
           <div class="col-sm-4 fw-bold">Category:</div>
-          <div class="col-sm-8">{{ task.category.name }}</div>
+          <div class="col-sm-8">{{ task.category.name|default:"—" }}</div>
         </div>
 
         <div class="row">
           <div class="col-sm-4 fw-bold">Tags:</div>
           <div class="col-sm-8">
             {% for tag in task.tags.all %}
-              <span class="badge bg-primary me-1">{{ tag.name }}</span>
+              <span class="tag-chip d-inline-flex me-1 mb-1">{{ tag.name }}</span>
             {% empty %}
               —
             {% endfor %}
@@ -70,8 +85,9 @@
         </div>
       </div>
     </div>
-    <div class="mt-3 text-center">
-      <a href="{% url 'tasks:task-list' %}" class="btn btn-outline-secondary btn-sm">Back to list</a>
+
+    <div class="mt-3">
+      <a href="{% url 'tasks:task-list' %}" class="btn btn-outline-secondary">Back to list</a>
     </div>
   </div>
 {% endblock %}

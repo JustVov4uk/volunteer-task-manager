@@ -1,98 +1,125 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container py-4">
-  <h1 class="h4 mb-4 text-center">Coordinator Dashboard</h1>
-
-  <div class="row g-4 mb-4">
-    <div class="col-12 col-sm-6 col-xl-3">
-      <a href="{% url 'tasks:volunteer-list' %}" class="text-decoration-none text-dark">
-        <div class="card border-0 shadow-sm text-center h-100 dashboard-card">
-          <div class="card-body">
-            <h3 class="h2 mb-1">{{ num_volunteers }}</h3>
-            <div class="small text-muted">Volunteers</div>
-          </div>
-        </div>
-      </a>
+<div class="page-shell py-4">
+  <div class="page-header">
+    <div>
+      <div class="eyebrow">Coordinator workspace</div>
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-subtitle">
+        Monitor volunteer activity, assigned tasks, submitted reports, and task status distribution.
+      </p>
     </div>
-
-    <div class="col-12 col-sm-6 col-xl-3">
-      <a href="{% url 'tasks:task-list' %}" class="text-decoration-none text-dark">
-        <div class="card border-0 shadow-sm text-center h-100 dashboard-card">
-          <div class="card-body">
-            <h3 class="h2 mb-1">{{ num_tasks }}</h3>
-            <div class="small text-muted">Tasks</div>
-          </div>
-        </div>
-      </a>
-    </div>
-
-    <div class="col-12 col-sm-6 col-xl-3">
-      <a href="{% url 'tasks:report-list' %}" class="text-decoration-none text-dark">
-        <div class="card border-0 shadow-sm text-center h-100 dashboard-card">
-          <div class="card-body">
-            <h3 class="h2 mb-1">{{ num_reports }}</h3>
-            <div class="small text-muted">Reports</div>
-          </div>
-        </div>
-      </a>
-    </div>
-
-    <div class="col-12 col-sm-6 col-xl-3">
-      <a href="{% url 'tasks:category-list' %}" class="text-decoration-none text-dark">
-        <div class="card border-0 shadow-sm text-center h-100 dashboard-card">
-          <div class="card-body">
-            <h3 class="h2 mb-1">{{ num_categories }}</h3>
-            <div class="small text-muted">Categories</div>
-          </div>
-        </div>
-      </a>
-    </div>
+    <a href="{% url 'tasks:task-create' %}" class="btn btn-primary">Create Task</a>
   </div>
 
-  <div class="row justify-content-center">
-    <div class="col-lg-6">
-      <div class="card border-0 shadow-sm">
-        <div class="card-header bg-light text-center">
-          <h5 class="mb-0">Tasks by Status</h5>
-        </div>
-        <div class="card-body">
-          <canvas id="statusChart"></canvas>
-        </div>
+  <div class="dashboard-grid">
+    <a href="{% url 'tasks:volunteer-list' %}" class="metric-card">
+      <div class="metric-label">Volunteers</div>
+      <div class="metric-value">{{ num_volunteers }}</div>
+      <div class="metric-note">People available for assignments</div>
+      <div class="metric-mark">V</div>
+    </a>
+
+    <a href="{% url 'tasks:task-list' %}" class="metric-card">
+      <div class="metric-label">Tasks</div>
+      <div class="metric-value">{{ num_tasks }}</div>
+      <div class="metric-note">Planned and running work</div>
+      <div class="metric-mark">T</div>
+    </a>
+
+    <a href="{% url 'tasks:report-list' %}" class="metric-card">
+      <div class="metric-label">Reports</div>
+      <div class="metric-value">{{ num_reports }}</div>
+      <div class="metric-note">Volunteer updates submitted</div>
+      <div class="metric-mark">R</div>
+    </a>
+
+    <a href="{% url 'tasks:category-list' %}" class="metric-card">
+      <div class="metric-label">Categories</div>
+      <div class="metric-value">{{ num_categories }}</div>
+      <div class="metric-note">Operational work streams</div>
+      <div class="metric-mark">C</div>
+    </a>
+  </div>
+
+  <div class="chart-layout">
+    <section class="card border-0 shadow-sm">
+      <div class="card-header bg-white">
+        <h5 class="mb-0">Tasks by Status</h5>
       </div>
-    </div>
+      <div class="chart-shell">
+        <canvas id="statusChart"></canvas>
+      </div>
+    </section>
+
+    <aside class="card border-0 shadow-sm">
+      <div class="card-header bg-white">
+        <h5 class="mb-0">Quick Review</h5>
+      </div>
+      <div class="card-body insight-list">
+        <div class="insight-item">
+          <div class="small text-muted">Next action</div>
+          <div class="fw-semibold">Review reports and assign open tasks.</div>
+        </div>
+        <div class="insight-item">
+          <div class="small text-muted">Workflow</div>
+          <div class="fw-semibold">Tasks move through active, in progress, completed, or suspended.</div>
+        </div>
+        <a href="{% url 'tasks:report-list' %}" class="btn btn-outline-primary w-100">Open Reports</a>
+      </div>
+    </aside>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   const statusData = {{ status_counts|safe }};
-  const labels = statusData.map(i => i.status);
+  const labelMap = {
+    active: "Active",
+    completed: "Completed",
+    in_progress: "In Progress",
+    suspended: "Suspended"
+  };
+  const labels = statusData.map(i => labelMap[i.status] || i.status);
   const data = statusData.map(i => i.count);
+  const statusValues = statusData.map(i => i.status);
 
   new Chart(document.getElementById('statusChart'), {
-    type: 'pie',
+    type: 'bar',
     data: {
       labels,
       datasets: [{
+        label: 'Tasks',
         data,
-        backgroundColor: ['#36A2EB','#FFCE56','#4BC0C0','#FF6384'],
-        hoverOffset: 15
+        backgroundColor: ['#f59e0b', '#10b981', '#0ea5e9', '#64748b'],
+        borderRadius: 8,
+        maxBarThickness: 52
       }]
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
-        legend: { position: 'bottom' },
+        legend: { display: false },
         tooltip: {
           callbacks: {
             label: ctx => `${ctx.label}: ${ctx.parsed} tasks`
           }
         }
       },
+      scales: {
+        x: {
+          grid: { display: false }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: { precision: 0 }
+        }
+      },
       onClick: (e, el) => {
         if (el.length > 0) {
-          const status = labels[el[0].index];
+          const status = statusValues[el[0].index];
           const url = new URL("{% url 'tasks:task-list' %}", window.location.origin);
           url.searchParams.set("status", status);
           window.location.href = url;

@@ -1,10 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="py-4">
+<div class="page-shell py-4">
 
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h4 mb-0">Tasks</h1>
+  <div class="page-header">
+    <div>
+      <div class="eyebrow">Operations</div>
+      <h1 class="page-title">Tasks</h1>
+      <p class="page-subtitle">Track assignments, deadlines, categories, and current execution status.</p>
+    </div>
     {% if request.user.role == "coordinator" %}
       <a class="btn btn-primary" href="{% url 'tasks:task-create' %}">
         Add Task
@@ -12,7 +16,8 @@
     {% endif %}
   </div>
 
-  <form method="get" class="row g-2 mb-4">
+  <form method="get" class="toolbar-panel">
+    <div class="row g-3 align-items-end">
     <div class="col-md-3">
       {{ search_form.title }}
     </div>
@@ -30,16 +35,17 @@
         {{ search_form.volunteer }}
       </div>
     {% endif %}
-    <div class="col-md-1 d-grid">
-      <button type="submit" class="btn btn-outline-primary">Filter</button>
+    <div class="col-md d-grid">
+      <button type="submit" class="btn btn-primary">Filter</button>
+    </div>
     </div>
   </form>
 
   {% if task_list %}
-    <div class="card border-0 shadow-sm">
+    <div class="table-card responsive-card-table">
       <div class="table-responsive">
-        <table class="table table-centered table-hover mb-0">
-          <thead class="thead-light">
+        <table class="table table-centered table-hover table-modern mb-0">
+          <thead>
             <tr>
               <th>Title</th>
               <th>Description</th>
@@ -53,25 +59,25 @@
           <tbody>
             {% for task in task_list %}
               <tr class="clickable-row" onclick="window.location='{% url 'tasks:task-detail' pk=task.id %}'">
-                <td title="{{ task.title }}">{{ task.title|truncatechars:30 }}</td>
-                <td title="{{ task.description }}">{{ task.description|truncatechars:40 }}</td>
-                <td>{{ task.created_by }}</td>
-                <td>{{ task.assigned_to|default:"—" }}</td>
-                <td>
+                <td data-label="Title" class="title-cell" title="{{ task.title }}">{{ task.title|truncatechars:36 }}</td>
+                <td data-label="Description" class="muted-cell" title="{{ task.description }}">{{ task.description|truncatechars:52 }}</td>
+                <td data-label="Created by">{{ task.created_by }}</td>
+                <td data-label="Assigned to">{{ task.assigned_to|default:"—" }}</td>
+                <td data-label="Status">
                   {% if task.status == "active" %}
-                    <span class="badge bg-warning text-dark">Active</span>
+                    <span class="status-pill status-active">Active</span>
                   {% elif task.status == "in_progress" %}
-                    <span class="badge bg-info text-dark">In Progress</span>
+                    <span class="status-pill status-progress">In Progress</span>
                   {% elif task.status == "completed" %}
-                    <span class="badge bg-success">Completed</span>
+                    <span class="status-pill status-completed">Completed</span>
                   {% elif task.status == "suspended" %}
-                    <span class="badge bg-secondary">Suspended</span>
+                    <span class="status-pill status-suspended">Suspended</span>
                   {% else %}
                     {{ task.status }}
                   {% endif %}
                 </td>
-                <td>{{ task.deadline|date:"d.m.Y H:i"|default:"—" }}</td>
-                <td>{{ task.category.name }}</td>
+                <td data-label="Deadline">{{ task.deadline|date:"d.m.Y H:i"|default:"—" }}</td>
+                <td data-label="Category">{{ task.category.name }}</td>
               </tr>
             {% endfor %}
           </tbody>
@@ -79,11 +85,11 @@
       </div>
     </div>
   {% else %}
-    <div class="alert alert-info" role="alert">
+    <div class="empty-state" role="alert">
       No tasks found.
     </div>
   {% endif %}
-</div>
 
-{% include "includes/pagination.html" %}
+  {% include "includes/pagination.html" %}
+</div>
 {% endblock %}

@@ -1,10 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="container py-4">
-    <h1 class="h4 mb-4 text-center">Volunteer Dashboard</h1>
+  <div class="page-shell py-4">
+    <div class="page-header">
+      <div>
+        <div class="eyebrow">Volunteer workspace</div>
+        <h1 class="page-title">My Dashboard</h1>
+        <p class="page-subtitle">Track assigned tasks, submitted reports, and profile information.</p>
+      </div>
+      <a href="{% url 'tasks:report-create' %}" class="btn btn-primary">Submit Report</a>
+    </div>
 
-    <div class="text-center mb-3">
+    <div class="form-section mb-4 text-center">
       {% if user.avatar_url %}
         <img src="{{ user.avatar_url }}"
              class="avatar avatar-xl rounded-circle shadow-sm"
@@ -15,23 +22,16 @@
         </div>
       {% endif %}
       <h5 class="mt-2">{{ user.username }}</h5>
-    </div>
 
-    <div class="card border-0 shadow-sm mb-4">
-      <div class="card-header bg-light">
-        <h5 class="mb-0">Profile Information</h5>
-      </div>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-md-6">
-            <p><strong>First name:</strong> {{ user.first_name }}</p>
-            <p><strong>Last name:</strong> {{ user.last_name }}</p>
-            <p><strong>Email:</strong> {{ user.email }}</p>
-          </div>
-          <div class="col-md-6">
-            <p><strong>Phone:</strong> {{ user.phone_number|default:"—" }}</p>
-            <p><strong>City:</strong> {{ user.city|default:"—" }}</p>
-          </div>
+      <div class="row mt-4 text-start">
+        <div class="col-md-6">
+          <p><strong>First name:</strong> {{ user.first_name }}</p>
+          <p><strong>Last name:</strong> {{ user.last_name }}</p>
+          <p><strong>Email:</strong> {{ user.email }}</p>
+        </div>
+        <div class="col-md-6">
+          <p><strong>Phone:</strong> {{ user.phone_number|default:"—" }}</p>
+          <p><strong>City:</strong> {{ user.city|default:"—" }}</p>
         </div>
       </div>
     </div>
@@ -43,8 +43,8 @@
       </div>
       <div class="card-body">
         {% if my_tasks %}
-          <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle">
+          <div class="table-responsive responsive-card-table">
+            <table class="table table-hover table-modern align-middle">
               <thead>
               <tr>
                 <th>Title</th>
@@ -55,19 +55,19 @@
               <tbody>
               {% for task in my_tasks %}
                 <tr>
-                  <td>{{ task.title }}</td>
-                  <td>
+                  <td data-label="Title" class="title-cell">{{ task.title }}</td>
+                  <td data-label="Status">
                     {% if task.status == "completed" %}
-                      <span class="badge bg-success">Completed</span>
+                      <span class="status-pill status-completed">Completed</span>
                     {% elif task.status == "in_progress" %}
-                      <span class="badge bg-info text-dark">In progress</span>
+                      <span class="status-pill status-progress">In Progress</span>
                     {% elif task.status == "suspended" %}
-                      <span class="badge bg-secondary">Suspended</span>
+                      <span class="status-pill status-suspended">Suspended</span>
                     {% else %}
-                      <span class="badge bg-warning text-dark">Active</span>
+                      <span class="status-pill status-active">Active</span>
                     {% endif %}
                   </td>
-                  <td>{{ task.deadline|date:"d.m.Y H:i" }}</td>
+                  <td data-label="Deadline">{{ task.deadline|date:"d.m.Y H:i" }}</td>
                 </tr>
               {% endfor %}
               </tbody>
@@ -86,8 +86,8 @@
       </div>
       <div class="card-body">
         {% if my_reports %}
-          <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle">
+          <div class="table-responsive responsive-card-table">
+            <table class="table table-hover table-modern align-middle">
               <thead>
               <tr>
                 <th>Task</th>
@@ -98,11 +98,18 @@
               </thead>
               <tbody>
               {% for report in my_reports %}
-                <tr class="{% if not report.verified_at %}table-warning{% endif %}">
-                  <td>{{ report.task }}</td>
-                  <td>{{ report.comment }}</td>
-                  <td>{{ report.verified_by|default:"—" }}</td>
-                  <td>{{ report.verified_at|date:"d.m.Y H:i"|default:"—" }}</td>
+                <tr>
+                  <td data-label="Task" class="title-cell">{{ report.task }}</td>
+                  <td data-label="Comment" class="muted-cell">{{ report.comment|truncatechars:56 }}</td>
+                  <td data-label="Verified by">{{ report.verified_by|default:"—" }}</td>
+                  <td data-label="Verified at">
+                    {% if report.verified_at %}
+                      <span class="status-pill status-completed">Verified</span>
+                      <div class="small text-muted mt-1">{{ report.verified_at|date:"Y-m-d H:i" }}</div>
+                    {% else %}
+                      <span class="status-pill status-active">Pending</span>
+                    {% endif %}
+                  </td>
                 </tr>
               {% endfor %}
               </tbody>
