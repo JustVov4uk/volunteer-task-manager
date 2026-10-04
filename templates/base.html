@@ -34,6 +34,17 @@
   {% endif %}
 
   <main class="flex-fill content">
+    {% if messages %}
+      <div class="message-stack" aria-live="polite">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show shadow-sm" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
     {% block content %}{% endblock %}
   </main>
 
@@ -41,7 +52,7 @@
     <div class="container">
       <p class="mb-1">© {{ now|date:"Y" }} Volunteer Task Manager</p>
       <small>
-        Made with ❤️ by
+        Built by
         <a href="https://github.com/JustVov4uk" target="_blank" class="text-decoration-none">JustVov4uk</a>
       </small>
     </div>

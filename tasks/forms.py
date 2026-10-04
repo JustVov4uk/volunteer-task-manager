@@ -71,6 +71,13 @@ class TaskForm(forms.ModelForm):
 
 
 class TaskSearchForm(forms.Form):
+    DEADLINE_CHOICES = [
+        ("", "All deadlines"),
+        ("overdue", "Overdue"),
+        ("due_soon", "Due in 7 days"),
+        ("no_deadline", "No deadline"),
+    ]
+
     title = forms.CharField(
         max_length=100,
         required=False,
@@ -106,6 +113,11 @@ class TaskSearchForm(forms.Form):
         required=False,
         empty_label="All volunteers",
         label="Volunteers",
+    )
+    deadline = forms.ChoiceField(
+        choices=DEADLINE_CHOICES,
+        required=False,
+        label="Deadline",
     )
 
 
@@ -158,6 +170,12 @@ class CoordinatorReportForm(forms.ModelForm):
 
 
 class ReportSearchForm(forms.Form):
+    VERIFICATION_CHOICES = [
+        ("", "All reports"),
+        ("unverified", "Unverified"),
+        ("verified", "Verified"),
+    ]
+
     author = forms.CharField(
         max_length=100,
         required=False,
@@ -182,4 +200,9 @@ class ReportSearchForm(forms.Form):
                 "type": "date",
             }
         )
+    )
+    verification = forms.ChoiceField(
+        choices=VERIFICATION_CHOICES,
+        required=False,
+        label="Verification",
     )

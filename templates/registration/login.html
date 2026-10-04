@@ -28,8 +28,37 @@
           <input type="hidden" name="next" value="{{ next }}">
           <button type="submit" class="btn btn-primary w-100 mt-2">Login</button>
         </form>
+
+        <div class="demo-login-panel mt-4">
+          <div class="demo-login-title">Demo access</div>
+          <div class="demo-login-grid">
+            <button type="button"
+                    class="demo-login-card"
+                    data-demo-username="administrator1"
+                    data-demo-password="Me262VoV">
+              <span>Coordinator</span>
+              <small>Full management access</small>
+            </button>
+            <button type="button"
+                    class="demo-login-card"
+                    data-demo-username="vol_tanya"
+                    data-demo-password="GoodPass123!">
+              <span>Volunteer</span>
+              <small>Assigned tasks and reports</small>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  document.querySelectorAll("[data-demo-username]").forEach((button) => {
+    button.addEventListener("click", () => {
+      document.getElementById("{{ form.username.id_for_label }}").value = button.dataset.demoUsername;
+      document.getElementById("{{ form.password.id_for_label }}").value = button.dataset.demoPassword;
+    });
+  });
+</script>
 {% endblock %}

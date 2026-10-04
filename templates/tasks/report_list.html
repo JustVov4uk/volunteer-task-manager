@@ -16,20 +16,29 @@
 
   <form method="get" class="toolbar-panel">
     <div class="row g-3 align-items-end">
-    <div class="col-md-3">
-      {{ search_form.author }}
-    </div>
-    <div class="col-md-3">
-      {{ search_form.author_filter }}
-    </div>
-    <div class="col-md-3">
-      {{ search_form.created_filter }}
-    </div>
-    <div class="col-md-3">
-      <button type="submit" class="btn btn-primary w-100">Apply</button>
-    </div>
+      <div class="col-md-3">
+        {{ search_form.author }}
+      </div>
+      <div class="col-md-3">
+        {{ search_form.author_filter }}
+      </div>
+      <div class="col-md-2">
+        {{ search_form.created_filter }}
+      </div>
+      <div class="col-md-2">
+        {{ search_form.verification }}
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Apply</button>
+      </div>
     </div>
   </form>
+
+  <div class="quick-filter-bar">
+    <a href="{% url 'tasks:report-list' %}" class="quick-filter {% if not request.GET %}active{% endif %}">All</a>
+    <a href="{% url 'tasks:report-list' %}?verification=unverified" class="quick-filter {% if request.GET.verification == 'unverified' %}active{% endif %}">Unverified</a>
+    <a href="{% url 'tasks:report-list' %}?verification=verified" class="quick-filter {% if request.GET.verification == 'verified' %}active{% endif %}">Verified</a>
+  </div>
 
   {% if report_list %}
     <div class="table-card responsive-card-table">

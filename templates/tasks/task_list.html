@@ -18,28 +18,39 @@
 
   <form method="get" class="toolbar-panel">
     <div class="row g-3 align-items-end">
-    <div class="col-md-3">
-      {{ search_form.title }}
-    </div>
-    <div class="col-md-2">
-      {{ search_form.status }}
-    </div>
-    <div class="col-md-2">
-      {{ search_form.category }}
-    </div>
-    <div class="col-md-2">
-      {{ search_form.tags }}
-    </div>
-    {% if request.user.role == "coordinator" %}
       <div class="col-md-2">
-        {{ search_form.volunteer }}
+        {{ search_form.title }}
       </div>
-    {% endif %}
-    <div class="col-md d-grid">
-      <button type="submit" class="btn btn-primary">Filter</button>
-    </div>
+      <div class="col-md-2">
+        {{ search_form.status }}
+      </div>
+      <div class="col-md-2">
+        {{ search_form.deadline }}
+      </div>
+      <div class="col-md-2">
+        {{ search_form.category }}
+      </div>
+      <div class="col-md-2">
+        {{ search_form.tags }}
+      </div>
+      {% if request.user.role == "coordinator" %}
+        <div class="col-md-2">
+          {{ search_form.volunteer }}
+        </div>
+      {% endif %}
+      <div class="col-md d-grid">
+        <button type="submit" class="btn btn-primary">Filter</button>
+      </div>
     </div>
   </form>
+
+  <div class="quick-filter-bar">
+    <a href="{% url 'tasks:task-list' %}" class="quick-filter {% if not request.GET %}active{% endif %}">All</a>
+    <a href="{% url 'tasks:task-list' %}?deadline=overdue" class="quick-filter {% if request.GET.deadline == 'overdue' %}active{% endif %}">Overdue</a>
+    <a href="{% url 'tasks:task-list' %}?deadline=due_soon" class="quick-filter {% if request.GET.deadline == 'due_soon' %}active{% endif %}">Due soon</a>
+    <a href="{% url 'tasks:task-list' %}?status=in_progress" class="quick-filter {% if request.GET.status == 'in_progress' %}active{% endif %}">In progress</a>
+    <a href="{% url 'tasks:task-list' %}?status=completed" class="quick-filter {% if request.GET.status == 'completed' %}active{% endif %}">Completed</a>
+  </div>
 
   {% if task_list %}
     <div class="table-card responsive-card-table">

@@ -44,7 +44,7 @@
   </div>
 
   <div class="priority-grid">
-    <a href="{% url 'tasks:task-list' %}" class="priority-card priority-danger">
+    <a href="{% url 'tasks:task-list' %}?deadline=overdue" class="priority-card priority-danger">
       <div>
         <div class="metric-label">Overdue tasks</div>
         <div class="metric-value">{{ overdue_count }}</div>
@@ -52,7 +52,7 @@
       <span class="status-pill status-suspended">Needs review</span>
     </a>
 
-    <a href="{% url 'tasks:task-list' %}" class="priority-card priority-warning">
+    <a href="{% url 'tasks:task-list' %}?deadline=due_soon" class="priority-card priority-warning">
       <div>
         <div class="metric-label">Due in 7 days</div>
         <div class="metric-value">{{ due_soon_count }}</div>
@@ -60,7 +60,7 @@
       <span class="status-pill status-active">Upcoming</span>
     </a>
 
-    <a href="{% url 'tasks:report-list' %}" class="priority-card priority-info">
+    <a href="{% url 'tasks:report-list' %}?verification=unverified" class="priority-card priority-info">
       <div>
         <div class="metric-label">Unverified reports</div>
         <div class="metric-value">{{ unverified_reports_count }}</div>
@@ -104,7 +104,7 @@
           <div class="eyebrow">Deadline control</div>
           <h2 class="section-title">Overdue Tasks</h2>
         </div>
-        <a href="{% url 'tasks:task-list' %}" class="btn btn-sm btn-outline-primary">Open Tasks</a>
+        <a href="{% url 'tasks:task-list' %}?deadline=overdue" class="btn btn-sm btn-outline-primary">Open Tasks</a>
       </div>
 
       <div class="record-list">
@@ -128,7 +128,7 @@
           <div class="eyebrow">Next week</div>
           <h2 class="section-title">Due Soon</h2>
         </div>
-        <a href="{% url 'tasks:task-list' %}" class="btn btn-sm btn-outline-primary">View Queue</a>
+        <a href="{% url 'tasks:task-list' %}?deadline=due_soon" class="btn btn-sm btn-outline-primary">View Queue</a>
       </div>
 
       <div class="record-list">
@@ -154,7 +154,7 @@
           <div class="eyebrow">Report review</div>
           <h2 class="section-title">Unverified Reports</h2>
         </div>
-        <a href="{% url 'tasks:report-list' %}" class="btn btn-sm btn-outline-primary">Open Reports</a>
+        <a href="{% url 'tasks:report-list' %}?verification=unverified" class="btn btn-sm btn-outline-primary">Open Reports</a>
       </div>
 
       <div class="record-list">

@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views import generic
@@ -41,13 +42,25 @@ class TagCreateView(LoginRequiredMixin, CoordinatorRequiredMixin, CreateView):
     form_class = TagForm
     success_url = reverse_lazy("tasks:tag-list")
 
+    def form_valid(self, form):
+        messages.success(self.request, "Tag was created successfully.")
+        return super().form_valid(form)
+
 
 class TagUpdateView(LoginRequiredMixin, CoordinatorRequiredMixin, UpdateView):
     model = Tag
     form_class = TagForm
     success_url = reverse_lazy("tasks:tag-list")
 
+    def form_valid(self, form):
+        messages.success(self.request, "Tag was updated successfully.")
+        return super().form_valid(form)
+
 
 class TagDeleteView(LoginRequiredMixin, CoordinatorRequiredMixin, DeleteView):
     model = Tag
     success_url = reverse_lazy("tasks:tag-list")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Tag was deleted successfully.")
+        return super().form_valid(form)

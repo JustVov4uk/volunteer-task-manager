@@ -1,5 +1,9 @@
 # Volunteer Task Manager
 
+[![Python](https://img.shields.io/badge/Python-3.12-blue)](https://www.python.org/)
+[![Django](https://img.shields.io/badge/Django-5.2-green)](https://www.djangoproject.com/)
+[![Deploy](https://img.shields.io/badge/Deploy-Render-46e3b7)](https://render.com/)
+
 Volunteer Task Manager is a Django-based web application for managing coordinators, volunteers, tasks, and volunteer reports.
 
 Coordinators can create and assign tasks, manage categories and tags, review submitted reports, and track general task statistics. Volunteers can view assigned tasks, submit completion reports, and track their own task progress.
@@ -23,6 +27,16 @@ Volunteer:
 
 These accounts are for demo testing only.
 
+The login page also includes demo access buttons that fill credentials automatically.
+
+## Recruiter Review Path
+
+1. Open the live demo and use the coordinator demo account.
+2. Check the dashboard cards for overdue tasks, due-soon tasks, unverified reports, and latest tasks.
+3. Open the Tasks page and try quick filters: Overdue, Due soon, In progress, Completed.
+4. Open the Reports page and filter by Unverified or Verified.
+5. Log in as the volunteer demo account and review assigned tasks and submitted reports.
+
 ## Features
 
 - Role-based access for coordinators and volunteers.
@@ -31,9 +45,13 @@ These accounts are for demo testing only.
 - Global task statistics for coordinators.
 - Personal task statistics for volunteers.
 - Search and filtering for tasks, volunteers, categories, tags, and reports.
+- Quick filters for overdue tasks, due-soon tasks, task status, and report verification.
+- Demo login buttons for coordinator and volunteer accounts.
+- Success messages after create, update, verify, and delete actions.
 - Pagination for list views.
 - Email notifications when a task is assigned or a report is approved.
 - Automated tests for models, forms, views, templates, and email-related logic.
+- Idempotent demo data seeding command for local or deployed environments.
 - Separate development and production settings.
 - Deployment configuration for Render.
 
@@ -80,7 +98,7 @@ python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 python manage.py migrate
-python manage.py loaddata fixtures/data.json
+python manage.py seed_demo
 python manage.py runserver
 ```
 
@@ -89,6 +107,8 @@ For Windows:
 ```bash
 venv\Scripts\activate
 ```
+
+The `seed_demo` command creates demo users, categories, tags, tasks, and reports with current relative deadlines, so the dashboard always contains useful data.
 
 ## Environment Variables
 
@@ -122,6 +142,12 @@ coverage run manage.py test
 coverage report
 ```
 
+## Suggested GitHub Topics
+
+```text
+django python bootstrap postgresql render volunteer-management task-management
+```
+
 ## Deployment
 
 The project is deployed on Render. The `build.sh` script installs dependencies, collects static files, and applies migrations:
@@ -130,6 +156,7 @@ The project is deployed on Render. The `build.sh` script installs dependencies, 
 pip install -r requirements.txt
 python manage.py collectstatic --no-input
 python manage.py migrate
+python manage.py seed_demo
 ```
 
 ## Author

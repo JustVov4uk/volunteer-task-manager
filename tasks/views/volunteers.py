@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views import generic
@@ -65,6 +66,10 @@ class VolunteerCreateView(LoginRequiredMixin,
     template_name = "tasks/volunteer_form.html"
     success_url = reverse_lazy("tasks:volunteer-list")
 
+    def form_valid(self, form):
+        messages.success(self.request, "Volunteer was created successfully.")
+        return super().form_valid(form)
+
 
 class VolunteerUpdateView(LoginRequiredMixin,
                           CoordinatorRequiredMixin, UpdateView):
@@ -73,6 +78,10 @@ class VolunteerUpdateView(LoginRequiredMixin,
     template_name = "tasks/volunteer_form.html"
     success_url = reverse_lazy("tasks:volunteer-list")
 
+    def form_valid(self, form):
+        messages.success(self.request, "Volunteer was updated successfully.")
+        return super().form_valid(form)
+
 
 class VolunteerDeleteView(LoginRequiredMixin,
                           CoordinatorRequiredMixin, DeleteView):
@@ -80,3 +89,7 @@ class VolunteerDeleteView(LoginRequiredMixin,
     success_url = reverse_lazy("tasks:volunteer-list")
     template_name = "tasks/volunteer_confirm_delete.html"
     context_object_name = "volunteer"
+
+    def form_valid(self, form):
+        messages.success(self.request, "Volunteer was deleted successfully.")
+        return super().form_valid(form)

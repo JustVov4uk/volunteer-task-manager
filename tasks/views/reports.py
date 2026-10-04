@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
@@ -35,6 +36,7 @@ class ReportListView(LoginRequiredMixin, generic.ListView):
             author_text = form.cleaned_data.get("author")
             author_filter = form.cleaned_data.get("author_filter")
             created_filter = form.cleaned_data.get("created_filter")
+            verification = form.cleaned_data.get("verification")
             if author_text:
                 queryset = queryset.filter(
                     author__username__icontains=author_text)
@@ -42,6 +44,10 @@ class ReportListView(LoginRequiredMixin, generic.ListView):
                 queryset = queryset.filter(author=author_filter)
             if created_filter:
                 queryset = queryset.filter(created_at__date=created_filter)
+            if verification == "verified":
+                queryset = queryset.filter(verified_at__isnull=False)
+            elif verification == "unverified":
+                queryset = queryset.filter(verified_at__isnull=True)
         return queryset
 
 
@@ -70,7 +76,9 @@ class ReportCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, "Report was submitted successfully.")
+        return response
 
 
 class ReportUpdateView(LoginRequiredMixin,
@@ -84,6 +92,7 @@ class ReportUpdateView(LoginRequiredMixin,
         form.instance.verified_at = timezone.now()
         response = super().form_valid(form)
         notify_report_verified(self.object)
+        messages.success(self.request, "Report was verified successfully.")
         return response
 
 
@@ -91,3 +100,7 @@ class ReportDeleteView(LoginRequiredMixin,
                        CoordinatorRequiredMixin, DeleteView):
     model = Report
     success_url = reverse_lazy("tasks:report-list")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Report was deleted successfully.")
+        return super().form_valid(form)

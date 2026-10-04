@@ -228,6 +228,7 @@ class TaskSearchFormTest(TestCase):
             "category": self.category.id,
             "tags": self.tag.id,
             "volunteer": self.volunteer.id,
+            "deadline": "overdue",
         }
         form = TaskSearchForm(data=form_data)
         self.assertTrue(form.is_valid())
@@ -239,6 +240,7 @@ class TaskSearchFormTest(TestCase):
             "category": "",
             "tags": "",
             "volunteer": "",
+            "deadline": "",
         }
         form = TaskSearchForm(data=form_data)
         self.assertTrue(form.is_valid())
@@ -247,6 +249,14 @@ class TaskSearchFormTest(TestCase):
         form = TaskSearchForm()
         choices = [choice[0] for choice in form.fields["status"].choices if choice[0]]
         self.assertEqual(choices, ["active", "in_progress", "completed", "suspended"])
+
+    def test_form_deadline_has_choices(self):
+        form = TaskSearchForm()
+        choices = [
+            choice[0] for choice in form.fields["deadline"].choices
+            if choice[0]
+        ]
+        self.assertEqual(choices, ["overdue", "due_soon", "no_deadline"])
 
     def test_form_fields_category_tags_volunteer_with_empty_label(self):
         form = TaskSearchForm()
@@ -412,3 +422,11 @@ class ReportSearchFormTest(TestCase):
         form = ReportSearchForm()
         placeholder = form.fields["author"].widget.attrs["placeholder"]
         self.assertEqual(placeholder, "Search by author")
+
+    def test_form_verification_has_choices(self):
+        form = ReportSearchForm()
+        choices = [
+            choice[0] for choice in form.fields["verification"].choices
+            if choice[0]
+        ]
+        self.assertEqual(choices, ["unverified", "verified"])

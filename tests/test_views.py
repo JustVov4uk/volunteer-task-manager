@@ -65,6 +65,10 @@ class CoordinatorIndexViewTest(TestCase):
         self.assertIn("num_categories", response.context)
         self.assertIn("num_reports", response.context)
         self.assertIn("status_counts", response.context)
+        self.assertIn("overdue_tasks", response.context)
+        self.assertIn("due_soon_tasks", response.context)
+        self.assertIn("unverified_reports", response.context)
+        self.assertIn("latest_tasks", response.context)
 
     def test_view_if_not_coordinator_permission_denied(self):
         self.client.login(username="volunteer", password="other test password")
@@ -87,8 +91,11 @@ class VolunteerIndexViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         self.assertIn("user", response.context)
-        self.assertIn("num_tasks", response.context)
-        self.assertIn("num_categories", response.context)
+        self.assertIn("my_tasks", response.context)
+        self.assertIn("my_reports", response.context)
+        self.assertIn("assigned_tasks_count", response.context)
+        self.assertIn("completed_tasks_count", response.context)
+        self.assertIn("reports_count", response.context)
 
 
 class VolunteerListViewTest(TestCase):
@@ -508,6 +515,7 @@ class TaskListViewTest(TestCase):
             category=self.category1,
             status="active",
             assigned_to=self.volunteer1,
+            deadline=timezone.now() - timedelta(days=1),
         )
         self.task1.tags.add(self.tag1)
 
@@ -516,6 +524,7 @@ class TaskListViewTest(TestCase):
             category=self.category2,
             status="in_progress",
             assigned_to=self.volunteer2,
+            deadline=timezone.now() + timedelta(days=2),
         )
         self.task2.tags.add(self.tag2)
 
@@ -579,6 +588,24 @@ class TaskListViewTest(TestCase):
         tasks = response.context["task_list"]
         self.assertIn(self.task1, tasks)
         self.assertNotIn(self.task2, tasks)
+
+    def test_view_filtering_by_overdue_deadline(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.get(reverse("tasks:task-list"), {
+            "deadline": "overdue",
+        })
+        tasks = response.context["task_list"]
+        self.assertIn(self.task1, tasks)
+        self.assertNotIn(self.task2, tasks)
+
+    def test_view_filtering_by_due_soon_deadline(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.get(reverse("tasks:task-list"), {
+            "deadline": "due_soon",
+        })
+        tasks = response.context["task_list"]
+        self.assertIn(self.task2, tasks)
+        self.assertNotIn(self.task1, tasks)
 
     def test_view_pagination(self):
         self.client.login(username="coordinator", password="test password")
@@ -979,6 +1006,7 @@ class ReportListViewTest(TestCase):
             author=self.volunteer1,
             task=self.task1,
             verified_by=self.coordinator,
+            verified_at=timezone.now(),
         )
         self.report2 = Report.objects.create(
             comment="another report",
@@ -1020,6 +1048,24 @@ class ReportListViewTest(TestCase):
         reports = response.context["report_list"]
         self.assertIn(self.report1, reports)
         self.assertNotIn(self.report2, reports)
+
+    def test_view_filtering_by_verified_reports(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.get(reverse("tasks:report-list"), {
+            "verification": "verified",
+        })
+        reports = response.context["report_list"]
+        self.assertIn(self.report1, reports)
+        self.assertNotIn(self.report2, reports)
+
+    def test_view_filtering_by_unverified_reports(self):
+        self.client.login(username="coordinator", password="test password")
+        response = self.client.get(reverse("tasks:report-list"), {
+            "verification": "unverified",
+        })
+        reports = response.context["report_list"]
+        self.assertIn(self.report2, reports)
+        self.assertNotIn(self.report1, reports)
 
     def test_view_pagination(self):
         self.client.login(username="coordinator", password="test password")

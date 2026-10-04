@@ -1,5 +1,9 @@
+from datetime import timedelta
+
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views import generic
 from django.views.generic import CreateView, DeleteView, UpdateView
 
@@ -36,6 +40,7 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
             category = form.cleaned_data.get("category")
             tag = form.cleaned_data.get("tags")
             volunteer = form.cleaned_data.get("volunteer")
+            deadline = form.cleaned_data.get("deadline")
             if title:
                 queryset = queryset.filter(title__icontains=title)
             if status:
@@ -46,6 +51,18 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
                 queryset = queryset.filter(tags=tag)
             if volunteer:
                 queryset = queryset.filter(assigned_to=volunteer)
+            if deadline:
+                now = timezone.now()
+                if deadline == "overdue":
+                    queryset = queryset.exclude(
+                        status="completed").filter(deadline__lt=now)
+                elif deadline == "due_soon":
+                    queryset = queryset.exclude(status="completed").filter(
+                        deadline__gte=now,
+                        deadline__lte=now + timedelta(days=7),
+                    )
+                elif deadline == "no_deadline":
+                    queryset = queryset.filter(deadline__isnull=True)
         return queryset
 
 
@@ -71,6 +88,7 @@ class TaskCreateView(LoginRequiredMixin, CoordinatorRequiredMixin, CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         notify_task_assigned(self.object)
+        messages.success(self.request, "Task was created successfully.")
         return response
 
 
@@ -84,9 +102,14 @@ class TaskUpdateView(LoginRequiredMixin, CoordinatorRequiredMixin, UpdateView):
         response = super().form_valid(form)
         if assigned_changed:
             notify_task_assigned(self.object)
+        messages.success(self.request, "Task was updated successfully.")
         return response
 
 
 class TaskDeleteView(LoginRequiredMixin, CoordinatorRequiredMixin, DeleteView):
     model = Task
     success_url = reverse_lazy("tasks:task-list")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Task was deleted successfully.")
+        return super().form_valid(form)
