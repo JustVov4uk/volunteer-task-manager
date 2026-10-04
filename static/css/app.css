@@ -41,11 +41,13 @@ body.login-page {
 }
 
 .content {
+    min-width: 0;
     width: 100%;
     padding: 1rem;
 }
 
 .page-shell {
+    min-width: 0;
     width: 100%;
     max-width: 1500px;
     margin: 0 auto;
@@ -216,6 +218,7 @@ img.avatar {
 .metric-card {
     position: relative;
     display: block;
+    min-width: 0;
     min-height: 128px;
     padding: 1.25rem;
     overflow: hidden;
@@ -284,6 +287,7 @@ img.avatar {
     gap: 1rem;
     align-items: center;
     justify-content: space-between;
+    min-width: 0;
     min-height: 112px;
     padding: 1.1rem 1.25rem;
     color: inherit;
@@ -442,6 +446,7 @@ img.avatar {
 }
 
 .table-card {
+    min-width: 0;
     overflow: hidden;
     background: var(--app-surface);
     border: 1px solid var(--app-border);
@@ -649,6 +654,7 @@ img.avatar {
 }
 
 .form-section {
+    min-width: 0;
     padding: 1.25rem;
     background: var(--app-surface);
     border: 1px solid var(--app-border);
@@ -705,6 +711,14 @@ footer {
     body.default-page .content,
     body.default-page footer {
         margin-left: var(--sidebar-width);
+    }
+
+    body.default-page .content {
+        width: calc(100% - var(--sidebar-width));
+    }
+
+    body.default-page footer {
+        width: calc(100% - var(--sidebar-width));
     }
 
     .content {
