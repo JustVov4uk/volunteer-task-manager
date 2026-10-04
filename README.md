@@ -1,155 +1,141 @@
-# 🧩 Volunteer Task Manager
+# Volunteer Task Manager
 
-**Volunteer Task Manager** is a Django-based web application for managing coordinators, volunteers, and tasks.  
-Coordinators can create and assign tasks, while volunteers can complete them and submit reports.
+Volunteer Task Manager is a Django-based web application for managing coordinators, volunteers, tasks, and volunteer reports.
 
----
-🌐 Live Demo
+Coordinators can create and assign tasks, manage categories and tags, review submitted reports, and track general task statistics. Volunteers can view assigned tasks, submit completion reports, and track their own task progress.
 
-Deployed version of project:
+## Live Demo
+
+Deployed project:
 https://volunteer-task-manager.onrender.com/accounts/login/
 
-## 🧾 Test Accounts
+## Demo Accounts
 
-**Coordinator:**  
-- Login: `administrator1`  
+Coordinator:
+
+- Login: `administrator1`
 - Password: `Me262VoV`
 
-**Volunteer:**  
-- Login: `vol_tanya`  
+Volunteer:
+
+- Login: `vol_tanya`
 - Password: `GoodPass123!`
 
-> These are example accounts for testing only.  
-> Use your own credentials when deploying or testing locally.
+These accounts are for demo testing only.
 
-## 🚀 Features
+## Features
 
-### 👥 User Roles
+- Role-based access for coordinators and volunteers.
+- Task management with categories, tags, statuses, deadlines, and assigned volunteers.
+- Volunteer reports with coordinator review and approval flow.
+- Global task statistics for coordinators.
+- Personal task statistics for volunteers.
+- Search and filtering for tasks, volunteers, categories, tags, and reports.
+- Pagination for list views.
+- Email notifications when a task is assigned or a report is approved.
+- Automated tests for models, forms, views, templates, and email-related logic.
+- Separate development and production settings.
+- Deployment configuration for Render.
 
-- **Coordinator (superuser or user with coordinator rights):**
-  - Creates and manages other coordinators and volunteers.  
-  - Creates, updates, and deletes **tasks**, **categories**, and **tags**.  
-  - Assigns tasks and sets deadlines.  
-  - Reviews and manages **volunteer reports** — can approve, edit, or delete them.
+## Tech Stack
 
-- **Volunteer:**
-  - Views assigned tasks.  
-  - Submits reports upon task completion.  
-  - Has a personal statistics page with their own task overview.
+- Python 3.12
+- Django 5.2
+- Django ORM
+- PostgreSQL for production
+- SQLite for local development
+- HTML/CSS
+- Bootstrap 5
+- Crispy Forms
+- unittest
+- coverage
+- SMTP email backend
+- Gunicorn
+- Whitenoise
+- Render
+- Git and GitHub
 
-### 📊 Statistics
-- Global task statistics: completed, active, in progress, paused.  
-- Personal task statistics for each volunteer.
+## Project Structure
 
-### ✉️ Email Notifications
-- Automatic email alerts to volunteers when:
-  - A new task is assigned.  
-  - Their report is approved or edited.
+```text
+volunteer-task-manager/
+├── docs/                     # Database diagram
+├── fixtures/                 # Demo data for local setup
+├── static/                   # Source static files
+├── tasks/                    # Main app: models, views, forms, notifications
+├── templates/                # HTML templates
+├── tests/                    # Automated tests
+├── volunteer_task_manager/   # Django project settings and URLs
+├── build.sh                  # Render build script
+├── manage.py
+└── requirements.txt
+```
 
-### ✅ Tests
-- Full test coverage (~160 tests).  
-- Includes model, view, template, and email logic testing.
-
----
-
-## 🛠️ Tech Stack
-
-- **Python 3.12**  
-- **Django 5**  
-- **SQLite**
-- **HTML/CSS**
-- **Bootstrap 5**  
-- **Django ORM**  
-- **unittest**  
-- **SMTP email backend**
-- **Git**
-- **GitHub**
-
----
-
-## ⚙️ Installation
+## Local Setup
 
 ```bash
-git clone https://github.com/your-username/volunteer-task-manager.git
+git clone https://github.com/JustVov4uk/volunteer-task-manager.git
 cd volunteer-task-manager
 python -m venv venv
-source venv/bin/activate   # or venv\Scripts\activate on Windows
+source venv/bin/activate
 pip install -r requirements.txt
 python manage.py migrate
-python manage.py loaddata fixtures/data.json  # to load example data
+python manage.py loaddata fixtures/data.json
 python manage.py runserver
 ```
 
----
+For Windows:
 
-## 🔐 Environment Variables Example
-
-Create a `.env` file in the project root.  
-Below is an example of required variables (do not commit real credentials to GitHub):
-
+```bash
+venv\Scripts\activate
 ```
+
+## Environment Variables
+
+Create a `.env` file in the project root. Do not commit real credentials to GitHub.
+
+```env
 SECRET_KEY=your_secret_key
 DEBUG=True
 ALLOWED_HOSTS=127.0.0.1,localhost
 
-# Email configuration
-EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USE_TLS=True
 EMAIL_HOST_USER=your_email@gmail.com
 EMAIL_HOST_PASSWORD=your_email_app_password
-
+EMAIL_PORT=587
 ```
 
-> For Gmail, create an **App Password** in your Google Account and use it instead of your real password.
+Production deployment uses PostgreSQL environment variables:
 
----
----
-## 📸 Screenshots
-
-> Screenshots of all pages are located in `/screenshots/`  
-> (Home, Login, Task list, Task detail, Reports, Statistics, etc.)
-
----
-
-## 🧩 Project Structure
-
-```
-volunteer_task_manager/
-│ manage.py
-│ requirements.txt
-│ .env.example
-├── volunteer_task_manager/    # Main Django configuration
-├── static/                    # Static files
-├── tasks/                     # Tasks models, views, forms, mixins
-├── media/                     # Media files
-├── templates/                 # HTML templates
-└── tests/                     # Test files
+```env
+POSTGRES_DB=your_database_name
+POSTGRES_USER=your_database_user
+POSTGRES_PASSWORD=your_database_password
+POSTGRES_HOST=your_database_host
+POSTGRES_DB_PORT=5432
 ```
 
----
+## Tests
 
-## 🧠 Author
+```bash
+python manage.py test
+coverage run manage.py test
+coverage report
+```
 
-**Volodymyr [JustVov4uk] Budzan**  
-Email: [volodabudzan4@gmail.com]  
-LinkedIn: [https://www.linkedin.com/in/volodymyr-budzan-22582b292/]
+## Deployment
 
----
+The project is deployed on Render. The `build.sh` script installs dependencies, collects static files, and applies migrations:
 
-## 🧩 Additional Notes
+```bash
+pip install -r requirements.txt
+python manage.py collectstatic --no-input
+python manage.py migrate
+```
 
-- Commit after each major change (new model, view, or template).  
-- Keep commit names descriptive (e.g., `Add Task model`, `Implement report approval view`).  
-- Before merging `develop` → `main`, make sure:
-  - All tests pass.  
-  - The code follows PEP8 formatting.  
-  - The README and screenshots are up to date.  
-  - Database diagram (draw.io) is included if models changed.
+## Author
 
----
+Volodymyr Budzan
 
-## 📄 License
-
-This project is open-source and available under the [MIT License](LICENSE).
+- GitHub: https://github.com/JustVov4uk
+- LinkedIn: https://www.linkedin.com/in/volodymyr-budzan-22582b292/
+- Email: volodabudzan4@gmail.com
