@@ -2,27 +2,30 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-8 col-lg-6">
-    <div class="card border-0 shadow-sm">
-      <div class="card-header text-center">
-        <h5 class="mb-0">
-          {{ object|yesno:"Update Report,Create Report" }}
-        </h5>
-      </div>
-      <div class="card-body">
-        <form action="" method="post" novalidate>
-          {% csrf_token %}
-          {{ form.non_field_errors }}
-          {{ form|crispy }}
-          <div class="d-grid">
-            <button type="submit" class="btn btn-primary">
-              {{ object|yesno:"Update,Create" }}
-            </button>
-          </div>
-        </form>
-      </div>
+<div class="form-shell py-4">
+  <div class="page-header">
+    <div>
+      <div class="eyebrow">Report editor</div>
+      <h1 class="page-title">{{ object|yesno:"Update Report,Create Report" }}</h1>
+      <p class="page-subtitle">Submit a task update or record coordinator verification.</p>
     </div>
   </div>
+
+  <form action="" method="post" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <section class="form-section">
+      <h2 class="form-section-title">Report Information</h2>
+      {{ form|crispy }}
+    </section>
+
+    <div class="form-actions">
+      <a href="{% url 'tasks:report-list' %}" class="btn btn-outline-secondary">Cancel</a>
+      <button type="submit" class="btn btn-primary">
+        {{ object|yesno:"Update Report,Create Report" }}
+      </button>
+    </div>
+  </form>
 </div>
 {% endblock %}

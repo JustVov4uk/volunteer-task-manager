@@ -43,6 +43,32 @@
     </a>
   </div>
 
+  <div class="priority-grid">
+    <a href="{% url 'tasks:task-list' %}" class="priority-card priority-danger">
+      <div>
+        <div class="metric-label">Overdue tasks</div>
+        <div class="metric-value">{{ overdue_count }}</div>
+      </div>
+      <span class="status-pill status-suspended">Needs review</span>
+    </a>
+
+    <a href="{% url 'tasks:task-list' %}" class="priority-card priority-warning">
+      <div>
+        <div class="metric-label">Due in 7 days</div>
+        <div class="metric-value">{{ due_soon_count }}</div>
+      </div>
+      <span class="status-pill status-active">Upcoming</span>
+    </a>
+
+    <a href="{% url 'tasks:report-list' %}" class="priority-card priority-info">
+      <div>
+        <div class="metric-label">Unverified reports</div>
+        <div class="metric-value">{{ unverified_reports_count }}</div>
+      </div>
+      <span class="status-pill status-progress">Pending</span>
+    </a>
+  </div>
+
   <div class="chart-layout">
     <section class="card border-0 shadow-sm">
       <div class="card-header bg-white">
@@ -60,7 +86,7 @@
       <div class="card-body insight-list">
         <div class="insight-item">
           <div class="small text-muted">Next action</div>
-          <div class="fw-semibold">Review reports and assign open tasks.</div>
+          <div class="fw-semibold">Review overdue work, upcoming deadlines, and pending reports.</div>
         </div>
         <div class="insight-item">
           <div class="small text-muted">Workflow</div>
@@ -69,6 +95,109 @@
         <a href="{% url 'tasks:report-list' %}" class="btn btn-outline-primary w-100">Open Reports</a>
       </div>
     </aside>
+  </div>
+
+  <div class="work-grid mt-3">
+    <section class="work-card">
+      <div class="work-card-header">
+        <div>
+          <div class="eyebrow">Deadline control</div>
+          <h2 class="section-title">Overdue Tasks</h2>
+        </div>
+        <a href="{% url 'tasks:task-list' %}" class="btn btn-sm btn-outline-primary">Open Tasks</a>
+      </div>
+
+      <div class="record-list">
+        {% for task in overdue_tasks %}
+          <a href="{% url 'tasks:task-detail' pk=task.id %}" class="record-row">
+            <span>
+              <strong>{{ task.title|truncatechars:44 }}</strong>
+              <small>{{ task.assigned_to|default:"Unassigned" }}{% if task.category %} / {{ task.category.name }}{% endif %}</small>
+            </span>
+            <span class="record-date">{{ task.deadline|date:"d.m.Y H:i" }}</span>
+          </a>
+        {% empty %}
+          <div class="mini-empty">No overdue tasks.</div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="work-card">
+      <div class="work-card-header">
+        <div>
+          <div class="eyebrow">Next week</div>
+          <h2 class="section-title">Due Soon</h2>
+        </div>
+        <a href="{% url 'tasks:task-list' %}" class="btn btn-sm btn-outline-primary">View Queue</a>
+      </div>
+
+      <div class="record-list">
+        {% for task in due_soon_tasks %}
+          <a href="{% url 'tasks:task-detail' pk=task.id %}" class="record-row">
+            <span>
+              <strong>{{ task.title|truncatechars:44 }}</strong>
+              <small>{{ task.assigned_to|default:"Unassigned" }}{% if task.category %} / {{ task.category.name }}{% endif %}</small>
+            </span>
+            <span class="record-date">{{ task.deadline|date:"d.m.Y H:i" }}</span>
+          </a>
+        {% empty %}
+          <div class="mini-empty">No upcoming deadlines.</div>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+
+  <div class="work-grid mt-3">
+    <section class="work-card">
+      <div class="work-card-header">
+        <div>
+          <div class="eyebrow">Report review</div>
+          <h2 class="section-title">Unverified Reports</h2>
+        </div>
+        <a href="{% url 'tasks:report-list' %}" class="btn btn-sm btn-outline-primary">Open Reports</a>
+      </div>
+
+      <div class="record-list">
+        {% for report in unverified_reports %}
+          <a href="{% url 'tasks:report-detail' pk=report.id %}" class="record-row">
+            <span>
+              <strong>{{ report.task|truncatechars:44 }}</strong>
+              <small>{{ report.author|default:"Unknown author" }}</small>
+            </span>
+            <span class="record-date">{{ report.created_at|date:"d.m.Y H:i" }}</span>
+          </a>
+        {% empty %}
+          <div class="mini-empty">All reports are verified.</div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="work-card">
+      <div class="work-card-header">
+        <div>
+          <div class="eyebrow">Latest records</div>
+          <h2 class="section-title">Latest Tasks</h2>
+        </div>
+        <a href="{% url 'tasks:task-create' %}" class="btn btn-sm btn-primary">Create Task</a>
+      </div>
+
+      <div class="record-list">
+        {% for task in latest_tasks %}
+          <a href="{% url 'tasks:task-detail' pk=task.id %}" class="record-row">
+            <span>
+              <strong>{{ task.title|truncatechars:44 }}</strong>
+              <small>
+                {% if task.status == "in_progress" %}In Progress{% else %}{{ task.get_status_display }}{% endif %}
+                / {{ task.assigned_to|default:"Unassigned" }}
+              </small>
+            </span>
+            <span class="record-date">{{ task.deadline|date:"d.m.Y H:i"|default:"No deadline" }}</span>
+          </a>
+        {% empty %}
+          <div class="mini-empty">No tasks yet.</div>
+        {% endfor %}
+      </div>
+    </section>
   </div>
 </div>
 

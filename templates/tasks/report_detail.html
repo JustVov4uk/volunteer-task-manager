@@ -1,36 +1,69 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-      <div class="card border-0 shadow-sm">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">Report #{{ report.id }}</h5>
-          <div>
-            {% if request.user.role == "coordinator" %}
-              <a href="{% url 'tasks:report-update' pk=report.id %}" class="btn btn-sm btn-warning me-1">
-                Update
-              </a>
-              <a href="{% url 'tasks:report-delete' pk=report.id %}" class="btn btn-sm btn-danger">
-                Delete
-              </a>
-            {% endif %}
-          </div>
-        </div>
-
-        <div class="card-body">
-          <p><strong>Author:</strong> {{ report.author|default:"—" }}</p>
-          <p class="text-break"><strong>Comment:</strong> {{ report.comment }}</p>
-          <p><strong>Task:</strong>
-            <a href="{% url 'tasks:task-detail' pk=report.task.id %}">{{ report.task }}</a>
-          </p>
-          <p><strong>Verified by:</strong> {{ report.verified_by|default:"—" }}</p>
-          <p><strong>Verified at:</strong> {{ report.verified_at|date:"d.m.Y H:i"|default:"—" }}</p>
-        </div>
+  <div class="page-shell py-4">
+    <div class="page-header">
+      <div>
+        <div class="eyebrow">Report details</div>
+        <h1 class="page-title">Report #{{ report.id }}</h1>
+        <p class="page-subtitle">Volunteer update, related task, and verification state.</p>
       </div>
+
+      {% if request.user.role == "coordinator" %}
+        <div class="d-flex gap-2">
+          <a href="{% url 'tasks:report-update' pk=report.id %}" class="btn btn-primary">Update</a>
+          <a href="{% url 'tasks:report-delete' pk=report.id %}" class="btn btn-outline-danger">Delete</a>
+        </div>
+      {% endif %}
     </div>
-    <div class="mt-3 text-center">
-      <a href="{% url 'tasks:report-list' %}" class="btn btn-outline-secondary btn-sm">Back to list</a>
+
+    <div class="detail-grid">
+      <section class="form-section">
+        <h2 class="form-section-title">Report</h2>
+        <dl class="detail-list">
+          <div>
+            <dt>Author</dt>
+            <dd>{{ report.author|default:"—" }}</dd>
+          </div>
+          <div>
+            <dt>Created at</dt>
+            <dd>{{ report.created_at|date:"d.m.Y H:i" }}</dd>
+          </div>
+          <div>
+            <dt>Comment</dt>
+            <dd class="text-break">{{ report.comment }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <aside class="form-section">
+        <h2 class="form-section-title">Verification</h2>
+        <div class="mb-3">
+          {% if report.verified_at %}
+            <span class="status-pill status-completed">Verified</span>
+          {% else %}
+            <span class="status-pill status-active">Pending</span>
+          {% endif %}
+        </div>
+        <dl class="detail-list">
+          <div>
+            <dt>Task</dt>
+            <dd><a href="{% url 'tasks:task-detail' pk=report.task.id %}">{{ report.task }}</a></dd>
+          </div>
+          <div>
+            <dt>Verified by</dt>
+            <dd>{{ report.verified_by|default:"—" }}</dd>
+          </div>
+          <div>
+            <dt>Verified at</dt>
+            <dd>{{ report.verified_at|date:"d.m.Y H:i"|default:"—" }}</dd>
+          </div>
+        </dl>
+      </aside>
+    </div>
+
+    <div class="mt-3">
+      <a href="{% url 'tasks:report-list' %}" class="btn btn-outline-secondary">Back to list</a>
     </div>
   </div>
 {% endblock %}

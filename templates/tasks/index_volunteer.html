@@ -36,6 +36,33 @@
       </div>
     </div>
 
+    <div class="dashboard-grid mb-4">
+      <div class="metric-card static-metric">
+        <div class="metric-label">Assigned Tasks</div>
+        <div class="metric-value">{{ assigned_tasks_count }}</div>
+        <div class="metric-note">Tasks assigned to you</div>
+        <div class="metric-mark">T</div>
+      </div>
+      <div class="metric-card static-metric">
+        <div class="metric-label">Completed</div>
+        <div class="metric-value">{{ completed_tasks_count }}</div>
+        <div class="metric-note">Finished assignments</div>
+        <div class="metric-mark">C</div>
+      </div>
+      <div class="metric-card static-metric">
+        <div class="metric-label">Reports</div>
+        <div class="metric-value">{{ reports_count }}</div>
+        <div class="metric-note">Submitted task updates</div>
+        <div class="metric-mark">R</div>
+      </div>
+      <a href="{% url 'tasks:task-list' %}" class="metric-card">
+        <div class="metric-label">Task List</div>
+        <div class="metric-value">Open</div>
+        <div class="metric-note">Review current assignments</div>
+        <div class="metric-mark">O</div>
+      </a>
+    </div>
+
     <div class="card border-0 shadow-sm mb-4">
       <div class="card-header d-flex justify-content-between align-items-center bg-light">
         <h5 class="mb-0">My Tasks</h5>
