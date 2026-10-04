@@ -40,9 +40,8 @@
           </thead>
           <tbody>
             {% for report in report_list %}
-              <tr class="{% if not report.verified_at %}table-warning{% endif %}"
-                  onclick="window.location='{% url 'tasks:report-detail' pk=report.id %}'"
-                  style="cursor: pointer;">
+              <tr class="clickable-row {% if not report.verified_at %}table-warning{% endif %}"
+                  onclick="window.location='{% url 'tasks:report-detail' pk=report.id %}'">
                 <td>{{ report.author|default:"—" }}</td>
                 <td title="{{ report.comment }}">{{ report.comment|truncatechars:40 }}</td>
                 <td>{{ report.created_at|date:"Y-m-d H:i" }}</td>

@@ -1,6 +1,10 @@
 {% load static %}
-<aside id="sidebarMenu" class="sidebar d-lg-block bg-gray-800 text-white collapse" data-simplebar>
-  <div class="sidebar-inner px-4 pt-3">
+<aside id="sidebarMenu" class="sidebar d-lg-block text-white collapse">
+  <div class="sidebar-inner px-3 py-4">
+    <a href="{% url 'tasks:index' %}" class="sidebar-brand">
+      Volunteer Task Manager
+    </a>
+
     <div class="user-card d-flex d-md-none align-items-center justify-content-between pb-4">
       <div class="d-flex align-items-center">
         <div class="avatar-lg me-4">
@@ -10,7 +14,7 @@
           <h2 class="h5 mb-3">{{ request.user.username }}</h2>
           <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-secondary btn-sm d-inline-flex align-items-center">
+            <button type="submit" class="btn btn-outline-light btn-sm d-inline-flex align-items-center">
               Logout
             </button>
           </form>
@@ -41,7 +45,7 @@
         <li class="nav-item">
           <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
-            <button type="submit" class="nav-link d-flex align-items-center text-danger">
+            <button type="submit" class="nav-link w-100 border-0 bg-transparent text-danger">
               <span class="sidebar-text">Logout</span>
             </button>
           </form>

@@ -23,7 +23,7 @@
           </thead>
           <tbody>
             {% for category in category_list %}
-              <tr onclick="window.location='{% url 'tasks:category-detail' pk=category.id %}'" style="cursor:pointer;">
+              <tr class="clickable-row" onclick="window.location='{% url 'tasks:category-detail' pk=category.id %}'">
                 <td>{{ category.name }}</td>
                 <td>{{ category.description|truncatechars:40 }}</td>
               </tr>

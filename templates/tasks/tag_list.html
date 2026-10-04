@@ -7,7 +7,7 @@
     <h1 class="h4 mb-0">Tags</h1>
     {% if request.user.role == "coordinator" %}
       <a class="btn btn-primary" href="{% url 'tasks:tag-create' %}">
-        <i class="bi bi-plus-circle"></i> Add Tag
+        Add Tag
       </a>
     {% endif %}
   </div>

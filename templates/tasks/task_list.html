@@ -7,7 +7,7 @@
     <h1 class="h4 mb-0">Tasks</h1>
     {% if request.user.role == "coordinator" %}
       <a class="btn btn-primary" href="{% url 'tasks:task-create' %}">
-        <i class="bi bi-plus-circle"></i> Add Task
+        Add Task
       </a>
     {% endif %}
   </div>
@@ -52,7 +52,7 @@
           </thead>
           <tbody>
             {% for task in task_list %}
-              <tr onclick="window.location='{% url 'tasks:task-detail' pk=task.id %}'" style="cursor: pointer;">
+              <tr class="clickable-row" onclick="window.location='{% url 'tasks:task-detail' pk=task.id %}'">
                 <td title="{{ task.title }}">{{ task.title|truncatechars:30 }}</td>
                 <td title="{{ task.description }}">{{ task.description|truncatechars:40 }}</td>
                 <td>{{ task.created_by }}</td>
