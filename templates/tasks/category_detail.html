@@ -9,12 +9,13 @@
       <p class="page-subtitle">Work stream description and maintenance actions.</p>
     </div>
 
-    {% if request.user.role == "coordinator" %}
-      <div class="d-flex gap-2">
+    <div class="d-flex gap-2">
+      <a href="{% url 'tasks:category-list' %}" class="back-link">&larr; Back</a>
+      {% if request.user.role == "coordinator" %}
         <a href="{% url 'tasks:category-update' pk=category.id %}" class="btn btn-primary">Update</a>
         <a href="{% url 'tasks:category-delete' pk=category.id %}" class="btn btn-outline-danger">Delete</a>
-      </div>
-    {% endif %}
+      {% endif %}
+    </div>
   </div>
 
   <section class="form-section">
@@ -22,8 +23,5 @@
     <p class="mb-0 text-break">{{ category.description }}</p>
   </section>
 
-  <div class="mt-3">
-    <a href="{% url 'tasks:category-list' %}" class="btn btn-outline-secondary">Back to list</a>
-  </div>
 </div>
 {% endblock %}

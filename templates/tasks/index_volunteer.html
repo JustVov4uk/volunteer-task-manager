@@ -12,15 +12,7 @@
     </div>
 
     <div class="form-section mb-4 text-center">
-      {% if user.avatar_url %}
-        <img src="{{ user.avatar_url }}"
-             class="avatar avatar-xl rounded-circle shadow-sm"
-             alt="Avatar">
-      {% else %}
-        <div class="avatar avatar-xl rounded-circle shadow-sm mx-auto">
-          {{ user.username|slice:":1"|upper }}
-        </div>
-      {% endif %}
+      {% include "includes/avatar.html" with avatar_user=user avatar_size="avatar-xl" avatar_class="shadow-sm mx-auto" %}
       <h5 class="mt-2">{{ user.username }}</h5>
 
       <div class="row mt-4 text-start">

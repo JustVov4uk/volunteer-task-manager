@@ -30,7 +30,10 @@ class CustomUser(AbstractUser):
     @property
     def avatar_url(self):
         if self.profile_image:
-            return self.profile_image.url
+            try:
+                return self.profile_image.url
+            except ValueError:
+                return ""
         return ""
 
     def __str__(self):

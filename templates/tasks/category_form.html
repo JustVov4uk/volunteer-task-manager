@@ -9,6 +9,8 @@
       <h1 class="page-title">{{ object|yesno:"Update Category,Create Category" }}</h1>
       <p class="page-subtitle">Define a work stream used to organize volunteer tasks.</p>
     </div>
+    <a href="{% if object %}{% url 'tasks:category-detail' pk=object.id %}{% else %}{% url 'tasks:category-list' %}{% endif %}"
+       class="back-link">&larr; Back</a>
   </div>
 
   <form method="post" novalidate>

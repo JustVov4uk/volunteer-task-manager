@@ -9,6 +9,8 @@
       <h1 class="page-title">{{ object|yesno:"Update Task,Create Task" }}</h1>
       <p class="page-subtitle">Define the work, assign a volunteer, set the deadline, and attach operational tags.</p>
     </div>
+    <a href="{% if object %}{% url 'tasks:task-detail' pk=object.id %}{% else %}{% url 'tasks:task-list' %}{% endif %}"
+       class="back-link">&larr; Back</a>
   </div>
 
   <form action="" method="post" enctype="multipart/form-data" novalidate>

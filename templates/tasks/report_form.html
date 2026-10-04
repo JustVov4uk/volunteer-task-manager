@@ -9,6 +9,8 @@
       <h1 class="page-title">{{ object|yesno:"Update Report,Create Report" }}</h1>
       <p class="page-subtitle">Submit a task update or record coordinator verification.</p>
     </div>
+    <a href="{% if object %}{% url 'tasks:report-detail' pk=object.id %}{% else %}{% url 'tasks:report-list' %}{% endif %}"
+       class="back-link">&larr; Back</a>
   </div>
 
   <form action="" method="post" novalidate>

@@ -7,9 +7,7 @@
 
     <div class="user-card d-flex d-md-none align-items-center justify-content-between pb-4">
       <div class="d-flex align-items-center">
-        <div class="avatar-lg me-4">
-          <img src="{{ request.user.avatar_url }}" class="card-img-top rounded-circle border-white" alt="User Avatar">
-        </div>
+        {% include "includes/avatar.html" with avatar_user=request.user avatar_size="avatar-lg" avatar_class="me-4" %}
         <div class="d-block">
           <h2 class="h5 mb-3">{{ request.user.username }}</h2>
           <form method="post" action="{% url 'logout' %}">

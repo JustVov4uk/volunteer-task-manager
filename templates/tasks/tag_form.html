@@ -9,6 +9,8 @@
       <h1 class="page-title">{{ object|yesno:"Update Tag,Create Tag" }}</h1>
       <p class="page-subtitle">Create a short label for filtering and grouping tasks.</p>
     </div>
+    <a href="{% if object %}{% url 'tasks:tag-detail' pk=object.id %}{% else %}{% url 'tasks:tag-list' %}{% endif %}"
+       class="back-link">&larr; Back</a>
   </div>
 
   <form action="" method="post" novalidate>

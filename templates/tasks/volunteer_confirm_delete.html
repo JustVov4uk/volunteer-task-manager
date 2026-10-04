@@ -3,6 +3,7 @@
 {% block content %}
 <div class="page-shell py-5">
   <section class="form-section confirm-card">
+    <a href="{% url 'tasks:volunteer-detail' pk=volunteer.id %}" class="back-link mb-3">&larr; Back</a>
     <div class="eyebrow">Delete confirmation</div>
     <h1 class="page-title">Delete Volunteer</h1>
     <p class="page-subtitle">Are you sure you want to delete <strong>{{ volunteer.username }}</strong>?</p>

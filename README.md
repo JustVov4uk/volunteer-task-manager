@@ -153,6 +153,7 @@ django python bootstrap postgresql render volunteer-management task-management
 The project is deployed on Render. The `build.sh` script installs dependencies, collects static files, and applies migrations:
 
 ```bash
+export DJANGO_SETTINGS_MODULE=volunteer_task_manager.settings.production
 pip install -r requirements.txt
 python manage.py collectstatic --no-input
 python manage.py migrate

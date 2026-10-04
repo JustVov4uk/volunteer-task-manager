@@ -1,0 +1,9 @@
+<div class="avatar {{ avatar_size|default:'avatar-lg' }} rounded-circle {{ avatar_class|default:'' }}">
+  <span class="avatar-initials">{{ avatar_user.username|slice:":1"|upper }}</span>
+  {% if avatar_user.profile_image %}
+    <img src="{{ avatar_user.profile_image.url }}"
+         alt="{{ avatar_user.username }} avatar"
+         loading="lazy"
+         onerror="this.remove();">
+  {% endif %}
+</div>
